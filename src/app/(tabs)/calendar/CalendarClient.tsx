@@ -1,9 +1,10 @@
 'use client'
 
 import { FlagImg } from '@/components/FlagImg'
+import { TeamSheet } from '@/components/TeamSheet'
 
 import { useState } from 'react'
-import type { Match } from '@/lib/types'
+import type { Match, Team } from '@/lib/types'
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
@@ -35,8 +36,9 @@ interface DayKey { year: number; month: number; day: number }
 
 export default function CalendarClient({ matches }: { matches: Match[] }) {
   const [selectedDay, setSelectedDay] = useState<DayKey | null>(null)
+  const [teamSheet, setTeamSheet] = useState<Team | null>(null)
 
-  // Build map: "year-month-day" (UTC) → Match[]
+  // Build map: "year-month-day" (UTC) -> Match[]
   const matchDayMap: Record<string, Match[]> = {}
   for (const m of matches) {
     const d = new Date(m.kickoff)
@@ -122,8 +124,8 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
         </div>
       </div>
 
-      {/* ── Bottom sheet overlay ── */}
-      {selectedDay && (
+      {/* Day sheet — hidden while team sheet is open */}
+      {selectedDay && !teamSheet && (
         <>
           {/* Backdrop */}
           <div
@@ -189,7 +191,12 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                     <div className="flex items-center gap-3">
                       {/* Home team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
-                        <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-9" />
+                        <button
+                          className="active:scale-90 transition-transform"
+                          onClick={() => setTeamSheet(m.homeTeam)}
+                        >
+                          <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-9" />
+                        </button>
                         <span className="text-xs font-semibold text-white text-center leading-tight">
                           {m.homeTeam.name}
                         </span>
@@ -211,7 +218,12 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
                       {/* Away team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
-                        <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-9" />
+                        <button
+                          className="active:scale-90 transition-transform"
+                          onClick={() => setTeamSheet(m.awayTeam)}
+                        >
+                          <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-9" />
+                        </button>
                         <span className="text-xs font-semibold text-white text-center leading-tight">
                           {m.awayTeam.name}
                         </span>
@@ -229,8 +241,11 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
           </div>
         </>
       )}
+
+      {/* Team sheet — closes back to day sheet */}
+      {teamSheet && (
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
+      )}
     </div>
   )
 }
-
-

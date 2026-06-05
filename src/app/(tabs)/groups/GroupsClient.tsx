@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import type { Standing, Group } from '@/lib/types'
+import type { Standing, Group, Team } from '@/lib/types'
 import { FlagImg } from '@/components/FlagImg'
+import { TeamSheet } from '@/components/TeamSheet'
 
-// ── Standings table (used inside the sheet) ────────────────────────────────
+// -- Standings table --------------------------------------------------------
 
 function StandingsTable({ standings }: { standings: Standing[] }) {
   return (
@@ -52,7 +53,7 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
   )
 }
 
-// ── Group button card (2-col grid item) ────────────────────────────────────
+// -- Group button card ------------------------------------------------------
 
 function GroupCard({
   groupId,
@@ -68,7 +69,6 @@ function GroupCard({
       onClick={onOpen}
       className="relative flex flex-col items-start p-4 rounded-2xl bg-[#1a1a24] active:scale-95 transition-transform overflow-hidden text-left w-full h-full shadow-lg shadow-black/40"
     >
-      {/* Group label + thick white underline */}
       <div className="w-full mb-3 text-left">
         <span className="text-sm font-bold tracking-wide text-white leading-none">
           Group {groupId}
@@ -76,7 +76,6 @@ function GroupCard({
         <div className="mt-1.5 h-[2px] w-full bg-white/30 rounded-full" />
       </div>
 
-      {/* 2×2 flag + name grid */}
       <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
         {standings.map((s) => (
           <div key={s.team.id} className="flex items-center gap-2 min-w-0">
@@ -88,7 +87,6 @@ function GroupCard({
         ))}
       </div>
 
-      {/* "Top 2 advance" micro-label */}
       <div className="flex items-center gap-1 mt-auto">
         <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
         <span className="text-[10px] text-green-400">Top 2 advance</span>
@@ -97,28 +95,28 @@ function GroupCard({
   )
 }
 
-// ── Bottom sheet ───────────────────────────────────────────────────────────
+// -- Group bottom sheet -----------------------------------------------------
 
 function GroupSheet({
   groupId,
   standings,
   group,
   onClose,
+  onTeamOpen,
 }: {
   groupId: string
   standings: Standing[]
   group: Group
   onClose: () => void
+  onTeamOpen: (team: Team) => void
 }) {
   const completedMatches = group.matches.filter(m => m.status === 'ft')
   const upcomingMatches = group.matches.filter(m => m.status === 'upcoming' || m.status === 'live')
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
 
-      {/* Sheet */}
       <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up">
         {/* Header */}
         <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-[#13131a] border-b border-white/10">
@@ -130,18 +128,21 @@ function GroupSheet({
             ✕
           </button>
 
-          {/* Title — matches schedule/calendar style */}
           <h2 className="text-xl font-bold text-white">Group {groupId}</h2>
 
-          {/* All 4 flags large */}
+          {/* Large flags — tappable */}
           <div className="flex gap-4 mt-3">
             {standings.map((s, idx) => (
-              <div key={s.team.id} className="flex flex-col items-center gap-0.5">
+              <button
+                key={s.team.id}
+                className="flex flex-col items-center gap-0.5 active:scale-90 transition-transform"
+                onClick={() => onTeamOpen(s.team)}
+              >
                 <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-8" />
                 <span className={`text-[10px] font-medium ${idx < 2 ? 'text-green-400' : 'text-gray-400'}`}>
                   {s.team.name.length > 6 ? s.team.name.slice(0, 6) + '…' : s.team.name}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -151,7 +152,6 @@ function GroupSheet({
           className="overflow-y-auto bg-[#13131a] flex-1 px-4 py-3 space-y-5"
           style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
         >
-          {/* Standings */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="w-2 h-2 rounded-sm bg-green-500" />
@@ -160,7 +160,6 @@ function GroupSheet({
             <StandingsTable standings={standings} />
           </div>
 
-          {/* Completed results */}
           {completedMatches.length > 0 && (
             <div>
               <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-2">Results</p>
@@ -184,7 +183,6 @@ function GroupSheet({
             </div>
           )}
 
-          {/* Upcoming matches */}
           {upcomingMatches.length > 0 && (
             <div>
               <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-2">Upcoming</p>
@@ -220,7 +218,7 @@ function GroupSheet({
   )
 }
 
-// ── Main export ────────────────────────────────────────────────────────────
+// -- Main export ------------------------------------------------------------
 
 interface GroupsClientProps {
   standings: Record<string, Standing[]>
@@ -229,6 +227,7 @@ interface GroupsClientProps {
 
 export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
+  const [teamSheet, setTeamSheet] = useState<Team | null>(null)
 
   const activeStandings = activeGroup ? standings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
@@ -236,7 +235,6 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
-      {/* 2-column grid — fills full screen */}
       <div
         className="px-3 py-4 grid grid-cols-2 gap-3"
         style={{
@@ -255,17 +253,21 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
         ))}
       </div>
 
-      {/* Bottom sheet */}
-      {activeGroup && activeStandings && activeGroupData && (
+      {/* Group sheet — hidden while team sheet is open */}
+      {activeGroup && activeStandings && activeGroupData && !teamSheet && (
         <GroupSheet
           groupId={activeGroup}
           standings={activeStandings}
           group={activeGroupData}
           onClose={() => setActiveGroup(null)}
+          onTeamOpen={(team) => setTeamSheet(team)}
         />
+      )}
+
+      {/* Team sheet — closes back to group sheet */}
+      {teamSheet && (
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
       )}
     </div>
   )
 }
-
-
