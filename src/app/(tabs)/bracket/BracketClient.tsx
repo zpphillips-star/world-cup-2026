@@ -20,7 +20,7 @@ function isTeam(x: unknown): x is { id: string; name: string; flag: string } {
   return typeof x === 'object' && x !== null
 }
 
-function MatchCard({ slot, isFinal = false }: { slot: BracketSlot; isFinal?: boolean }) {
+function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; isFinal?: boolean; matchLabel?: string }) {
   const isTbd = slot.status === 'tbd'
   const hasScore = slot.status === 'ft' || slot.status === 'live'
 
@@ -40,9 +40,14 @@ function MatchCard({ slot, isFinal = false }: { slot: BracketSlot; isFinal?: boo
             : 'border-zinc-700 bg-[#13131a]'
         }`}
     >
-      {isFinal && (
-        <div className="bg-yellow-500/10 px-2 py-0.5 text-center text-[9px] font-bold text-yellow-400 uppercase tracking-widest border-b border-yellow-500/20">
-          ⭐ Final ⭐
+      {/* Match label header */}
+      {matchLabel && (
+        <div className={`px-2 py-0.5 text-center text-[9px] font-bold uppercase tracking-widest border-b
+          ${isFinal
+            ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+            : 'bg-zinc-800/60 text-zinc-500 border-zinc-700/60'
+          }`}>
+          {matchLabel}
         </div>
       )}
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
@@ -90,12 +95,21 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
   const BASE_UNIT = Math.max(CARD_H + 8, 72)
   const totalH = maxMatches * BASE_UNIT
 
+  // Short label for each round used as match prefix
+  const ROUND_MATCH_LABEL: Record<string, string> = {
+    'Round of 32': 'R32',
+    'Round of 16': 'R16',
+    'Quarter-Finals': 'QF',
+    'Semi-Finals': 'SF',
+    'Final': 'Final',
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       {/* Sticky header with round toggles */}
       <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-4 pt-3 pb-3">
         <h1 className="text-lg font-bold text-white mb-2.5">Knockout Bracket</h1>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2">
           {ROUND_ORDER.map(name => {
             const exists = mainRounds.find(r => r.name === name)
             if (!exists) return null
@@ -104,7 +118,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
               <button
                 key={name}
                 onClick={() => toggleRound(name)}
-                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all
+                className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all
                   ${on
                     ? name === 'Final'
                       ? 'bg-yellow-400 text-zinc-900 border-yellow-400'
@@ -149,14 +163,18 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
                       </span>
                     </div>
                     {/* Match cards */}
-                    {round.matches.map((slot) => (
-                      <div
-                        key={slot.id}
-                        style={{ height: slotH, display: 'flex', alignItems: 'center' }}
-                      >
-                        <MatchCard slot={slot} isFinal={isFinalRound} />
-                      </div>
-                    ))}
+                    {round.matches.map((slot, matchIdx) => {
+                      const prefix = ROUND_MATCH_LABEL[round.name] || ROUND_SHORT[round.name]
+                      const label = isFinalRound ? '⭐ Final ⭐' : `${prefix} ${matchIdx + 1}`
+                      return (
+                        <div
+                          key={slot.id}
+                          style={{ height: slotH, display: 'flex', alignItems: 'center' }}
+                        >
+                          <MatchCard slot={slot} isFinal={isFinalRound} matchLabel={label} />
+                        </div>
+                      )
+                    })}
                   </div>
 
                   {/* Connector SVG (between this col and next) */}

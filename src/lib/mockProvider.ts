@@ -184,33 +184,36 @@ function computeStandings(groupId: string): Standing[] {
 }
 
 function getBracket(): BracketRound[] {
-  const groups = ["A","B","C","D","E","F","G","H","I","J","K","L"]
-  const r32Slots: BracketSlot[] = []
-  for (let i = 0; i < groups.length; i += 2) {
-    const g1 = groups[i]
-    const g2 = groups[i+1]
-    r32Slots.push({
-      id: `r32-${i/2+1}a`,
-      home: `Winner Group ${g1}`,
-      away: `Runner-up Group ${g2}`,
-      status: "tbd",
-    })
-    r32Slots.push({
-      id: `r32-${i/2+1}b`,
-      home: `Winner Group ${g2}`,
-      away: `Runner-up Group ${g1}`,
-      status: "tbd",
-    })
-  }
+  // 2026 World Cup: 48 teams → 32 qualify for knockout → 16 R32 matches
+  const r32Slots: BracketSlot[] = [
+    { id: 'r32-1',  home: 'Winner Group A', away: 'Runner-up Group B', status: 'tbd' },
+    { id: 'r32-2',  home: 'Winner Group C', away: 'Runner-up Group D', status: 'tbd' },
+    { id: 'r32-3',  home: 'Winner Group E', away: 'Runner-up Group F', status: 'tbd' },
+    { id: 'r32-4',  home: 'Winner Group G', away: 'Runner-up Group H', status: 'tbd' },
+    { id: 'r32-5',  home: 'Winner Group I', away: 'Runner-up Group J', status: 'tbd' },
+    { id: 'r32-6',  home: 'Winner Group K', away: 'Runner-up Group L', status: 'tbd' },
+    { id: 'r32-7',  home: 'Winner Group B', away: 'Runner-up Group A', status: 'tbd' },
+    { id: 'r32-8',  home: 'Winner Group D', away: 'Runner-up Group C', status: 'tbd' },
+    { id: 'r32-9',  home: 'Winner Group F', away: 'Runner-up Group E', status: 'tbd' },
+    { id: 'r32-10', home: 'Winner Group H', away: 'Runner-up Group G', status: 'tbd' },
+    { id: 'r32-11', home: 'Winner Group J', away: 'Runner-up Group I', status: 'tbd' },
+    { id: 'r32-12', home: 'Winner Group L', away: 'Runner-up Group K', status: 'tbd' },
+    { id: 'r32-13', home: 'Best 3rd Place #1', away: 'Best 3rd Place #2', status: 'tbd' },
+    { id: 'r32-14', home: 'Best 3rd Place #3', away: 'Best 3rd Place #4', status: 'tbd' },
+    { id: 'r32-15', home: 'Best 3rd Place #5', away: 'Best 3rd Place #6', status: 'tbd' },
+    { id: 'r32-16', home: 'Best 3rd Place #7', away: 'Best 3rd Place #8', status: 'tbd' },
+  ]
 
-  const r16Slots: BracketSlot[] = Array.from({ length: 16 }, (_, i) => ({
+  // R16: 8 matches, each winner advances from R32
+  const r16Slots: BracketSlot[] = Array.from({ length: 8 }, (_, i) => ({
     id: `r16-${i+1}`,
     home: `Winner R32 Match ${i*2+1}`,
     away: `Winner R32 Match ${i*2+2}`,
     status: "tbd" as const,
   }))
 
-  const qfSlots: BracketSlot[] = Array.from({ length: 8 }, (_, i) => ({
+  // QF: 4 matches — labeled QF1-QF4 so SF references are clear
+  const qfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => ({
     id: `qf-${i+1}`,
     home: `Winner R16 Match ${i*2+1}`,
     away: `Winner R16 Match ${i*2+2}`,
