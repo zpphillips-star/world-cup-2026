@@ -173,12 +173,9 @@ export default function MatchCard({
         <div className="flex-1 flex items-center min-w-0">
           <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
-            <button
-              className="flex-shrink-0 active:scale-90 transition-transform"
-              onClick={e => { e.stopPropagation(); setTeamSheet(match.homeTeam) }}
-            >
+            <span className="flex-shrink-0">
               <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5" />
-            </button>
+            </span>
           </div>
           <div className="w-14 flex-shrink-0 text-center">
             {hasScore ? (
@@ -190,12 +187,9 @@ export default function MatchCard({
             )}
           </div>
           <div className="flex-1 flex items-center gap-1.5 min-w-0">
-            <button
-              className="flex-shrink-0 active:scale-90 transition-transform"
-              onClick={e => { e.stopPropagation(); setTeamSheet(match.awayTeam) }}
-            >
+            <span className="flex-shrink-0">
               <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5" />
-            </button>
+            </span>
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
           </div>
         </div>
@@ -258,7 +252,13 @@ export default function MatchCard({
 
               <div className="flex items-center justify-between mt-3 gap-4">
                 <div className="flex-1 flex flex-col items-center gap-2">
-                  <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10" />
+                  <button
+                    className="active:scale-90 transition-transform"
+                    onClick={() => setTeamSheet(match.homeTeam)}
+                    title={`View ${match.homeTeam.name}`}
+                  >
+                    <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10" />
+                  </button>
                   <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.homeTeam.name}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 min-w-[80px]">
@@ -274,7 +274,13 @@ export default function MatchCard({
                   )}
                 </div>
                 <div className="flex-1 flex flex-col items-center gap-2">
-                  <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10" />
+                  <button
+                    className="active:scale-90 transition-transform"
+                    onClick={() => setTeamSheet(match.awayTeam)}
+                    title={`View ${match.awayTeam.name}`}
+                  >
+                    <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10" />
+                  </button>
                   <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.awayTeam.name}</span>
                 </div>
               </div>
