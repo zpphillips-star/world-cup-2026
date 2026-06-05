@@ -202,7 +202,7 @@ export default function MatchCard({
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={() => setOpen(false)} />
 
           <div
-            className="fixed bottom-0 left-0 right-0 z-50 max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
+            className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
             {/* Gradient header */}
@@ -256,7 +256,7 @@ export default function MatchCard({
             </div>
 
             {/* Scrollable body */}
-            <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 pb-8 flex-1">
+            <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
               {/* World Cup history */}
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">World Cup History</p>
               <div className="flex gap-4 items-start">
