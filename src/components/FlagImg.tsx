@@ -79,14 +79,22 @@ export function FlagImg({ teamId, fallback = '🏳️', className = 'h-5 w-auto'
     return <span className="leading-none">{fallback}</span>
   }
 
+  // Wrap in a fixed-ratio container so all flags look like proper flag rectangles.
+  // object-cover crops to fill — consistent shape regardless of the flag's natural ratio
+  // (fixes Qatar 28:11 being huge, Switzerland 1:1 being square, etc.)
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`https://flagcdn.com/w40/${code}.png`}
-      srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
-      alt={teamId}
-      className={`inline-block flex-shrink-0 rounded-[2px] ${className}`}
-      loading="lazy"
-    />
+    <span
+      className={`inline-block flex-shrink-0 overflow-hidden rounded-[2px] ${className}`}
+      style={{ aspectRatio: '3/2' }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`https://flagcdn.com/w40/${code}.png`}
+        srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+        alt={teamId}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </span>
   )
 }

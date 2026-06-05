@@ -146,7 +146,7 @@ export default function AssistantPage() {
                 <div key={m.id} className="bg-[#1a1a24] rounded-2xl px-4 py-3 shadow-lg shadow-black/40">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <FlagImg teamId={home.id} fallback={home.flag} className="h-6 w-auto flex-shrink-0" />
+                      <FlagImg teamId={home.id} fallback={home.flag} className="h-6" />
                       <span className="text-sm font-semibold text-white truncate">{home.name}</span>
                     </div>
                     <div className="flex flex-col items-center px-3 min-w-[64px]">
@@ -156,7 +156,7 @@ export default function AssistantPage() {
                     </div>
                     <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
                       <span className="text-sm font-semibold text-white truncate text-right">{away.name}</span>
-                      <FlagImg teamId={away.id} fallback={away.flag} className="h-6 w-auto flex-shrink-0" />
+                      <FlagImg teamId={away.id} fallback={away.flag} className="h-6" />
                     </div>
                   </div>
                 </div>
@@ -254,3 +254,4 @@ export default function AssistantPage() {
     </div>
   )
 }
+

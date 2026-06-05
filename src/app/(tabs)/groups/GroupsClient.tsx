@@ -32,7 +32,7 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
               </td>
               <td className="py-2">
                 <div className="flex items-center gap-1.5">
-                  <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 w-auto" />
+                  <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4" />
                   <span className={`font-medium truncate max-w-[100px] ${advances ? 'text-white' : 'text-gray-300'}`}>
                     {s.team.name}
                   </span>
@@ -80,7 +80,7 @@ function GroupCard({
       <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
         {standings.map((s) => (
           <div key={s.team.id} className="flex items-center gap-2 min-w-0">
-            <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-6 w-auto flex-shrink-0" />
+            <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-6" />
             <span className="text-xs font-medium truncate text-white">
               {s.team.name}
             </span>
@@ -137,7 +137,7 @@ function GroupSheet({
           <div className="flex gap-4 mt-3">
             {standings.map((s, idx) => (
               <div key={s.team.id} className="flex flex-col items-center gap-0.5">
-                <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-8 w-auto" />
+                <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-8" />
                 <span className={`text-[10px] font-medium ${idx < 2 ? 'text-green-400' : 'text-gray-400'}`}>
                   {s.team.name.length > 6 ? s.team.name.slice(0, 6) + '…' : s.team.name}
                 </span>
@@ -168,7 +168,7 @@ function GroupSheet({
                 {completedMatches.map(m => (
                   <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
                     <span className="flex items-center gap-1.5 flex-1">
-                      <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5 w-auto" />
+                      <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5" />
                       <span className="text-gray-200 font-medium">{m.homeTeam.name}</span>
                     </span>
                     <span className="font-bold text-white tabular-nums px-3 text-sm">
@@ -176,7 +176,7 @@ function GroupSheet({
                     </span>
                     <span className="flex items-center gap-1.5 flex-1 justify-end">
                       <span className="text-gray-200 font-medium text-right">{m.awayTeam.name}</span>
-                      <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5 w-auto" />
+                      <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5" />
                     </span>
                   </div>
                 ))}
@@ -197,7 +197,7 @@ function GroupSheet({
                   return (
                     <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
                       <span className="flex items-center gap-1.5 flex-1">
-                        <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5 w-auto" />
+                        <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5" />
                         <span className="text-gray-300">{m.homeTeam.name}</span>
                       </span>
                       <div className="flex flex-col items-center px-2">
@@ -206,7 +206,7 @@ function GroupSheet({
                       </div>
                       <span className="flex items-center gap-1.5 flex-1 justify-end">
                         <span className="text-gray-300 text-right">{m.awayTeam.name}</span>
-                        <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5 w-auto" />
+                        <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5" />
                       </span>
                     </div>
                   )
@@ -267,4 +267,5 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     </div>
   )
 }
+
 
