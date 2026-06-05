@@ -3,7 +3,15 @@
 import { useState } from 'react'
 import type { Standing, Group } from '@/lib/types'
 
-// ── Standings table ────────────────────────────────────────────────────────
+// ── Color palette per group ────────────────────────────────────────────────
+
+const GROUP_COLORS: Record<string, string> = {
+  A: '#ef4444', B: '#f97316', C: '#eab308', D: '#22c55e',
+  E: '#14b8a6', F: '#3b82f6', G: '#8b5cf6', H: '#ec4899',
+  I: '#f43f5e', J: '#06b6d4', K: '#84cc16', L: '#a855f7',
+}
+
+// ── Standings table (used inside the sheet) ────────────────────────────────
 
 function StandingsTable({ standings }: { standings: Standing[] }) {
   return (
@@ -16,36 +24,23 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
           <th className="text-center py-1.5 w-7">W</th>
           <th className="text-center py-1.5 w-7">D</th>
           <th className="text-center py-1.5 w-7">L</th>
-          {/* GF/GA/GD hidden on small screens */}
-          <th className="hidden sm:table-cell text-center py-1.5 w-8">GF</th>
-          <th className="hidden sm:table-cell text-center py-1.5 w-8">GA</th>
           <th className="text-center py-1.5 w-8">GD</th>
-          <th className="text-center py-1.5 w-8 text-[#00d4ff] font-bold">Pts</th>
+          <th className="text-center py-1.5 w-8 font-bold" style={{ color: '#00d4ff' }}>Pts</th>
         </tr>
       </thead>
       <tbody>
         {standings.map((s, idx) => {
           const advances = idx < 2
           return (
-            <tr
-              key={s.team.id}
-              className={`border-b border-gray-800/60 last:border-b-0 transition-colors
-                ${advances ? 'bg-green-950/20' : ''}
-              `}
-            >
-              {/* Advance indicator left-border via inset box-shadow trick */}
+            <tr key={s.team.id} className={`border-b border-gray-800/60 last:border-b-0 ${advances ? 'bg-green-950/20' : ''}`}>
               <td className="py-2 relative">
-                {advances && (
-                  <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-green-500 rounded-r" />
-                )}
-                <span className={`pl-1.5 ${advances ? 'text-green-400' : 'text-gray-500'}`}>
-                  {idx + 1}
-                </span>
+                {advances && <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-green-500 rounded-r" />}
+                <span className={`pl-1.5 ${advances ? 'text-green-400' : 'text-gray-500'}`}>{idx + 1}</span>
               </td>
               <td className="py-2">
                 <div className="flex items-center gap-1.5">
                   <span className="text-base leading-none">{s.team.flag}</span>
-                  <span className={`truncate max-w-[90px] font-medium ${advances ? 'text-white' : 'text-gray-300'}`}>
+                  <span className={`font-medium truncate max-w-[100px] ${advances ? 'text-white' : 'text-gray-300'}`}>
                     {s.team.name}
                   </span>
                 </div>
@@ -54,12 +49,8 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
               <td className="text-center py-2 text-gray-300">{s.won}</td>
               <td className="text-center py-2 text-gray-300">{s.drawn}</td>
               <td className="text-center py-2 text-gray-300">{s.lost}</td>
-              <td className="hidden sm:table-cell text-center py-2 text-gray-400">{s.goalsFor}</td>
-              <td className="hidden sm:table-cell text-center py-2 text-gray-400">{s.goalsAgainst}</td>
-              <td className="text-center py-2 text-gray-400">
-                {s.goalDiff > 0 ? `+${s.goalDiff}` : s.goalDiff}
-              </td>
-              <td className="text-center py-2 font-bold text-[#00d4ff]">{s.points}</td>
+              <td className="text-center py-2 text-gray-400">{s.goalDiff > 0 ? `+${s.goalDiff}` : s.goalDiff}</td>
+              <td className="text-center py-2 font-bold" style={{ color: '#00d4ff' }}>{s.points}</td>
             </tr>
           )
         })}
@@ -68,80 +59,190 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
   )
 }
 
-// ── Group accordion ────────────────────────────────────────────────────────
+// ── Group button card (2-col grid item) ────────────────────────────────────
 
-const GROUP_COLORS: Record<string, string> = {
-  A: '#ef4444', B: '#f97316', C: '#eab308', D: '#22c55e',
-  E: '#14b8a6', F: '#3b82f6', G: '#8b5cf6', H: '#ec4899',
-  I: '#f43f5e', J: '#06b6d4', K: '#84cc16', L: '#a855f7',
-}
-
-function GroupAccordion({ groupId, standings, group }: { groupId: string; standings: Standing[]; group: Group }) {
-  const [open, setOpen] = useState(false)
-  const completedMatches = group.matches.filter(m => m.status === 'ft')
+function GroupCard({
+  groupId,
+  standings,
+  onOpen,
+}: {
+  groupId: string
+  standings: Standing[]
+  onOpen: () => void
+}) {
   const accent = GROUP_COLORS[groupId] ?? '#00d4ff'
 
   return (
-    <div
-      className="mb-3 rounded-xl border border-gray-800 overflow-hidden"
-      style={{ background: '#13131a' }}
+    <button
+      onClick={onOpen}
+      className="relative flex flex-col items-start p-4 rounded-2xl border active:scale-95 transition-transform overflow-hidden text-left"
+      style={{
+        background: `linear-gradient(135deg, ${accent}18 0%, #13131a 60%)`,
+        borderColor: `${accent}44`,
+      }}
     >
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
+      {/* Top accent strip */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: accent }} />
+
+      {/* Group label */}
+      <span
+        className="text-[11px] font-black tracking-widest uppercase mb-3"
+        style={{ color: accent }}
       >
-        <div className="flex items-center gap-3">
-          {/* Colored pill badge */}
-          <span
-            className="text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full"
-            style={{ background: `${accent}22`, color: accent, border: `1px solid ${accent}44` }}
+        Group {groupId}
+      </span>
+
+      {/* 2×2 flag grid */}
+      <div className="grid grid-cols-2 gap-y-1 gap-x-2 w-full mb-3">
+        {standings.map((s, idx) => (
+          <div key={s.team.id} className="flex items-center gap-1.5 min-w-0">
+            <span className="text-xl leading-none flex-shrink-0">{s.team.flag}</span>
+            <span
+              className={`text-[11px] font-medium truncate ${idx < 2 ? 'text-white' : 'text-gray-400'}`}
+            >
+              {s.team.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* "Top 2 advance" micro-label */}
+      <div className="flex items-center gap-1 mt-auto">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+        <span className="text-[10px] text-green-400">Top 2 advance</span>
+      </div>
+    </button>
+  )
+}
+
+// ── Bottom sheet ───────────────────────────────────────────────────────────
+
+function GroupSheet({
+  groupId,
+  standings,
+  group,
+  onClose,
+}: {
+  groupId: string
+  standings: Standing[]
+  group: Group
+  onClose: () => void
+}) {
+  const accent = GROUP_COLORS[groupId] ?? '#00d4ff'
+  const completedMatches = group.matches.filter(m => m.status === 'ft')
+  const upcomingMatches = group.matches.filter(m => m.status === 'upcoming' || m.status === 'live')
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
+
+      {/* Sheet */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up">
+        {/* Header */}
+        <div
+          className="relative px-5 pt-4 pb-4 flex-shrink-0"
+          style={{ background: `linear-gradient(160deg, ${accent}30 0%, #0c1a2e 100%)` }}
+        >
+          <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
           >
-            GROUP {groupId}
-          </span>
-          {/* Top 2 team flags preview */}
-          <div className="flex gap-0.5 text-base">
-            {standings.slice(0, 2).map(s => (
-              <span key={s.team.id}>{s.team.flag}</span>
+            ✕
+          </button>
+          <div className="flex items-center gap-3">
+            <span
+              className="text-xs font-black tracking-widest px-3 py-1 rounded-full"
+              style={{ background: `${accent}22`, color: accent, border: `1px solid ${accent}55` }}
+            >
+              GROUP {groupId}
+            </span>
+          </div>
+          {/* All 4 flags large */}
+          <div className="flex gap-3 mt-3">
+            {standings.map((s, idx) => (
+              <div key={s.team.id} className="flex flex-col items-center gap-0.5">
+                <span className="text-3xl leading-none">{s.team.flag}</span>
+                <span className={`text-[10px] font-medium ${idx < 2 ? 'text-green-400' : 'text-gray-400'}`}>
+                  {s.team.name.length > 6 ? s.team.name.slice(0, 6) + '…' : s.team.name}
+                </span>
+              </div>
             ))}
           </div>
         </div>
-        <span className="text-gray-500 text-xs">{open ? '▲' : '▼'}</span>
-      </button>
 
-      {open && (
-        <div className="border-t border-gray-800">
-          {/* Advance indicator legend */}
-          <div className="px-4 pt-3 pb-1 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-sm bg-green-500" />
-            <span className="text-[10px] text-green-400 font-medium">Top 2 advance</span>
-          </div>
-          <div className="px-4 pb-4">
+        {/* Scrollable body */}
+        <div
+          className="overflow-y-auto bg-[#13131a] flex-1 px-4 py-3 space-y-5"
+          style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
+        >
+          {/* Standings */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-2 h-2 rounded-sm bg-green-500" />
+              <span className="text-[10px] text-green-400 font-semibold uppercase tracking-wider">Top 2 advance to Round of 32</span>
+            </div>
             <StandingsTable standings={standings} />
           </div>
 
+          {/* Completed results */}
           {completedMatches.length > 0 && (
-            <div className="px-4 pb-4 border-t border-gray-800/60 pt-3 space-y-2">
-              <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider">Results</p>
-              {completedMatches.map(m => (
-                <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-lg px-3 py-2">
-                  <span className="flex items-center gap-1.5">
-                    <span>{m.homeTeam.flag}</span>
-                    <span className="text-gray-300">{m.homeTeam.name}</span>
-                  </span>
-                  <span className="font-bold text-white tabular-nums px-2">
-                    {m.homeScore} – {m.awayScore}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-gray-300 text-right">{m.awayTeam.name}</span>
-                    <span>{m.awayTeam.flag}</span>
-                  </span>
-                </div>
-              ))}
+            <div>
+              <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-2">Results</p>
+              <div className="space-y-2">
+                {completedMatches.map(m => (
+                  <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
+                    <span className="flex items-center gap-1.5 flex-1">
+                      <span>{m.homeTeam.flag}</span>
+                      <span className="text-gray-200 font-medium">{m.homeTeam.name}</span>
+                    </span>
+                    <span className="font-bold text-white tabular-nums px-3 text-sm">
+                      {m.homeScore} – {m.awayScore}
+                    </span>
+                    <span className="flex items-center gap-1.5 flex-1 justify-end">
+                      <span className="text-gray-200 font-medium text-right">{m.awayTeam.name}</span>
+                      <span>{m.awayTeam.flag}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Upcoming matches */}
+          {upcomingMatches.length > 0 && (
+            <div>
+              <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-2">Upcoming</p>
+              <div className="space-y-2">
+                {upcomingMatches.map(m => {
+                  const time = new Date(m.kickoff).toLocaleString('en-US', {
+                    month: 'short', day: 'numeric',
+                    hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+                  })
+                  return (
+                    <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
+                      <span className="flex items-center gap-1.5 flex-1">
+                        <span>{m.homeTeam.flag}</span>
+                        <span className="text-gray-300">{m.homeTeam.name}</span>
+                      </span>
+                      <div className="flex flex-col items-center px-2">
+                        <span className="text-gray-500 font-medium">vs</span>
+                        <span className="text-[10px] text-gray-600 text-center">{time}</span>
+                      </div>
+                      <span className="flex items-center gap-1.5 flex-1 justify-end">
+                        <span className="text-gray-300 text-right">{m.awayTeam.name}</span>
+                        <span>{m.awayTeam.flag}</span>
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   )
 }
 
@@ -153,20 +254,38 @@ interface GroupsClientProps {
 }
 
 export default function GroupsClient({ standings, groups }: GroupsClientProps) {
+  const [activeGroup, setActiveGroup] = useState<string | null>(null)
+
+  const activeStandings = activeGroup ? standings[activeGroup] : null
+  const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
+
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 px-4 py-3 border-b border-gray-800">
         <h1 className="text-xl font-bold">Groups</h1>
       </div>
 
-      <div className="px-4 py-4">
-        {Object.entries(standings).map(([groupId, groupStandings]) => {
-          const group = groups.find(g => g.id === groupId)!
-          return (
-            <GroupAccordion key={groupId} groupId={groupId} standings={groupStandings} group={group} />
-          )
-        })}
+      {/* 2-column grid */}
+      <div className="px-3 py-4 grid grid-cols-2 gap-3" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+        {Object.entries(standings).map(([groupId, groupStandings]) => (
+          <GroupCard
+            key={groupId}
+            groupId={groupId}
+            standings={groupStandings}
+            onOpen={() => setActiveGroup(groupId)}
+          />
+        ))}
       </div>
+
+      {/* Bottom sheet */}
+      {activeGroup && activeStandings && activeGroupData && (
+        <GroupSheet
+          groupId={activeGroup}
+          standings={activeStandings}
+          group={activeGroupData}
+          onClose={() => setActiveGroup(null)}
+        />
+      )}
     </div>
   )
 }
