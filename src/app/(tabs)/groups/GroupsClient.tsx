@@ -65,22 +65,22 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col items-start p-4 rounded-2xl border border-gray-700 bg-[#13131a] active:scale-95 transition-transform overflow-hidden text-left hover:border-gray-500"
+      className="relative flex flex-col items-start p-4 rounded-2xl border border-white/20 bg-[#13131a] active:scale-95 transition-transform overflow-hidden text-left hover:border-white/40 w-full h-full"
     >
       {/* Top white strip */}
       <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl bg-white/40" />
 
       {/* Group label */}
-      <span className="text-[11px] font-black tracking-widest uppercase text-white mb-3">
+      <span className="text-2xl font-black tracking-widest uppercase text-white mb-4 leading-none">
         Group {groupId}
       </span>
 
       {/* 2×2 flag + name grid */}
-      <div className="grid grid-cols-2 gap-y-1 gap-x-2 w-full mb-3">
+      <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
         {standings.map((s, idx) => (
-          <div key={s.team.id} className="flex items-center gap-1.5 min-w-0">
-            <span className="text-xl leading-none flex-shrink-0">{s.team.flag}</span>
-            <span className={`text-[11px] font-medium truncate ${idx < 2 ? 'text-white' : 'text-gray-400'}`}>
+          <div key={s.team.id} className="flex items-center gap-2 min-w-0">
+            <span className="text-2xl leading-none flex-shrink-0">{s.team.flag}</span>
+            <span className={`text-xs font-medium truncate ${idx < 2 ? 'text-white' : 'text-gray-400'}`}>
               {s.team.name}
             </span>
           </div>
@@ -120,7 +120,7 @@ function GroupSheet({
       {/* Sheet */}
       <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up">
         {/* Header */}
-        <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-gradient-to-b from-[#0c2540] to-[#13131a]">
+        <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-[#13131a] border-b border-white/10">
           <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
           <button
             onClick={onClose}
@@ -238,8 +238,15 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
         <h1 className="text-xl font-bold">Groups</h1>
       </div>
 
-      {/* 2-column grid */}
-      <div className="px-3 py-4 grid grid-cols-2 gap-3" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+      {/* 2-column grid — fills full screen */}
+      <div
+        className="px-3 py-4 grid grid-cols-2 gap-3"
+        style={{
+          paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
+          minHeight: 'calc(100dvh - 3.5rem - env(safe-area-inset-top))',
+          gridAutoRows: '1fr',
+        }}
+      >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
           <GroupCard
             key={groupId}
@@ -552,4 +559,3 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     </div>
   )
 }
-
