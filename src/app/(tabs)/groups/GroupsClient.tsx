@@ -68,7 +68,7 @@ function GroupCard({
       className="relative flex flex-col items-start p-4 rounded-2xl border border-white/20 bg-[#13131a] active:scale-95 transition-transform overflow-hidden text-left hover:border-white/40 w-full h-full"
     >
       {/* Group label + thick white underline */}
-      <div className="w-full mb-3">
+      <div className="w-full mb-3 text-center">
         <span className="text-sm font-bold tracking-widest uppercase text-white leading-none">
           Group {groupId}
         </span>
