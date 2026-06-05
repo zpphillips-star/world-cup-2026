@@ -167,7 +167,7 @@ const matches: Match[] = [
   { id: "m39", homeTeam: teams.belgium,      awayTeam: teams.iran,         kickoff: "2026-06-21T19:00:00Z" /* ✅ 12PM PDT */,                venue: venues.tbd,    group: "G", round: "Group Stage", status: "upcoming", matchday: 2 },
   { id: "m40", homeTeam: teams.newzealand,   awayTeam: teams.egypt,        kickoff: "2026-06-22T01:00:00Z" /* ✅ 6PM PDT */,                 venue: venues.tbd,    group: "G", round: "Group Stage", status: "upcoming", matchday: 2 },
   { id: "m63", homeTeam: teams.egypt,        awayTeam: teams.iran,         kickoff: "2026-06-27T03:00:00Z" /* ✅ 8PM PDT — Lumen Field ✅ */, venue: venues.lumen,  group: "G", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m64", homeTeam: teams.belgium,      awayTeam: teams.newzealand,   kickoff: "2026-06-27T03:00:00Z" /* ✅ simultaneous */,             venue: venues.bcplace,group: "G", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m64", homeTeam: teams.newzealand,   awayTeam: teams.belgium,      kickoff: "2026-06-27T03:00:00Z" /* ✅ simultaneous */,             venue: venues.bcplace,group: "G", round: "Group Stage", status: "upcoming", matchday: 3 },
 
   // ── GROUP H: Spain, Uruguay, Saudi Arabia, Cape Verde ──
   { id: "m14", homeTeam: teams.spain,        awayTeam: teams.capeverde,    kickoff: "2026-06-15T20:00:00Z" /* ⚠️ TBD */, venue: venues.tbd,   group: "H", round: "Group Stage", status: "upcoming", matchday: 1 },
