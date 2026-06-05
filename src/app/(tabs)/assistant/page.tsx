@@ -67,9 +67,15 @@ export default function AssistantPage() {
   const isEmpty = messages.length === 0 && !thinking
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+    <div
+      className="bg-[#0a0a0f] flex flex-col overflow-hidden"
+      style={{
+        height: '100dvh',
+        paddingTop: 'env(safe-area-inset-top)',
+      }}
+    >
       {/* Header */}
-      <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 px-4 py-3 border-b border-gray-800">
+      <div className="flex-shrink-0 bg-[#0a0a0f]/90 backdrop-blur-sm px-4 py-3 border-b border-gray-800">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0066cc] flex items-center justify-center text-sm font-bold text-white">
             ⚽
@@ -81,8 +87,8 @@ export default function AssistantPage() {
         </div>
       </div>
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      {/* Messages area — scrollable, fills remaining space */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
         {/* Empty state */}
         {isEmpty && (
           <div className="flex flex-col items-center justify-center text-center pt-8 pb-4">
@@ -161,8 +167,11 @@ export default function AssistantPage() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input bar */}
-      <div className="sticky bottom-20 bg-[#0a0a0f] px-4 py-3 border-t border-gray-800">
+      {/* Input bar — pinned above nav */}
+      <div
+        className="flex-shrink-0 bg-[#0a0a0f] px-4 py-3 border-t border-gray-800"
+        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
+      >
         <div className="flex items-center gap-2 bg-[#13131a] border border-gray-700 rounded-full px-4 py-2.5 focus-within:border-[#00d4ff] transition-colors">
           <input
             type="text"
