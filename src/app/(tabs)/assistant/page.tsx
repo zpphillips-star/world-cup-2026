@@ -99,7 +99,7 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: 'calc(8rem + env(safe-area-inset-bottom))' }}>
+    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
       {/* Header */}
       <div className="px-4 pt-5 pb-3">
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">World Cup 2026</p>
@@ -204,22 +204,45 @@ export default function AssistantPage() {
 
       {/* Fixed input bar above nav */}
       <div
-        className="fixed left-0 right-0 bg-[#0a0a0f]/95 backdrop-blur-sm border-t border-gray-800 px-4 py-3"
+        className="fixed left-0 right-0 px-3 pb-3"
         style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
-        <div className="flex items-center gap-2 bg-[#1a1a24] rounded-full px-4 py-2.5 shadow-lg shadow-black/40">
+        {/* Gradient fade so content doesn't hard-clip behind the bar */}
+        <div className="absolute inset-x-0 -top-8 h-8 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
+
+        {/* Suggestion chips */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-2 pb-0.5">
+          {['How does it work?', 'USA matches', 'Argentina', 'The Final'].map(chip => (
+            <button
+              key={chip}
+              onClick={() => send(chip)}
+              className="flex-shrink-0 text-xs text-gray-300 bg-[#1e1e2e] border border-white/10 rounded-full px-3 py-1.5 hover:border-[#00d4ff]/40 hover:text-white transition-colors active:scale-95"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+
+        {/* Input row */}
+        <div className="flex items-center gap-2 bg-[#16161f] border border-white/15 rounded-2xl px-4 py-3 shadow-xl shadow-black/60 focus-within:border-[#00d4ff]/50 focus-within:shadow-[0_0_0_1px_rgba(0,212,255,0.15)] transition-all">
+          {/* Bot avatar */}
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0077ff] flex items-center justify-center flex-shrink-0 mr-0.5">
+            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 010 2h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 010-2h1a7 7 0 017-7h1V5.73A2 2 0 0110 4a2 2 0 012-2zm0 7a5 5 0 00-5 5v3h10v-3a5 5 0 00-5-5zm-2 6a1 1 0 110-2 1 1 0 010 2zm4 0a1 1 0 110-2 1 1 0 010 2z"/>
+            </svg>
+          </div>
           <input
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send(input)}
-            placeholder="Ask about teams, groups, schedule…"
+            placeholder="Ask anything about the World Cup…"
             className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 outline-none"
           />
           <button
             onClick={() => send(input)}
             disabled={!input.trim()}
-            className="w-8 h-8 rounded-full bg-[#00d4ff] flex items-center justify-center text-[#0a0a0f] disabled:opacity-30 flex-shrink-0 transition-opacity"
+            className="w-9 h-9 rounded-xl bg-[#00d4ff] flex items-center justify-center text-[#0a0a0f] disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0 transition-all active:scale-90 shadow-md shadow-[#00d4ff]/20"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
