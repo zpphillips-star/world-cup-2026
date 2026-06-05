@@ -69,7 +69,7 @@ function GroupCard({
     >
       {/* Group label + thick white underline */}
       <div className="w-full mb-3 text-center">
-        <span className="text-sm font-bold tracking-widest uppercase text-white leading-none">
+        <span className="text-sm font-bold tracking-wide text-white leading-none">
           Group {groupId}
         </span>
         <div className="mt-1.5 h-[2px] w-full bg-white/70 rounded-full" />
