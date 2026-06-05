@@ -33,10 +33,7 @@ function TeamPanel({ team, stats, side }: {
 }) {
   return (
     <div className={`flex-1 flex flex-col gap-3 ${side === 'away' ? 'items-end' : 'items-start'}`}>
-      <div className={`flex items-center gap-2 ${side === 'away' ? 'flex-row-reverse' : ''}`}>
-        <FlagImg teamId={team.id} fallback={team.flag} className="h-10 w-auto" />
-        <span className="text-[15px] font-bold text-white leading-tight">{team.name}</span>
-      </div>
+      <span className={`text-[15px] font-bold text-white leading-tight`}>{team.name}</span>
       {!stats ? (
         <span className="text-xs text-zinc-600">No data</span>
       ) : (
