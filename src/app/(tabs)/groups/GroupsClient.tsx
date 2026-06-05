@@ -67,13 +67,13 @@ function GroupCard({
       onClick={onOpen}
       className="relative flex flex-col items-start p-4 rounded-2xl border border-white/20 bg-[#13131a] active:scale-95 transition-transform overflow-hidden text-left hover:border-white/40 w-full h-full"
     >
-      {/* Top white strip */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl bg-white/40" />
-
-      {/* Group label */}
-      <span className="text-2xl font-black tracking-widest uppercase text-white mb-4 leading-none">
-        Group {groupId}
-      </span>
+      {/* Group label + thick white underline */}
+      <div className="w-full mb-3">
+        <span className="text-sm font-bold tracking-widest uppercase text-white leading-none">
+          Group {groupId}
+        </span>
+        <div className="mt-1.5 h-[2px] w-full bg-white/70 rounded-full" />
+      </div>
 
       {/* 2×2 flag + name grid */}
       <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
