@@ -44,7 +44,7 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
     <div className="pb-8">
       {byDate.map(([isoDate, dayMatches], index) => (
         <div key={isoDate} className={index > 0 ? 'mt-10' : ''}>
-          <h2 className="sticky top-[70px] z-10 px-4 py-3 bg-zinc-200 dark:bg-zinc-600 text-zinc-900 dark:text-white text-2xl font-extrabold tracking-wide border-b border-zinc-300 dark:border-zinc-500">
+          <h2 className="sticky top-[70px] z-10 px-4 py-3 bg-gray-50 dark:bg-zinc-800 text-zinc-900 dark:text-white text-2xl font-extrabold tracking-wide border-b border-zinc-200 dark:border-zinc-700">
             {formatDateHeader(isoDate, userTimezone)}
           </h2>
           <div className="px-4 pt-2">
