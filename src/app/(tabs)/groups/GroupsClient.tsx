@@ -65,7 +65,7 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col items-start p-4 rounded-2xl border border-white/20 bg-[#13131a] active:scale-95 transition-transform overflow-hidden text-left hover:border-white/40 w-full h-full"
+      className="relative flex flex-col items-start p-4 rounded-2xl bg-[#1a1a24] active:scale-95 transition-transform overflow-hidden text-left w-full h-full shadow-lg shadow-black/40"
     >
       {/* Group label + thick white underline */}
       <div className="w-full mb-3 text-left">

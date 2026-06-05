@@ -118,7 +118,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
               <button
                 key={name}
                 onClick={() => toggleRound(name)}
-                className={`flex-1 py-3.5 rounded-xl text-sm font-bold border-2 transition-all active:scale-95
+                className={`flex-1 py-4 rounded-xl text-sm font-bold border-2 transition-all active:scale-95
                   ${on
                     ? name === 'Final'
                       ? 'bg-yellow-400 text-zinc-900 border-yellow-400'
