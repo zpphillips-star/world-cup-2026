@@ -316,7 +316,7 @@ export default function MatchCard({
 
       {/* Team sheet — opens when a flag is tapped */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
+        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} />
       )}
     </>
   )
