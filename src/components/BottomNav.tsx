@@ -9,10 +9,9 @@ const tabs = [
     label: 'Schedule',
     icon: (active: boolean) => (
       <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth={2} />
-        <line x1="16" y1="2" x2="16" y2="6" strokeWidth={2} />
-        <line x1="8" y1="2" x2="8" y2="6" strokeWidth={2} />
-        <line x1="3" y1="10" x2="21" y2="10" strokeWidth={2} />
+        <line x1="3" y1="6" x2="21" y2="6" strokeWidth={2} strokeLinecap="round" />
+        <line x1="3" y1="12" x2="21" y2="12" strokeWidth={2} strokeLinecap="round" />
+        <line x1="3" y1="18" x2="21" y2="18" strokeWidth={2} strokeLinecap="round" />
       </svg>
     ),
   },
@@ -21,10 +20,10 @@ const tabs = [
     label: 'Calendar',
     icon: (active: boolean) => (
       <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <rect x="3" y="3" width="7" height="7" strokeWidth={2} />
-        <rect x="14" y="3" width="7" height="7" strokeWidth={2} />
-        <rect x="14" y="14" width="7" height="7" strokeWidth={2} />
-        <rect x="3" y="14" width="7" height="7" strokeWidth={2} />
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth={2} />
+        <line x1="16" y1="2" x2="16" y2="6" strokeWidth={2} strokeLinecap="round" />
+        <line x1="8" y1="2" x2="8" y2="6" strokeWidth={2} strokeLinecap="round" />
+        <line x1="3" y1="10" x2="21" y2="10" strokeWidth={2} />
       </svg>
     ),
   },
@@ -33,12 +32,10 @@ const tabs = [
     label: 'Groups',
     icon: (active: boolean) => (
       <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <line x1="8" y1="6" x2="21" y2="6" strokeWidth={2} />
-        <line x1="8" y1="12" x2="21" y2="12" strokeWidth={2} />
-        <line x1="8" y1="18" x2="21" y2="18" strokeWidth={2} />
-        <line x1="3" y1="6" x2="3.01" y2="6" strokeWidth={2} />
-        <line x1="3" y1="12" x2="3.01" y2="12" strokeWidth={2} />
-        <line x1="3" y1="18" x2="3.01" y2="18" strokeWidth={2} />
+        <rect x="3" y="3" width="7" height="7" rx="1" strokeWidth={2} />
+        <rect x="14" y="3" width="7" height="7" rx="1" strokeWidth={2} />
+        <rect x="14" y="14" width="7" height="7" rx="1" strokeWidth={2} />
+        <rect x="3" y="14" width="7" height="7" rx="1" strokeWidth={2} />
       </svg>
     ),
   },
