@@ -59,9 +59,6 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 px-4 py-3 border-b border-gray-800">
-        <h1 className="text-xl font-bold">Calendar</h1>
-      </div>
 
       <div className="px-4 py-4 space-y-8">
         {months.map(({ year, month, name }) => {
