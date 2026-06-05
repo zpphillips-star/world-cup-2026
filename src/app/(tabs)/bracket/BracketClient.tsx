@@ -3,200 +3,225 @@
 import { useState } from 'react'
 import type { BracketRound, BracketSlot } from '@/lib/types'
 
-const SLOT_H = 72
-const CARD_W = 168
-const CONN_W = 24
-
-function isTeamObj(x: string | { id: string; name: string; flag: string }): x is { id: string; name: string; flag: string } {
-  return typeof x === 'object'
+const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
+const ROUND_SHORT: Record<string, string> = {
+  'Round of 32': 'R32',
+  'Round of 16': 'R16',
+  'Quarter-Finals': 'QF',
+  'Semi-Finals': 'SF',
+  'Final': 'Final',
 }
 
-function BracketCard({ slot, isFinal = false }: { slot: BracketSlot; isFinal?: boolean }) {
+const CARD_H = 60   // height of match card px
+const CARD_W = 164  // width of match card px
+const CONN_W = 28   // width of connector column
+
+function isTeam(x: unknown): x is { id: string; name: string; flag: string } {
+  return typeof x === 'object' && x !== null
+}
+
+function MatchCard({ slot, isFinal = false }: { slot: BracketSlot; isFinal?: boolean }) {
   const isTbd = slot.status === 'tbd'
   const hasScore = slot.status === 'ft' || slot.status === 'live'
 
-  const homeTeam = isTeamObj(slot.home) ? slot.home : null
-  const awayTeam = isTeamObj(slot.away) ? slot.away : null
+  const homeTeam = isTeam(slot.home) ? slot.home : null
+  const awayTeam = isTeam(slot.away) ? slot.away : null
   const homeLabel = homeTeam ? homeTeam.name : (slot.home as string)
   const awayLabel = awayTeam ? awayTeam.name : (slot.away as string)
 
   return (
     <div
-      className={`rounded-lg border text-[11px] overflow-hidden w-full
+      style={{ width: CARD_W, minWidth: CARD_W }}
+      className={`rounded-lg border text-[11px] overflow-hidden
         ${isFinal
-          ? 'border-yellow-500/50 shadow-lg shadow-yellow-900/30 bg-gradient-to-br from-yellow-950/30 to-[#13131a]'
+          ? 'border-yellow-500/60 bg-gradient-to-br from-yellow-950/30 to-[#0d0d15] shadow-lg shadow-yellow-900/20'
           : isTbd
-            ? 'border-dashed border-gray-700/40 bg-[#0d0d15]'
-            : 'border-gray-700 bg-[#13131a]'
+            ? 'border-dashed border-zinc-700/40 bg-[#0d0d15]'
+            : 'border-zinc-700 bg-[#13131a]'
         }`}
     >
       {isFinal && (
-        <div className="bg-yellow-500/10 px-2 py-0.5 text-center text-[10px] font-bold text-yellow-400 uppercase tracking-widest border-b border-yellow-500/20">
+        <div className="bg-yellow-500/10 px-2 py-0.5 text-center text-[9px] font-bold text-yellow-400 uppercase tracking-widest border-b border-yellow-500/20">
           ⭐ Final ⭐
         </div>
       )}
-      <div className={`flex items-center gap-1.5 px-2.5 py-1.5 ${isTbd ? 'text-gray-600' : 'text-gray-200'}`}>
-        {homeTeam && <span className="text-sm flex-shrink-0">{homeTeam.flag}</span>}
-        <span className="flex-1 truncate">{homeLabel}</span>
-        {hasScore && <span className="font-bold text-white ml-auto tabular-nums">{slot.homeScore ?? 0}</span>}
+      <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
+        {homeTeam && <span className="text-xs flex-shrink-0">{homeTeam.flag}</span>}
+        <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
+        {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.homeScore ?? 0}</span>}
       </div>
-      <div className="border-t border-gray-800/60" />
-      <div className={`flex items-center gap-1.5 px-2.5 py-1.5 ${isTbd ? 'text-gray-600' : 'text-gray-200'}`}>
-        {awayTeam && <span className="text-sm flex-shrink-0">{awayTeam.flag}</span>}
-        <span className="flex-1 truncate">{awayLabel}</span>
-        {hasScore && <span className="font-bold text-white ml-auto tabular-nums">{slot.awayScore ?? 0}</span>}
+      <div className="border-t border-zinc-800/80" />
+      <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
+        {awayTeam && <span className="text-xs flex-shrink-0">{awayTeam.flag}</span>}
+        <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
+        {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.awayScore ?? 0}</span>}
       </div>
-    </div>
-  )
-}
-
-function BinaryConnector({ count, slotH }: { count: number; slotH: number }) {
-  const pairs = Math.floor(count / 2)
-  const pairH = slotH * 2
-
-  return (
-    <div style={{ width: CONN_W, flexShrink: 0 }}>
-      {Array.from({ length: pairs }, (_, i) => (
-        <div key={i} style={{ height: pairH, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ flex: 1, borderRight: '1px solid rgba(75,85,99,0.5)', borderBottom: '1px solid rgba(75,85,99,0.5)' }} />
-          <div style={{ flex: 1, borderRight: '1px solid rgba(75,85,99,0.5)', borderTop: '1px solid rgba(75,85,99,0.5)' }} />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function EarlyRoundList({ round }: { round: BracketRound }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="mb-3 rounded-xl border border-gray-800 overflow-hidden" style={{ background: '#13131a' }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
-      >
-        <span className="text-sm font-bold text-gray-200">{round.name}</span>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">{round.matches.length} matches</span>
-          <span className="text-gray-500 text-xs">{open ? '▲' : '▼'}</span>
-        </div>
-      </button>
-      {open && (
-        <div className="border-t border-gray-800 px-4 py-3 space-y-2">
-          {round.matches.map((slot) => (
-            <div key={slot.id} className="bg-[#0a0a0f] rounded-lg px-3 py-2 text-xs text-gray-400 flex items-center gap-2">
-              <span className="flex-1 truncate">
-                {isTeamObj(slot.home) ? `${slot.home.flag} ${slot.home.name}` : slot.home}
-              </span>
-              <span className="text-gray-600 font-bold">vs</span>
-              <span className="flex-1 text-right truncate">
-                {isTeamObj(slot.away) ? `${slot.away.flag} ${slot.away.name}` : slot.away}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
 
 export default function BracketClient({ bracket }: { bracket: BracketRound[] }) {
-  const r32 = bracket.find(r => r.name === 'Round of 32')
-  const r16 = bracket.find(r => r.name === 'Round of 16')
-  const qf = bracket.find(r => r.name === 'Quarter-Finals')
-  const sf = bracket.find(r => r.name === 'Semi-Finals')
-  const finalRound = bracket.find(r => r.name === 'Final')
-  const thirdRound = bracket.find(r => r.name === 'Third Place')
+  const [activeRounds, setActiveRounds] = useState<Set<string>>(new Set(['Round of 32']))
 
-  const qfMatches = qf?.matches ?? []
-  const sfMatches = sf?.matches ?? []
-  const finalMatch = finalRound?.matches[0]
+  const toggleRound = (name: string) => {
+    setActiveRounds(prev => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
+  }
 
-  const qfSlotH = SLOT_H
-  const sfSlotH = SLOT_H * (qfMatches.length / (sfMatches.length || 1))
-  const totalH = qfMatches.length * qfSlotH
+  // Only the named rounds (not Third Place)
+  const mainRounds = bracket.filter(r => ROUND_ORDER.includes(r.name))
+  const thirdPlace = bracket.find(r => r.name === 'Third Place')
+
+  // Ordered rounds that are currently active
+  const displayedRounds = ROUND_ORDER
+    .filter(name => activeRounds.has(name) && mainRounds.find(r => r.name === name))
+    .map(name => mainRounds.find(r => r.name === name)!)
+
+  // Max matches across displayed rounds = determines height
+  const maxMatches = displayedRounds.length > 0
+    ? Math.max(...displayedRounds.map(r => r.matches.length))
+    : 0
+
+  // Base unit height = total canvas height / maxMatches
+  const BASE_UNIT = Math.max(CARD_H + 8, 72)
+  const totalH = maxMatches * BASE_UNIT
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 px-4 py-3 border-b border-gray-800">
-        <h1 className="text-xl font-bold">Bracket</h1>
-      </div>
-
-      <div className="px-4 py-4">
-        {r32 && <EarlyRoundList round={r32} />}
-        {r16 && <EarlyRoundList round={r16} />}
-
-        {qfMatches.length > 0 && finalMatch && (
-          <div className="mt-4">
-            <p className="text-xs text-gray-500 mb-3 font-medium">
-              Knockout stages — scroll right to see full bracket →
-            </p>
-            <div className="overflow-x-auto pb-4">
-              <div
-                className="flex items-stretch"
-                style={{ minWidth: (CARD_W + CONN_W) * 3 + CARD_W, height: totalH + 28 }}
+      {/* Sticky header with round toggles */}
+      <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-4 pt-3 pb-3">
+        <h1 className="text-lg font-bold text-white mb-2.5">Knockout Bracket</h1>
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          {ROUND_ORDER.map(name => {
+            const exists = mainRounds.find(r => r.name === name)
+            if (!exists) return null
+            const on = activeRounds.has(name)
+            return (
+              <button
+                key={name}
+                onClick={() => toggleRound(name)}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all
+                  ${on
+                    ? name === 'Final'
+                      ? 'bg-yellow-400 text-zinc-900 border-yellow-400'
+                      : 'bg-[#00d4ff] text-[#0a0a0f] border-[#00d4ff]'
+                    : 'bg-transparent text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
+                  }`}
               >
-                <div className="flex flex-col">
-                  <div className="h-6 flex items-center">
-                    <div className="text-[10px] font-bold text-[#00d4ff] uppercase tracking-widest w-full text-center">
-                      Quarter-Finals
-                    </div>
-                  </div>
-                  <div style={{ width: CARD_W }}>
-                    {qfMatches.map((slot) => (
-                      <div key={slot.id} style={{ height: qfSlotH, display: 'flex', alignItems: 'center', padding: '4px 0' }}>
-                        <BracketCard slot={slot} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="h-6" />
-                  <BinaryConnector count={qfMatches.length} slotH={qfSlotH} />
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="h-6 flex items-center">
-                    <div className="text-[10px] font-bold text-[#00d4ff] uppercase tracking-widest w-full text-center">
-                      Semi-Finals
-                    </div>
-                  </div>
-                  <div style={{ width: CARD_W }}>
-                    {sfMatches.map((slot) => (
-                      <div key={slot.id} style={{ height: sfSlotH, display: 'flex', alignItems: 'center', padding: '4px 0' }}>
-                        <BracketCard slot={slot} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="h-6" />
-                  <BinaryConnector count={sfMatches.length} slotH={sfSlotH} />
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="h-6 flex items-center">
-                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest w-full text-center">
-                      Final
-                    </div>
-                  </div>
-                  <div style={{ width: CARD_W, height: totalH, display: 'flex', alignItems: 'center', padding: '4px 0' }}>
-                    <BracketCard slot={finalMatch} isFinal />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {thirdRound && thirdRound.matches[0] && (
-              <div className="mt-3 bg-[#13131a] rounded-xl border border-gray-800 p-3">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Third Place</p>
-                <BracketCard slot={thirdRound.matches[0]} />
-              </div>
-            )}
-          </div>
-        )}
+                {ROUND_SHORT[name] || name}
+              </button>
+            )
+          })}
+        </div>
       </div>
+
+      {displayedRounds.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 gap-3 text-zinc-500">
+          <span className="text-3xl">🏆</span>
+          <span className="text-sm">Tap a round above to view the bracket</span>
+        </div>
+      ) : (
+        <div className="overflow-x-auto px-4 py-4">
+          <div
+            className="flex items-start"
+            style={{ minWidth: displayedRounds.length * (CARD_W + CONN_W), height: totalH + 32 }}
+          >
+            {displayedRounds.map((round, colIdx) => {
+              const isFinalRound = round.name === 'Final'
+              const count = round.matches.length
+              // Each slot gets equal share of totalH
+              const slotH = totalH / count
+              const isLast = colIdx === displayedRounds.length - 1
+
+              return (
+                <div key={round.name} className="flex items-start flex-shrink-0">
+                  {/* Round column */}
+                  <div style={{ width: CARD_W }}>
+                    {/* Column label */}
+                    <div className="h-7 flex items-center justify-center mb-0">
+                      <span className={`text-[10px] font-bold uppercase tracking-widest
+                        ${isFinalRound ? 'text-yellow-400' : 'text-[#00d4ff]/80'}`}>
+                        {round.name}
+                      </span>
+                    </div>
+                    {/* Match cards */}
+                    {round.matches.map((slot) => (
+                      <div
+                        key={slot.id}
+                        style={{ height: slotH, display: 'flex', alignItems: 'center' }}
+                      >
+                        <MatchCard slot={slot} isFinal={isFinalRound} />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Connector SVG (between this col and next) */}
+                  {!isLast && (() => {
+                    const nextRound = displayedRounds[colIdx + 1]
+                    const thisCount = round.matches.length
+                    const nextCount = nextRound.matches.length
+                    const nextSlotH = totalH / nextCount
+                    const groupSize = thisCount / nextCount  // how many current slots → 1 next slot
+
+                    return (
+                      <svg
+                        width={CONN_W}
+                        height={totalH + 32}
+                        style={{ flexShrink: 0, marginTop: 28 }}
+                        overflow="visible"
+                      >
+                        {Array.from({ length: nextCount }, (_, i) => {
+                          const color = 'rgba(82,82,91,0.6)'  // zinc-600/60
+
+                          if (groupSize >= 2 && Number.isInteger(groupSize)) {
+                            // Bracket-style: two arms from current slots converge to midpoint, then horizontal to next
+                            const slots = Array.from({ length: groupSize }, (_, j) => i * groupSize + j)
+                            const yTop = slots[0] * slotH + slotH / 2
+                            const yBot = slots[slots.length - 1] * slotH + slotH / 2
+                            const yMid = (yTop + yBot) / 2
+                            const yOut = i * nextSlotH + nextSlotH / 2
+
+                            return (
+                              <g key={i} stroke={color} strokeWidth="1.5" fill="none" strokeLinecap="round">
+                                {/* Vertical bracket arms */}
+                                <line x1={1} y1={yTop} x2={CONN_W / 2} y2={yTop} />
+                                <line x1={1} y1={yBot} x2={CONN_W / 2} y2={yBot} />
+                                <line x1={CONN_W / 2} y1={yTop} x2={CONN_W / 2} y2={yBot} />
+                                {/* Horizontal output line */}
+                                <line x1={CONN_W / 2} y1={yMid} x2={CONN_W} y2={yOut} />
+                              </g>
+                            )
+                          } else {
+                            // 1:1 — straight horizontal
+                            const y = i * slotH + slotH / 2
+                            return (
+                              <line key={i} x1={0} y1={y} x2={CONN_W} y2={y} stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+                            )
+                          }
+                        })}
+                      </svg>
+                    )
+                  })()}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Third Place (always show when visible) */}
+      {thirdPlace?.matches[0] && activeRounds.has('Final') && (
+        <div className="px-4 pb-8">
+          <div className="bg-[#13131a] rounded-xl border border-zinc-800 p-3 max-w-[220px]">
+            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">🥉 Third Place</p>
+            <MatchCard slot={thirdPlace.matches[0]} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

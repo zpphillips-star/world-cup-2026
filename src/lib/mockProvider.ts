@@ -217,7 +217,7 @@ function getBracket(): BracketRound[] {
     status: "tbd" as const,
   }))
 
-  const sfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => ({
+  const sfSlots: BracketSlot[] = Array.from({ length: 2 }, (_, i) => ({
     id: `sf-${i+1}`,
     home: `Winner QF ${i*2+1}`,
     away: `Winner QF ${i*2+2}`,
