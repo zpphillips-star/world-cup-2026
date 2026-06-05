@@ -1,5 +1,7 @@
 'use client'
 
+import { FlagImg } from '@/components/FlagImg'
+
 import { useState } from 'react'
 import type { BracketRound, BracketSlot } from '@/lib/types'
 
@@ -51,13 +53,13 @@ function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; i
         </div>
       )}
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {homeTeam && <span className="text-xs flex-shrink-0">{homeTeam.flag}</span>}
+        {homeTeam && <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4 w-auto flex-shrink-0" />}
         <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.homeScore ?? 0}</span>}
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {awayTeam && <span className="text-xs flex-shrink-0">{awayTeam.flag}</span>}
+        {awayTeam && <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4 w-auto flex-shrink-0" />}
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.awayScore ?? 0}</span>}
       </div>
@@ -243,3 +245,4 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
     </div>
   )
 }
+

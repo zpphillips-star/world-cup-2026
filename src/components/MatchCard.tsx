@@ -15,6 +15,8 @@ function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: 
   }
 }
 
+import { FlagImg } from '@/components/FlagImg'
+
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex flex-col items-center gap-1 bg-[#0d0d15] rounded-xl px-3 py-2.5 min-w-[44px]">
@@ -25,14 +27,14 @@ function StatBox({ label, value }: { label: string; value: string | number }) {
 }
 
 function TeamPanel({ team, stats, side }: {
-  team: { name: string; flag: string }
+  team: { id: string; name: string; flag: string }
   stats: TeamStats | null
   side: 'home' | 'away'
 }) {
   return (
     <div className={`flex-1 flex flex-col gap-3 ${side === 'away' ? 'items-end' : 'items-start'}`}>
       <div className={`flex items-center gap-2 ${side === 'away' ? 'flex-row-reverse' : ''}`}>
-        <span className="text-5xl leading-none">{team.flag}</span>
+        <FlagImg teamId={team.id} fallback={team.flag} className="h-10 w-auto" />
         <span className="text-[15px] font-bold text-white leading-tight">{team.name}</span>
       </div>
       {!stats ? (
@@ -104,7 +106,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-[11px] text-zinc-600 w-3 flex-shrink-0">{i + 1}</span>
-                <span className="text-base leading-none flex-shrink-0">{s.team.flag}</span>
+                <span className="text-base leading-none flex-shrink-0"><FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 w-auto" /></span>
                 <span className={`truncate font-medium ${isHighlighted ? 'text-white' : isTop2 ? 'text-zinc-200' : 'text-zinc-400'}`}>
                   {s.team.name}
                 </span>
@@ -172,7 +174,7 @@ export default function MatchCard({
         <div className="flex-1 flex items-center min-w-0">
           <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
-            <span className="text-lg leading-none flex-shrink-0">{match.homeTeam.flag}</span>
+            <span className="text-lg leading-none flex-shrink-0"><FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5 w-auto" /></span>
           </div>
           <div className="w-14 flex-shrink-0 text-center">
             {hasScore ? (
@@ -184,7 +186,7 @@ export default function MatchCard({
             )}
           </div>
           <div className="flex-1 flex items-center gap-1.5 min-w-0">
-            <span className="text-lg leading-none flex-shrink-0">{match.awayTeam.flag}</span>
+            <span className="text-lg leading-none flex-shrink-0"><FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5 w-auto" /></span>
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
           </div>
         </div>
@@ -228,7 +230,7 @@ export default function MatchCard({
 
               <div className="flex items-center justify-between mt-3 gap-4">
                 <div className="flex-1 flex flex-col items-center gap-2">
-                  <span className="text-5xl leading-none">{match.homeTeam.flag}</span>
+                  <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10 w-auto" />
                   <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.homeTeam.name}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 min-w-[80px]">
@@ -244,7 +246,7 @@ export default function MatchCard({
                   )}
                 </div>
                 <div className="flex-1 flex flex-col items-center gap-2">
-                  <span className="text-5xl leading-none">{match.awayTeam.flag}</span>
+                  <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10 w-auto" />
                   <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.awayTeam.name}</span>
                 </div>
               </div>

@@ -1,5 +1,7 @@
 'use client'
 
+import { FlagImg } from '@/components/FlagImg'
+
 import { useState } from 'react'
 import type { Match } from '@/lib/types'
 
@@ -187,7 +189,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                     <div className="flex items-center gap-3">
                       {/* Home team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
-                        <span className="text-4xl leading-none">{m.homeTeam.flag}</span>
+                        <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-9 w-auto" />
                         <span className="text-xs font-semibold text-white text-center leading-tight">
                           {m.homeTeam.name}
                         </span>
@@ -209,7 +211,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
                       {/* Away team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
-                        <span className="text-4xl leading-none">{m.awayTeam.flag}</span>
+                        <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-9 w-auto" />
                         <span className="text-xs font-semibold text-white text-center leading-tight">
                           {m.awayTeam.name}
                         </span>
@@ -230,3 +232,4 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
     </div>
   )
 }
+

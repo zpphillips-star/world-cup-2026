@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { mockProvider } from '@/lib/mockProvider'
+import { FlagImg } from '@/components/FlagImg'
 
 const TODAY_UTC = new Date('2026-06-17')
 
@@ -139,13 +140,13 @@ export default function AssistantPage() {
         ) : (
           <div className="space-y-2">
             {todayMatches.map(m => {
-              const home = typeof m.homeTeam === 'object' ? m.homeTeam : { name: String(m.homeTeam), flag: '🏆' }
-              const away = typeof m.awayTeam === 'object' ? m.awayTeam : { name: String(m.awayTeam), flag: '🏆' }
+              const home = typeof m.homeTeam === 'object' ? m.homeTeam : { id: '', name: String(m.homeTeam), flag: '🏆' }
+              const away = typeof m.awayTeam === 'object' ? m.awayTeam : { id: '', name: String(m.awayTeam), flag: '🏆' }
               return (
                 <div key={m.id} className="bg-[#1a1a24] rounded-2xl px-4 py-3 shadow-lg shadow-black/40">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <span className="text-xl flex-shrink-0">{home.flag}</span>
+                      <FlagImg teamId={home.id} fallback={home.flag} className="h-6 w-auto flex-shrink-0" />
                       <span className="text-sm font-semibold text-white truncate">{home.name}</span>
                     </div>
                     <div className="flex flex-col items-center px-3 min-w-[64px]">
@@ -155,7 +156,7 @@ export default function AssistantPage() {
                     </div>
                     <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
                       <span className="text-sm font-semibold text-white truncate text-right">{away.name}</span>
-                      <span className="text-xl flex-shrink-0">{away.flag}</span>
+                      <FlagImg teamId={away.id} fallback={away.flag} className="h-6 w-auto flex-shrink-0" />
                     </div>
                   </div>
                 </div>
