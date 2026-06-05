@@ -288,6 +288,7 @@ const teamStats: Record<string, TeamStats> = {
 export const mockProvider: DataProvider = {
   getMatches() { return matches },
   getMatch(id) { return matches.find(m => m.id === id) ?? null },
+  getGroups() {
     const groupIds = ["A","B","C","D","E","F","G","H","I","J","K","L"]
     return groupIds.map(id => ({
       id,
