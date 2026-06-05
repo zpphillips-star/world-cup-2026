@@ -234,9 +234,6 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
 
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 px-4 py-3 border-b border-gray-800">
-        <h1 className="text-xl font-bold">Groups</h1>
-      </div>
 
       {/* 2-column grid — fills full screen */}
       <div
