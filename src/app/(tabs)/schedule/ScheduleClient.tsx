@@ -42,44 +42,34 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
   }, [sortedMatches, userTimezone])
 
   return (
-    <div className="pb-8">
+    <div className="pb-10 px-3 sm:px-4 max-w-2xl mx-auto">
       {byDate.map(([isoDate, dayMatches]) => {
         const isToday = isoDate === TODAY
         return (
-          <div key={isoDate} className="mt-4 first:mt-0">
+          <div key={isoDate} className="mt-8 first:mt-4">
             {/* Date header */}
-            <h2 className={`sticky top-[70px] z-10 px-4 py-2 border-b flex items-center gap-2
-              ${isToday
-                ? 'bg-[#0a1a12] border-green-900/60 dark:bg-[#0a1a12]'
-                : 'bg-zinc-100 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-700'
-              }`}
-            >
+            <div className={`flex items-center gap-2 px-1 mb-3`}>
               <span className={`text-sm font-semibold tracking-wide
-                ${isToday ? 'text-white' : 'text-zinc-500 dark:text-zinc-400'}`}
+                ${isToday ? 'text-green-600 dark:text-green-400' : 'text-zinc-500 dark:text-zinc-400'}`}
               >
                 {formatDateHeader(isoDate, userTimezone)}
               </span>
               {isToday && (
-                <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500 text-white uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500 text-white uppercase tracking-wider">
                   Today
                 </span>
               )}
-            </h2>
+            </div>
 
-            {/* Match rows */}
-            <div className={`rounded-b overflow-hidden border border-t-0 mx-0
-              ${isToday
-                ? 'border-green-900/40'
-                : 'border-zinc-200 dark:border-zinc-800'
-              }`}
-            >
+            {/* Match cards */}
+            <div className="flex flex-col gap-2">
               {dayMatches.map((match) => (
-                <div
+                <MatchCard
                   key={match.id}
-                  className={isToday ? 'border-l-[3px] border-green-500/70' : ''}
-                >
-                  <MatchCard match={match} userTimezone={userTimezone} />
-                </div>
+                  match={match}
+                  userTimezone={userTimezone}
+                  isToday={isToday}
+                />
               ))}
             </div>
           </div>
