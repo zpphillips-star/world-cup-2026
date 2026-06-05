@@ -254,7 +254,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => setTeamSheet(match.homeTeam)}
+                    onClick={() => { setOpen(false); setTeamSheet(match.homeTeam) }}
                     title={`View ${match.homeTeam.name}`}
                   >
                     <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10" />
@@ -276,7 +276,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => setTeamSheet(match.awayTeam)}
+                    onClick={() => { setOpen(false); setTeamSheet(match.awayTeam) }}
                     title={`View ${match.awayTeam.name}`}
                   >
                     <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10" />
