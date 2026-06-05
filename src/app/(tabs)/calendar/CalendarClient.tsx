@@ -51,7 +51,11 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   const selectedKey = selectedDay
     ? `${selectedDay.year}-${selectedDay.month}-${selectedDay.day}`
     : null
-  const selectedMatches = selectedKey ? (matchDayMap[selectedKey] ?? []) : []
+  const selectedMatches = selectedKey
+    ? [...(matchDayMap[selectedKey] ?? [])].sort(
+        (a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()
+      )
+    : []
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
@@ -130,7 +134,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
           {/* Sheet */}
           <div
-            className="fixed bottom-0 left-0 right-0 z-50 max-h-[82vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
+            className="fixed bottom-0 left-0 right-0 z-[60] max-h-[82vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
           >
             {/* Gradient header */}
             <div className="relative bg-gradient-to-b from-[#0c2540] to-[#13131a] px-5 pt-4 pb-4 flex-shrink-0">
@@ -154,7 +158,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
             </div>
 
             {/* Scrollable match cards */}
-            <div className="overflow-y-auto bg-[#13131a] px-4 py-3 space-y-3 flex-1">
+            <div className="overflow-y-auto bg-[#13131a] px-4 py-3 space-y-3 flex-1" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
               {selectedMatches.map(m => {
                 const isLive = m.status === 'live'
                 const isFt = m.status === 'ft'
@@ -222,8 +226,6 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                   </div>
                 )
               })}
-              {/* Bottom safe-area spacer */}
-              <div className="h-6" />
             </div>
           </div>
         </>
