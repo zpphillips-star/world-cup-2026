@@ -200,6 +200,25 @@ export default function MatchCard({
         <>
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={() => setOpen(false)} />
 
+          {/* Jersey ad banner — lives in the dark space above the sheet */}
+          {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
+          <a
+            href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' soccer jersey 2026')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center gap-3 px-4 py-3"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2.5 bg-white/8 border border-white/10 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-lg">
+              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5" />
+              <span className="text-xs font-semibold text-white">{match.homeTeam.name}</span>
+              <span className="text-[10px] text-zinc-400 mx-0.5">+</span>
+              <span className="text-xs font-semibold text-white">{match.awayTeam.name}</span>
+              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5" />
+              <span className="text-[10px] text-[#00d4ff] font-bold ml-1">Shop kits →</span>
+            </div>
+          </a>
+
           <div
             className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
