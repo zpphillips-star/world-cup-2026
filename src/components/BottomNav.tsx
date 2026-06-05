@@ -43,8 +43,23 @@ const tabs = [
     href: '/bracket',
     label: 'Bracket',
     icon: (active: boolean) => (
-      <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" strokeWidth={2} strokeLinejoin="round" />
+      <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+        {/* Left bracket lines */}
+        <line x1="2" y1="5" x2="6" y2="5" strokeWidth={2} />
+        <line x1="2" y1="19" x2="6" y2="19" strokeWidth={2} />
+        <line x1="6" y1="5" x2="6" y2="9" strokeWidth={2} />
+        <line x1="6" y1="15" x2="6" y2="19" strokeWidth={2} />
+        <line x1="6" y1="9" x2="10" y2="12" strokeWidth={2} />
+        <line x1="6" y1="15" x2="10" y2="12" strokeWidth={2} />
+        {/* Right bracket lines */}
+        <line x1="22" y1="5" x2="18" y2="5" strokeWidth={2} />
+        <line x1="22" y1="19" x2="18" y2="19" strokeWidth={2} />
+        <line x1="18" y1="5" x2="18" y2="9" strokeWidth={2} />
+        <line x1="18" y1="15" x2="18" y2="19" strokeWidth={2} />
+        <line x1="18" y1="9" x2="14" y2="12" strokeWidth={2} />
+        <line x1="18" y1="15" x2="14" y2="12" strokeWidth={2} />
+        {/* Center final dot */}
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" strokeWidth={0} />
       </svg>
     ),
   },
