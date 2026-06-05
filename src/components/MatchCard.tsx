@@ -259,8 +259,8 @@ export default function MatchCard({
 
             {/* Scrollable body */}
             <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
-              {/* World Cup history */}
-              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">World Cup History</p>
+              {/* Team stats */}
+              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">Team Stats</p>
               <div className="flex gap-4 items-start">
                 <TeamPanel team={match.homeTeam} stats={homeStats ?? null} side="home" />
                 <div className="w-px bg-zinc-800 self-stretch" />
