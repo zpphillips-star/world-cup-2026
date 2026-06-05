@@ -60,7 +60,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
 
-      <div className="px-4 py-4 space-y-8">
+      <div className="px-4 pt-6 pb-4 space-y-12">
         {months.map(({ year, month, name }) => {
           const daysInMonth = getDaysInMonth(year, month)
           const firstDay = getFirstDayOfWeek(year, month)
