@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import type { Match, TeamStats, Standing } from '@/lib/types'
+import type { Match, TeamStats, Standing, Team } from '@/lib/types'
+import { TeamSheet } from '@/components/TeamSheet'
 
 function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
   try {
@@ -143,6 +144,7 @@ export default function MatchCard({
   groupStandings?: Standing[]
 }) {
   const [open, setOpen] = useState(false)
+  const [teamSheet, setTeamSheet] = useState<Team | null>(null)
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
@@ -171,7 +173,12 @@ export default function MatchCard({
         <div className="flex-1 flex items-center min-w-0">
           <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
-            <span className="text-lg leading-none flex-shrink-0"><FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5" /></span>
+            <button
+              className="flex-shrink-0 active:scale-90 transition-transform"
+              onClick={e => { e.stopPropagation(); setTeamSheet(match.homeTeam) }}
+            >
+              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5" />
+            </button>
           </div>
           <div className="w-14 flex-shrink-0 text-center">
             {hasScore ? (
@@ -183,7 +190,12 @@ export default function MatchCard({
             )}
           </div>
           <div className="flex-1 flex items-center gap-1.5 min-w-0">
-            <span className="text-lg leading-none flex-shrink-0"><FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5" /></span>
+            <button
+              className="flex-shrink-0 active:scale-90 transition-transform"
+              onClick={e => { e.stopPropagation(); setTeamSheet(match.awayTeam) }}
+            >
+              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5" />
+            </button>
             <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
           </div>
         </div>
@@ -294,6 +306,11 @@ export default function MatchCard({
             </div>
           </div>
         </>
+      )}
+
+      {/* Team sheet — opens when a flag is tapped */}
+      {teamSheet && (
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
       )}
     </>
   )
