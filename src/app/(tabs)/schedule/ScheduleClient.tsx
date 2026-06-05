@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import MatchCard from '@/components/MatchCard'
-import type { Match } from '@/lib/types'
+import type { Match, TeamStats } from '@/lib/types'
 
 // Hardcoded demo "today" as specified
 const TODAY = '2026-06-13'
@@ -19,7 +19,13 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   return `${weekday} · ${mon} ${day}`
 }
 
-export default function ScheduleClient({ matches }: { matches: Match[] }) {
+export default function ScheduleClient({
+  matches,
+  statsMap = {},
+}: {
+  matches: Match[]
+  statsMap?: Record<string, TeamStats | null>
+}) {
   const [userTimezone, setUserTimezone] = useState('UTC')
 
   useEffect(() => {
@@ -66,6 +72,8 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
                   key={match.id}
                   match={match}
                   userTimezone={userTimezone}
+                  homeStats={statsMap[match.homeTeam.id]}
+                  awayStats={statsMap[match.awayTeam.id]}
                 />
               ))}
             </div>

@@ -1,4 +1,4 @@
-import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot } from './types'
+import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStats } from './types'
 
 const venues: Record<string, Venue> = {
   metlife: { id: "metlife", name: "MetLife Stadium", city: "East Rutherford", country: "USA", timezone: "America/New_York" },
@@ -234,10 +234,60 @@ function getBracket(): BracketRound[] {
   ]
 }
 
+const teamStats: Record<string, TeamStats> = {
+  usa:         { fifaRank: 11, worldCupAppearances: 11, wcWins: 10, wcDraws: 7,  wcLosses: 12, wcGoalsFor: 38,  wcGoalsAgainst: 42,  bestFinish: "3rd (1930)" },
+  mexico:      { fifaRank: 15, worldCupAppearances: 17, wcWins: 16, wcDraws: 14, wcLosses: 27, wcGoalsFor: 60,  wcGoalsAgainst: 101, bestFinish: "QF (×5)" },
+  panama:      { fifaRank: 49, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 1,  wcLosses: 5,  wcGoalsFor: 4,   wcGoalsAgainst: 14,  bestFinish: "Group Stage" },
+  morocco:     { fifaRank: 14, worldCupAppearances: 7,  wcWins: 6,  wcDraws: 5,  wcLosses: 9,  wcGoalsFor: 16,  wcGoalsAgainst: 27,  bestFinish: "4th (2022)" },
+  germany:     { fifaRank: 12, worldCupAppearances: 20, wcWins: 67, wcDraws: 20, wcLosses: 20, wcGoalsFor: 226, wcGoalsAgainst: 125, bestFinish: "Champions (×4)" },
+  japan:       { fifaRank: 17, worldCupAppearances: 8,  wcWins: 9,  wcDraws: 5,  wcLosses: 10, wcGoalsFor: 27,  wcGoalsAgainst: 33,  bestFinish: "R16 (×4)" },
+  australia:   { fifaRank: 23, worldCupAppearances: 6,  wcWins: 5,  wcDraws: 2,  wcLosses: 12, wcGoalsFor: 19,  wcGoalsAgainst: 39,  bestFinish: "QF (2006)" },
+  senegal:     { fifaRank: 20, worldCupAppearances: 3,  wcWins: 4,  wcDraws: 3,  wcLosses: 3,  wcGoalsFor: 11,  wcGoalsAgainst: 10,  bestFinish: "QF (2002)" },
+  england:     { fifaRank: 5,  worldCupAppearances: 16, wcWins: 28, wcDraws: 18, wcLosses: 16, wcGoalsFor: 87,  wcGoalsAgainst: 53,  bestFinish: "Champions (1966)" },
+  algeria:     { fifaRank: 36, worldCupAppearances: 4,  wcWins: 3,  wcDraws: 3,  wcLosses: 7,  wcGoalsFor: 13,  wcGoalsAgainst: 21,  bestFinish: "R16 (2014)" },
+  ecuador:     { fifaRank: 34, worldCupAppearances: 4,  wcWins: 4,  wcDraws: 2,  wcLosses: 7,  wcGoalsFor: 14,  wcGoalsAgainst: 22,  bestFinish: "QF (2006)" },
+  czechia:     { fifaRank: 37, worldCupAppearances: 9,  wcWins: 12, wcDraws: 6,  wcLosses: 12, wcGoalsFor: 46,  wcGoalsAgainst: 45,  bestFinish: "2nd (1934, 1962)" },
+  france:      { fifaRank: 2,  worldCupAppearances: 16, wcWins: 34, wcDraws: 14, wcLosses: 14, wcGoalsFor: 120, wcGoalsAgainst: 68,  bestFinish: "Champions (×2)" },
+  argentina:   { fifaRank: 1,  worldCupAppearances: 18, wcWins: 45, wcDraws: 14, wcLosses: 16, wcGoalsFor: 145, wcGoalsAgainst: 76,  bestFinish: "Champions (×3)" },
+  southkorea:  { fifaRank: 22, worldCupAppearances: 11, wcWins: 8,  wcDraws: 8,  wcLosses: 20, wcGoalsFor: 36,  wcGoalsAgainst: 74,  bestFinish: "4th (2002)" },
+  nigeria:     { fifaRank: 39, worldCupAppearances: 7,  wcWins: 6,  wcDraws: 5,  wcLosses: 9,  wcGoalsFor: 21,  wcGoalsAgainst: 28,  bestFinish: "R16 (×3)" },
+  brazil:      { fifaRank: 3,  worldCupAppearances: 22, wcWins: 73, wcDraws: 18, wcLosses: 19, wcGoalsFor: 237, wcGoalsAgainst: 105, bestFinish: "Champions (×5)" },
+  netherlands: { fifaRank: 7,  worldCupAppearances: 11, wcWins: 27, wcDraws: 14, wcLosses: 13, wcGoalsFor: 90,  wcGoalsAgainst: 57,  bestFinish: "2nd (×3)" },
+  chile:       { fifaRank: 53, worldCupAppearances: 9,  wcWins: 13, wcDraws: 6,  wcLosses: 14, wcGoalsFor: 48,  wcGoalsAgainst: 57,  bestFinish: "3rd (1962)" },
+  iran:        { fifaRank: 21, worldCupAppearances: 6,  wcWins: 3,  wcDraws: 3,  wcLosses: 11, wcGoalsFor: 12,  wcGoalsAgainst: 34,  bestFinish: "Group Stage" },
+  spain:       { fifaRank: 6,  worldCupAppearances: 16, wcWins: 30, wcDraws: 17, wcLosses: 16, wcGoalsFor: 104, wcGoalsAgainst: 74,  bestFinish: "Champions (2010)" },
+  portugal:    { fifaRank: 6,  worldCupAppearances: 9,  wcWins: 17, wcDraws: 7,  wcLosses: 9,  wcGoalsFor: 62,  wcGoalsAgainst: 41,  bestFinish: "3rd (1966)" },
+  uruguay:     { fifaRank: 18, worldCupAppearances: 14, wcWins: 23, wcDraws: 8,  wcLosses: 17, wcGoalsFor: 89,  wcGoalsAgainst: 68,  bestFinish: "Champions (×2)" },
+  cameroon:    { fifaRank: 43, worldCupAppearances: 8,  wcWins: 4,  wcDraws: 5,  wcLosses: 15, wcGoalsFor: 22,  wcGoalsAgainst: 47,  bestFinish: "QF (1990)" },
+  belgium:     { fifaRank: 4,  worldCupAppearances: 14, wcWins: 18, wcDraws: 10, wcLosses: 20, wcGoalsFor: 68,  wcGoalsAgainst: 72,  bestFinish: "3rd (2018)" },
+  croatia:     { fifaRank: 10, worldCupAppearances: 6,  wcWins: 14, wcDraws: 4,  wcLosses: 8,  wcGoalsFor: 46,  wcGoalsAgainst: 32,  bestFinish: "2nd (2018)" },
+  venezuela:   { fifaRank: 56, worldCupAppearances: 0,  wcWins: 0,  wcDraws: 0,  wcLosses: 0,  wcGoalsFor: 0,   wcGoalsAgainst: 0,   bestFinish: "First appearance" },
+  egypt:       { fifaRank: 35, worldCupAppearances: 3,  wcWins: 2,  wcDraws: 2,  wcLosses: 5,  wcGoalsFor: 10,  wcGoalsAgainst: 15,  bestFinish: "Group Stage" },
+  italy:       { fifaRank: 9,  worldCupAppearances: 18, wcWins: 45, wcDraws: 21, wcLosses: 14, wcGoalsFor: 128, wcGoalsAgainst: 77,  bestFinish: "Champions (×4)" },
+  colombia:    { fifaRank: 27, worldCupAppearances: 6,  wcWins: 9,  wcDraws: 5,  wcLosses: 9,  wcGoalsFor: 32,  wcGoalsAgainst: 28,  bestFinish: "QF (2014)" },
+  ivorycoast:  { fifaRank: 30, worldCupAppearances: 4,  wcWins: 2,  wcDraws: 2,  wcLosses: 8,  wcGoalsFor: 11,  wcGoalsAgainst: 26,  bestFinish: "Group Stage" },
+  canada:      { fifaRank: 47, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 0,  wcLosses: 4,  wcGoalsFor: 2,   wcGoalsAgainst: 10,  bestFinish: "Group Stage" },
+  serbia:      { fifaRank: 33, worldCupAppearances: 13, wcWins: 16, wcDraws: 10, wcLosses: 18, wcGoalsFor: 64,  wcGoalsAgainst: 72,  bestFinish: "4th (×2)" },
+  poland:      { fifaRank: 25, worldCupAppearances: 9,  wcWins: 15, wcDraws: 5,  wcLosses: 12, wcGoalsFor: 44,  wcGoalsAgainst: 40,  bestFinish: "3rd (×2)" },
+  peru:        { fifaRank: 63, worldCupAppearances: 5,  wcWins: 4,  wcDraws: 3,  wcLosses: 8,  wcGoalsFor: 20,  wcGoalsAgainst: 35,  bestFinish: "3rd (1975 — CONMEBOL)" },
+  saudiarabia: { fifaRank: 57, worldCupAppearances: 6,  wcWins: 4,  wcDraws: 3,  wcLosses: 11, wcGoalsFor: 17,  wcGoalsAgainst: 43,  bestFinish: "R16 (1994)" },
+  switzerland: { fifaRank: 19, worldCupAppearances: 12, wcWins: 17, wcDraws: 10, wcLosses: 15, wcGoalsFor: 68,  wcGoalsAgainst: 65,  bestFinish: "QF (×3)" },
+  denmark:     { fifaRank: 24, worldCupAppearances: 5,  wcWins: 8,  wcDraws: 5,  wcLosses: 7,  wcGoalsFor: 28,  wcGoalsAgainst: 28,  bestFinish: "QF (1998)" },
+  bolivia:     { fifaRank: 77, worldCupAppearances: 3,  wcWins: 0,  wcDraws: 1,  wcLosses: 6,  wcGoalsFor: 1,   wcGoalsAgainst: 22,  bestFinish: "Group Stage" },
+  tunisia:     { fifaRank: 32, worldCupAppearances: 6,  wcWins: 1,  wcDraws: 4,  wcLosses: 13, wcGoalsFor: 9,   wcGoalsAgainst: 31,  bestFinish: "Group Stage" },
+  turkey:      { fifaRank: 29, worldCupAppearances: 3,  wcWins: 6,  wcDraws: 1,  wcLosses: 4,  wcGoalsFor: 24,  wcGoalsAgainst: 20,  bestFinish: "3rd (2002)" },
+  ukraine:     { fifaRank: 28, worldCupAppearances: 2,  wcWins: 3,  wcDraws: 2,  wcLosses: 3,  wcGoalsFor: 11,  wcGoalsAgainst: 12,  bestFinish: "QF (2006)" },
+  honduras:    { fifaRank: 76, worldCupAppearances: 3,  wcWins: 0,  wcDraws: 2,  wcLosses: 7,  wcGoalsFor: 3,   wcGoalsAgainst: 23,  bestFinish: "Group Stage" },
+  ghana:       { fifaRank: 60, worldCupAppearances: 4,  wcWins: 4,  wcDraws: 4,  wcLosses: 6,  wcGoalsFor: 13,  wcGoalsAgainst: 23,  bestFinish: "QF (2010)" },
+  sweden:      { fifaRank: 26, worldCupAppearances: 12, wcWins: 16, wcDraws: 8,  wcLosses: 18, wcGoalsFor: 74,  wcGoalsAgainst: 69,  bestFinish: "2nd (1958)" },
+  norway:      { fifaRank: 38, worldCupAppearances: 3,  wcWins: 2,  wcDraws: 3,  wcLosses: 4,  wcGoalsFor: 7,   wcGoalsAgainst: 8,   bestFinish: "QF (1938)" },
+  costarica:   { fifaRank: 58, worldCupAppearances: 6,  wcWins: 6,  wcDraws: 5,  wcLosses: 10, wcGoalsFor: 23,  wcGoalsAgainst: 33,  bestFinish: "QF (2014)" },
+  newzealand:  { fifaRank: 96, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 1,  wcLosses: 5,  wcGoalsFor: 4,   wcGoalsAgainst: 17,  bestFinish: "Group Stage" },
+}
+
 export const mockProvider: DataProvider = {
   getMatches() { return matches },
   getMatch(id) { return matches.find(m => m.id === id) ?? null },
-  getGroups() {
     const groupIds = ["A","B","C","D","E","F","G","H","I","J","K","L"]
     return groupIds.map(id => ({
       id,
@@ -254,4 +304,5 @@ export const mockProvider: DataProvider = {
   },
   getBracket,
   getTeam(id) { return teams[id] ?? null },
+  getTeamStats(id) { return teamStats[id] ?? null },
 }
