@@ -185,32 +185,37 @@ function computeStandings(groupId: string): Standing[] {
 
 function getBracket(): BracketRound[] {
   // 2026 World Cup: 48 teams → 32 qualify for knockout → 16 R32 matches
+  // FAKE DATA for preview — realistic matchups using actual group winners/runners-up
   const r32Slots: BracketSlot[] = [
-    { id: 'r32-1',  home: 'Winner Group A', away: 'Runner-up Group B', status: 'tbd' },
-    { id: 'r32-2',  home: 'Winner Group C', away: 'Runner-up Group D', status: 'tbd' },
-    { id: 'r32-3',  home: 'Winner Group E', away: 'Runner-up Group F', status: 'tbd' },
-    { id: 'r32-4',  home: 'Winner Group G', away: 'Runner-up Group H', status: 'tbd' },
-    { id: 'r32-5',  home: 'Winner Group I', away: 'Runner-up Group J', status: 'tbd' },
-    { id: 'r32-6',  home: 'Winner Group K', away: 'Runner-up Group L', status: 'tbd' },
-    { id: 'r32-7',  home: 'Winner Group B', away: 'Runner-up Group A', status: 'tbd' },
-    { id: 'r32-8',  home: 'Winner Group D', away: 'Runner-up Group C', status: 'tbd' },
-    { id: 'r32-9',  home: 'Winner Group F', away: 'Runner-up Group E', status: 'tbd' },
-    { id: 'r32-10', home: 'Winner Group H', away: 'Runner-up Group G', status: 'tbd' },
-    { id: 'r32-11', home: 'Winner Group J', away: 'Runner-up Group I', status: 'tbd' },
-    { id: 'r32-12', home: 'Winner Group L', away: 'Runner-up Group K', status: 'tbd' },
-    { id: 'r32-13', home: 'Best 3rd Place #1', away: 'Best 3rd Place #2', status: 'tbd' },
-    { id: 'r32-14', home: 'Best 3rd Place #3', away: 'Best 3rd Place #4', status: 'tbd' },
-    { id: 'r32-15', home: 'Best 3rd Place #5', away: 'Best 3rd Place #6', status: 'tbd' },
-    { id: 'r32-16', home: 'Best 3rd Place #7', away: 'Best 3rd Place #8', status: 'tbd' },
+    { id: 'r32-1',  home: teams.usa,         away: teams.senegal,     status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r32-2',  home: teams.england,     away: teams.argentina,   status: 'ft', homeScore: 1, awayScore: 0 },
+    { id: 'r32-3',  home: teams.brazil,      away: teams.portugal,    status: 'ft', homeScore: 3, awayScore: 1 },
+    { id: 'r32-4',  home: teams.belgium,     away: teams.italy,       status: 'ft', homeScore: 2, awayScore: 0 },
+    { id: 'r32-5',  home: teams.serbia,      away: teams.denmark,     status: 'ft', homeScore: 0, awayScore: 1 },
+    { id: 'r32-6',  home: teams.turkey,      away: teams.norway,      status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r32-7',  home: teams.germany,     away: teams.mexico,      status: 'ft', homeScore: 2, awayScore: 0 },
+    { id: 'r32-8',  home: teams.france,      away: teams.czechia,     status: 'ft', homeScore: 3, awayScore: 0 },
+    { id: 'r32-9',  home: teams.spain,       away: teams.netherlands, status: 'ft', homeScore: 1, awayScore: 0 },
+    { id: 'r32-10', home: teams.colombia,    away: teams.croatia,     status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r32-11', home: teams.switzerland, away: teams.poland,      status: 'ft', homeScore: 2, awayScore: 0 },
+    { id: 'r32-12', home: teams.sweden,      away: teams.ukraine,     status: 'ft', homeScore: 1, awayScore: 0 },
+    { id: 'r32-13', home: teams.japan,       away: teams.australia,   status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r32-14', home: teams.nigeria,     away: teams.ecuador,     status: 'ft', homeScore: 1, awayScore: 0 },
+    { id: 'r32-15', home: teams.uruguay,     away: teams.chile,       status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r32-16', home: teams.canada,      away: teams.ghana,       status: 'ft', homeScore: 1, awayScore: 0 },
   ]
 
-  // R16: 8 matches, each winner advances from R32
-  const r16Slots: BracketSlot[] = Array.from({ length: 8 }, (_, i) => ({
-    id: `r16-${i+1}`,
-    home: `Winner R32 Match ${i*2+1}`,
-    away: `Winner R32 Match ${i*2+2}`,
-    status: "tbd" as const,
-  }))
+  // R16: winners from R32
+  const r16Slots: BracketSlot[] = [
+    { id: 'r16-1', home: teams.usa,         away: teams.england,     status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r16-2', home: teams.brazil,      away: teams.belgium,     status: 'ft', homeScore: 2, awayScore: 0 },
+    { id: 'r16-3', home: teams.denmark,     away: teams.germany,     status: 'ft', homeScore: 1, awayScore: 3 },
+    { id: 'r16-4', home: teams.france,      away: teams.spain,       status: 'ft', homeScore: 2, awayScore: 1 },
+    { id: 'r16-5', home: teams.colombia,    away: teams.switzerland, status: 'ft', homeScore: 1, awayScore: 0 },
+    { id: 'r16-6', home: teams.sweden,      away: teams.japan,       status: 'ft', homeScore: 2, awayScore: 0 },
+    { id: 'r16-7', home: teams.nigeria,     away: teams.uruguay,     status: 'ft', homeScore: 1, awayScore: 2 },
+    { id: 'r16-8', home: teams.canada,      away: teams.turkey,      status: 'ft', homeScore: 0, awayScore: 2 },
+  ]
 
   // QF: 4 matches — labeled QF1-QF4 so SF references are clear
   const qfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => ({
