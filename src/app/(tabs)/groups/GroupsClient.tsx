@@ -72,7 +72,7 @@ function GroupCard({
         <span className="text-sm font-bold tracking-wide text-white leading-none">
           Group {groupId}
         </span>
-        <div className="mt-1.5 h-[2px] w-full bg-white/70 rounded-full" />
+        <div className="mt-1.5 h-[2px] w-full bg-white/30 rounded-full" />
       </div>
 
       {/* 2×2 flag + name grid */}
