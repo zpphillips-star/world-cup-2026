@@ -1,21 +1,28 @@
 import type { Match } from '@/lib/types'
 
-function formatTime(kickoff: string, timezone?: string): string {
+function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
   try {
-    return new Date(kickoff).toLocaleTimeString('en-US', {
+    const date = new Date(kickoff)
+    const time = date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
-      timeZone: timezone ?? 'America/New_York',
+      timeZone: timezone,
     })
+    const tzAbbr =
+      new Intl.DateTimeFormat('en-US', { timeZone: timezone, timeZoneName: 'short' })
+        .formatToParts(date)
+        .find((p) => p.type === 'timeZoneName')?.value ?? ''
+    return { time, tzAbbr }
   } catch {
-    return '--:--'
+    return { time: '--:--', tzAbbr: '' }
   }
 }
 
-export default function MatchCard({ match }: { match: Match }) {
+export default function MatchCard({ match, userTimezone = 'UTC' }: { match: Match; userTimezone?: string }) {
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
+  const { time, tzAbbr } = formatTime(match.kickoff, userTimezone)
 
   return (
     <div className="bg-[#13131a] rounded-xl p-4 mb-3 border border-gray-800 hover:border-gray-600 transition-colors">
@@ -31,7 +38,7 @@ export default function MatchCard({ match }: { match: Match }) {
         {isFt && <span className="text-xs text-gray-400">FT</span>}
         {!isLive && !isFt && (
           <span className="text-xs text-gray-400">
-            {formatTime(match.kickoff, match.venue.timezone)}
+            {time}{tzAbbr ? ` ${tzAbbr}` : ''}
           </span>
         )}
       </div>
