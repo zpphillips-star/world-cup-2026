@@ -11,15 +11,22 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'WC2026',
+    title: 'World Cup',
+    startupImage: '/icons/splash.png',
+  },
+  icons: {
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180' },
+    ],
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#00d4ff',
+  themeColor: '#0a0a0f',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -29,14 +36,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <head>
+      <body className="bg-[#0a0a0f] text-white min-h-screen">
         <script
           dangerouslySetInnerHTML={{
-            __html: `if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')`,
+            __html: `if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(r) { console.log('SW registered:', r.scope); }).catch(function(e) { console.log('SW registration failed:', e); }); }); }`,
           }}
         />
-      </head>
-      <body className="bg-[#0a0a0f] text-white min-h-screen">
         {children}
       </body>
     </html>
