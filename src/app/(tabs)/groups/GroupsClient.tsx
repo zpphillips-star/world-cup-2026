@@ -69,7 +69,7 @@ function GroupCard({
     >
       {/* Group label + thick white underline */}
       <div className="w-full mb-3 text-left">
-        <span className="text-sm font-bold tracking-wide text-white leading-none">
+        <span className="text-sm font-bold tracking-wide text-gray-400 leading-none">
           Group {groupId}
         </span>
         <div className="mt-1.5 h-[2px] w-full bg-white/70 rounded-full" />
@@ -77,10 +77,10 @@ function GroupCard({
 
       {/* 2×2 flag + name grid */}
       <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
-        {standings.map((s, idx) => (
+        {standings.map((s) => (
           <div key={s.team.id} className="flex items-center gap-2 min-w-0">
             <span className="text-2xl leading-none flex-shrink-0">{s.team.flag}</span>
-            <span className={`text-xs font-medium truncate ${idx < 2 ? 'text-white' : 'text-gray-400'}`}>
+            <span className="text-xs font-medium truncate text-white">
               {s.team.name}
             </span>
           </div>
