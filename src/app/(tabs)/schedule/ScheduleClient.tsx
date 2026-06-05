@@ -13,7 +13,7 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   // Parse as local date (noon to avoid any DST edge-cases shifting the day)
   const [year, month, day] = isoDate.split('-').map(Number)
   const d = new Date(year, month - 1, day, 12, 0, 0)
-  const weekday = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: timezone })
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
   const mon = d.toLocaleDateString('en-US', { month: 'short', timeZone: timezone })
   return `${weekday} · ${mon} ${day}`
 }
@@ -44,7 +44,7 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
     <div className="pb-8">
       {byDate.map(([isoDate, dayMatches], index) => (
         <div key={isoDate} className={index > 0 ? 'mt-10' : ''}>
-          <h2 className="sticky top-[70px] z-10 px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-sm font-semibold text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700">
+          <h2 className="sticky top-[70px] z-10 px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-base font-semibold text-zinc-400 dark:text-zinc-300 border-b-2 border-zinc-300 dark:border-zinc-600">
             {formatDateHeader(isoDate, userTimezone)}
           </h2>
           <div className="px-4 pt-2">
