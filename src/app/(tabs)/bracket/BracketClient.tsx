@@ -118,12 +118,12 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
               <button
                 key={name}
                 onClick={() => toggleRound(name)}
-                className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all
+                className={`flex-1 py-3.5 rounded-xl text-sm font-bold border-2 transition-all active:scale-95
                   ${on
                     ? name === 'Final'
                       ? 'bg-yellow-400 text-zinc-900 border-yellow-400'
                       : 'bg-[#00d4ff] text-[#0a0a0f] border-[#00d4ff]'
-                    : 'bg-transparent text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300'
+                    : 'bg-zinc-800/80 text-zinc-300 border-zinc-700 hover:border-zinc-500 hover:text-white'
                   }`}
               >
                 {ROUND_SHORT[name] || name}
