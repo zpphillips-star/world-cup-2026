@@ -67,7 +67,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
           return (
             <div key={name}>
-              <h2 className="text-lg font-bold mb-3 text-[#00d4ff]">{name}</h2>
+              <h2 className="text-lg font-bold mb-3 text-white">{name}</h2>
               <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-400 mb-2">
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
                   <div key={d} className="py-1">{d}</div>
