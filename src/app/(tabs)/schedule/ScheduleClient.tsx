@@ -50,7 +50,7 @@ export default function ScheduleClient({
   }, [sortedMatches, userTimezone])
 
   return (
-    <div className="pb-10 max-w-2xl mx-auto">
+    <div className="pb-16 max-w-2xl mx-auto">
       {byDate.map(([isoDate, dayMatches]) => {
         const isToday = isoDate === TODAY
         return (
