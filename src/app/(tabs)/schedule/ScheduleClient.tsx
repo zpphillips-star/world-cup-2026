@@ -4,13 +4,14 @@ import { useState, useEffect, useMemo } from 'react'
 import MatchCard from '@/components/MatchCard'
 import type { Match } from '@/lib/types'
 
+// Hardcoded demo "today" as specified
+const TODAY = '2026-06-13'
+
 function getLocalDateKey(kickoff: string, timezone: string): string {
-  // Returns YYYY-MM-DD in the given timezone (en-CA locale gives ISO date format)
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
 }
 
 function formatDateHeader(isoDate: string, timezone: string): string {
-  // Parse as local date (noon to avoid any DST edge-cases shifting the day)
   const [year, month, day] = isoDate.split('-').map(Number)
   const d = new Date(year, month - 1, day, 12, 0, 0)
   const weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
@@ -42,18 +43,49 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
 
   return (
     <div className="pb-8">
-      {byDate.map(([isoDate, dayMatches]) => (
-        <div key={isoDate} className="mt-4 first:mt-0">
-          <h2 className="sticky top-[70px] z-10 px-4 py-2 bg-zinc-100 dark:bg-zinc-950 text-sm font-semibold text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700 tracking-wide">
-            {formatDateHeader(isoDate, userTimezone)}
-          </h2>
-          <div className="rounded-b overflow-hidden border border-t-0 border-zinc-200 dark:border-zinc-800 mx-0">
-            {dayMatches.map((match) => (
-              <MatchCard key={match.id} match={match} userTimezone={userTimezone} />
-            ))}
+      {byDate.map(([isoDate, dayMatches]) => {
+        const isToday = isoDate === TODAY
+        return (
+          <div key={isoDate} className="mt-4 first:mt-0">
+            {/* Date header */}
+            <h2 className={`sticky top-[70px] z-10 px-4 py-2 border-b flex items-center gap-2
+              ${isToday
+                ? 'bg-[#0a1a12] border-green-900/60 dark:bg-[#0a1a12]'
+                : 'bg-zinc-100 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-700'
+              }`}
+            >
+              <span className={`text-sm font-semibold tracking-wide
+                ${isToday ? 'text-white' : 'text-zinc-500 dark:text-zinc-400'}`}
+              >
+                {formatDateHeader(isoDate, userTimezone)}
+              </span>
+              {isToday && (
+                <span className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500 text-white uppercase tracking-wider">
+                  Today
+                </span>
+              )}
+            </h2>
+
+            {/* Match rows */}
+            <div className={`rounded-b overflow-hidden border border-t-0 mx-0
+              ${isToday
+                ? 'border-green-900/40'
+                : 'border-zinc-200 dark:border-zinc-800'
+              }`}
+            >
+              {dayMatches.map((match) => (
+                <div
+                  key={match.id}
+                  className={isToday ? 'border-l-[3px] border-green-500/70' : ''}
+                >
+                  <MatchCard match={match} userTimezone={userTimezone} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
+
