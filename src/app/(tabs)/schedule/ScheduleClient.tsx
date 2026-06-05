@@ -42,16 +42,14 @@ export default function ScheduleClient({ matches }: { matches: Match[] }) {
 
   return (
     <div className="pb-8">
-      {byDate.map(([isoDate, dayMatches], index) => (
-        <div key={isoDate} className={index > 0 ? 'mt-10' : ''}>
-          <h2 className="sticky top-[70px] z-10 px-4 py-2 bg-gray-50 dark:bg-zinc-800 text-base font-semibold text-zinc-400 dark:text-zinc-300 border-b-2 border-zinc-300 dark:border-zinc-600">
+      {byDate.map(([isoDate, dayMatches]) => (
+        <div key={isoDate} className="mt-4 first:mt-0">
+          <h2 className="sticky top-[70px] z-10 px-4 py-2 bg-zinc-100 dark:bg-zinc-950 text-sm font-semibold text-zinc-500 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-700 tracking-wide">
             {formatDateHeader(isoDate, userTimezone)}
           </h2>
-          <div className="px-4 pt-2">
-            {dayMatches.map((match, i) => (
-              <div key={match.id} className={i < dayMatches.length - 1 ? 'border-b border-white/5' : ''}>
-                <MatchCard match={match} userTimezone={userTimezone} />
-              </div>
+          <div className="rounded-b overflow-hidden border border-t-0 border-zinc-200 dark:border-zinc-800 mx-0">
+            {dayMatches.map((match) => (
+              <MatchCard key={match.id} match={match} userTimezone={userTimezone} />
             ))}
           </div>
         </div>
