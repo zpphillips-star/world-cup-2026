@@ -86,7 +86,7 @@ function GroupCard({
         </span>
 
         {/* Header */}
-        <div className="px-3 pt-3 pb-1.5 flex items-baseline justify-between">
+        <div className="px-3 pt-3.5 pb-2 flex items-baseline justify-between">
           <div className="flex items-baseline gap-1">
             <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Group</span>
             <span className="text-[17px] font-bold text-white leading-none ml-1">{groupId}</span>
@@ -98,10 +98,10 @@ function GroupCard({
         <div className="mx-3 h-px bg-white/[0.04] mb-2" />
 
         {/* Teams */}
-        <div className="px-3 pb-3 space-y-2">
+        <div className="px-3 pb-4 space-y-2.5">
           {standings.map((s) => (
             <div key={s.team.id} className="flex items-center gap-2">
-              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3.5 flex-shrink-0 rounded-[1px]" />
+              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 flex-shrink-0 rounded-[1px]" />
               <span className="text-[12px] font-medium text-zinc-200 leading-tight truncate">
                 {s.team.name}
               </span>
