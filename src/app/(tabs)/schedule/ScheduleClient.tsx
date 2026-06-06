@@ -290,15 +290,20 @@ export default function ScheduleClient({
         </button>
       )}
 
-      {byDate.map(([isoDate, dayMatches]) => {
+      {byDate.map(([isoDate, dayMatches], idx) => {
         const isToday = isoDate === today
         return (
-          <div key={isoDate}>
-            <div className="px-4 pt-6 pb-1.5">
-              <span className={`text-[11px] uppercase tracking-widest font-bold ${isToday ? 'text-[#00d4ff]' : 'text-zinc-500'}`}>
-                {formatDateHeader(isoDate, userTimezone)}
-              </span>
-              <div className="mt-1.5 h-px bg-zinc-800/60" />
+          <div key={isoDate} className={idx > 0 ? 'mt-6' : ''}>
+            <div className="px-4 pt-2 pb-2">
+              <div className="flex items-center gap-3">
+                <span className={`text-[11px] uppercase tracking-widest font-bold ${isToday ? 'text-[#00d4ff]' : 'text-zinc-400'}`}>
+                  {formatDateHeader(isoDate, userTimezone)}
+                </span>
+                {isToday && (
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#00d4ff] bg-[#00d4ff]/10 px-2 py-0.5 rounded-full">Today</span>
+                )}
+              </div>
+              <div className="mt-2 h-px bg-zinc-800" />
             </div>
             <div>
               {dayMatches.map((match) => {
