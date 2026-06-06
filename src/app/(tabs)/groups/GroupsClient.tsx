@@ -67,7 +67,7 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col text-left active:scale-[0.97] transition-transform"
+      className="relative flex flex-col text-left w-full active:scale-[0.97] transition-transform"
     >
       {/* Group letter header */}
       <div className="flex items-center gap-2 mb-2 px-1">
@@ -76,7 +76,7 @@ function GroupCard({
       </div>
 
       {/* Team list — content width only */}
-      <div className="bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
+      <div className="w-full bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
         {standings.map((s, i) => (
           <div
             key={s.team.id}
@@ -234,7 +234,7 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
       <div
-        className="px-4 py-5 grid grid-cols-2 gap-x-4 gap-y-6 justify-items-start"
+        className="px-4 py-5 grid grid-cols-2 gap-x-4 gap-y-6"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
