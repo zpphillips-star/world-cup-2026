@@ -259,7 +259,7 @@ export default function ScheduleClient({
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date())
 
   return (
-    <div className="pb-16 max-w-2xl mx-auto">
+    <div className="pb-16 max-w-2xl mx-auto pt-5">
       {/* Live banner — tappable */}
       {hasAnyLive && (
         <button
