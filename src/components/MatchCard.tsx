@@ -339,30 +339,31 @@ export default function MatchCard({
               href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-shrink-0 block mx-3 mb-3 rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
+              className="flex-shrink-0 block mx-4 mb-4 rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
               style={{
-                background: 'linear-gradient(100deg, #ff6b00 0%, #ff8c00 100%)',
-                boxShadow: '0 2px 16px rgba(255,107,0,0.35)',
+                background: '#1a1a24',
+                border: '1px solid rgba(255,107,0,0.3)',
+                boxShadow: '0 0 20px rgba(255,107,0,0.08)',
               }}
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-center gap-3 px-4 py-3">
+              <div className="flex items-center gap-3 px-4 py-3.5">
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-7 rounded-sm" />
-                  <span className="text-white/40 text-xs mx-0.5">vs</span>
+                  <span className="text-zinc-600 text-[10px] mx-0.5">vs</span>
                   <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-7 rounded-sm" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-black text-white leading-tight truncate">
+                  <p className="text-[13px] font-bold text-white leading-tight truncate">
                     Shop Official Jerseys
                   </p>
-                  <p className="text-[11px] text-orange-100/80 leading-tight mt-0.5">
+                  <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">
                     2026 World Cup kits on Amazon
                   </p>
                 </div>
-                <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                  <span className="text-[9px] font-semibold text-orange-200/60 uppercase tracking-widest">Ad</span>
-                  <span className="text-[12px] font-bold text-white bg-black/20 px-3 py-1 rounded-full">
+                <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
+                  <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest">Ad</span>
+                  <span className="text-[11px] font-bold text-[#ff6b00] bg-[#ff6b00]/10 border border-[#ff6b00]/30 px-2.5 py-1 rounded-lg">
                     Shop →
                   </span>
                 </div>
