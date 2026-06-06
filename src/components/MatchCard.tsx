@@ -221,8 +221,28 @@ export default function MatchCard({
             className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
+            {/* Ad — very top of sheet */}
+            <a
+              href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-3 px-5 py-3 active:opacity-75 transition-opacity rounded-t-3xl"
+              style={{
+                background: `color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 15%, #0d0d16)`,
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4 rounded-sm opacity-70" />
+                <span className="text-zinc-700 text-[9px] mx-0.5">vs</span>
+                <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4 rounded-sm opacity-70" />
+              </div>
+              <span className="text-[12px] font-medium text-zinc-300 flex-1">Buy their gear on Amazon</span>
+              <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest">Ad</span>
+            </a>
+
             {/* Gradient header */}
-            <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0">
+            <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0 border-t border-white/5">
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
               <button
                 onClick={() => { setOpen(false); onCloseExternal?.() }}
@@ -288,27 +308,6 @@ export default function MatchCard({
                 </div>
               )}
             </div>
-
-            {/* Sticky ad strip — top of sheet, always visible */}
-            <a
-              href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 flex items-center gap-3 px-5 py-2.5 active:opacity-75 transition-opacity border-b border-white/5"
-              style={{
-                background: `color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 12%, #111118)`,
-              }}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4 rounded-sm opacity-80" />
-                <span className="text-zinc-600 text-[9px] mx-0.5">vs</span>
-                <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4 rounded-sm opacity-80" />
-              </div>
-              <span className="text-[12px] font-semibold text-white flex-1">Buy their gear</span>
-              <span className="text-[10px] text-zinc-500">Shop Amazon</span>
-              <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest ml-1">Ad</span>
-            </a>
 
             {/* Scrollable body */}
             <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
