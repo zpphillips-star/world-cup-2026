@@ -67,27 +67,47 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col text-left w-full active:scale-[0.97] transition-transform"
+      className="w-full text-left active:scale-[0.97] transition-transform"
     >
-      {/* Group letter header */}
-      <div className="flex items-center gap-2 mb-2 px-1">
-        <span className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em]">Group</span>
-        <span className="text-[22px] font-black text-white leading-none">{groupId}</span>
-      </div>
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(145deg, #1c1c26 0%, #16161e 100%)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+        }}
+      >
+        {/* Cyan accent bar */}
+        <div
+          className="h-[2px]"
+          style={{ background: 'linear-gradient(90deg, #00d4ff 0%, #0066ff 100%)' }}
+        />
 
-      {/* Team list — content width only */}
-      <div className="w-full bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
-        {standings.map((s, i) => (
-          <div
-            key={s.team.id}
-            className={`flex items-center gap-2.5 px-3 py-2 ${i < standings.length - 1 ? 'border-b border-zinc-800/50' : ''}`}
-          >
-            <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3.5 flex-shrink-0" />
-            <span className="text-[12px] font-medium text-zinc-200 leading-tight whitespace-nowrap">
-              {s.team.name}
+        {/* Header */}
+        <div className="flex items-center justify-between px-3.5 pt-2.5 pb-2">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] font-bold uppercase tracking-[0.18em]" style={{ color: 'rgba(0,212,255,0.5)' }}>
+              Group
             </span>
+            <span className="text-[20px] font-black text-white leading-none">{groupId}</span>
           </div>
-        ))}
+          <span className="text-zinc-600 text-sm">›</span>
+        </div>
+
+        {/* Subtle divider */}
+        <div className="mx-3.5 h-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
+
+        {/* Teams */}
+        <div className="px-3.5 py-2.5 space-y-[9px]">
+          {standings.map((s) => (
+            <div key={s.team.id} className="flex items-center gap-2">
+              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-[15px] flex-shrink-0" />
+              <span className="text-[12.5px] font-medium text-zinc-100 leading-tight truncate">
+                {s.team.name}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </button>
   )
@@ -234,17 +254,16 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
       <div
-        className="py-5 flex flex-wrap justify-center gap-4 px-4"
+        className="py-5 grid grid-cols-2 gap-3 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
-          <div key={groupId} style={{ width: 'calc(50% - 10px)' }}>
-            <GroupCard
-              groupId={groupId}
-              standings={groupStandings}
-              onOpen={() => setActiveGroup(groupId)}
-            />
-          </div>
+          <GroupCard
+            key={groupId}
+            groupId={groupId}
+            standings={groupStandings}
+            onOpen={() => setActiveGroup(groupId)}
+          />
         ))}
       </div>
 
