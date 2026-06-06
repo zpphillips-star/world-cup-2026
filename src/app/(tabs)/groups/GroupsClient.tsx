@@ -86,7 +86,7 @@ function GroupCard({
         </span>
 
         {/* Header */}
-        <div className="px-3 pt-3.5 pb-2 flex items-baseline justify-between">
+        <div className="px-4 pt-4 pb-2 flex items-baseline justify-between">
           <div className="flex items-baseline gap-1">
             <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Group</span>
             <span className="text-[17px] font-bold text-white leading-none ml-1">{groupId}</span>
@@ -95,14 +95,14 @@ function GroupCard({
         </div>
 
         {/* Divider */}
-        <div className="mx-3 h-px bg-white/[0.04] mb-2" />
+        <div className="mx-4 h-px bg-white/[0.04] mb-2.5" />
 
         {/* Teams */}
-        <div className="px-3 pb-4 space-y-2.5">
+        <div className="px-4 pb-4 space-y-3">
           {standings.map((s) => (
-            <div key={s.team.id} className="flex items-center gap-2">
+            <div key={s.team.id} className="flex items-center gap-2.5">
               <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 flex-shrink-0 rounded-[1px]" />
-              <span className="text-[12px] font-medium text-zinc-200 leading-tight truncate">
+              <span className="text-[12.5px] font-medium text-zinc-200 leading-tight truncate">
                 {s.team.name}
               </span>
             </div>
@@ -259,8 +259,14 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
+      {/* Page title */}
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · 12 Groups</p>
+      </div>
+
       <div
-        className="py-5 grid grid-cols-2 gap-3 px-4"
+        className="grid grid-cols-2 gap-4 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
