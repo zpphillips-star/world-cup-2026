@@ -92,34 +92,11 @@ export async function GET() {
       })
     )
 
-    // No real live games yet — inject demo so the live UI can be previewed
-    const hasRealLive = Object.values(scores).some(s => s.status === 'live')
-    if (!hasRealLive) {
-      Object.assign(scores, getDemoScores())
-    }
-
     return Response.json(
       { scores, fetchedAt: Date.now() },
       { headers: { 'Cache-Control': 's-maxage=2, stale-while-revalidate=3' } }
     )
   } catch {
     return Response.json({ scores: {}, fetchedAt: Date.now() })
-  }
-}
-
-// Demo data injected when no real games are live (removes itself once WC starts)
-function getDemoScores(): Record<string, ScoreUpdate> {
-  return {
-    'mexico|southafrica': {
-      homeScore: 2,
-      awayScore: 1,
-      status: 'live',
-      clock: "67'",
-      scorers: [
-        { playerName: 'Raúl Jiménez', minute: "23'", teamSide: 'home', type: 'goal' },
-        { playerName: 'H. Lozano',    minute: "51'", teamSide: 'home', type: 'pen'  },
-        { playerName: 'P. Wyngaard',  minute: "38'", teamSide: 'away', type: 'goal' },
-      ],
-    },
   }
 }
