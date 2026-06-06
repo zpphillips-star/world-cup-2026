@@ -206,11 +206,6 @@ export default function MatchCard({
           </div>
         </div>
 
-        <div className="ml-2 flex-shrink-0">
-          <svg className="w-3.5 h-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
       </div>
 
       {/* Slide-up sheet */}
