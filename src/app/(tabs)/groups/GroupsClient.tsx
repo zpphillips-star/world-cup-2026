@@ -67,20 +67,23 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col items-start p-4 rounded-2xl bg-[#1a1a24] active:scale-95 transition-transform overflow-hidden text-left w-full h-full shadow-lg shadow-black/40"
+      className="relative flex flex-col text-left w-full active:scale-[0.97] transition-transform"
     >
-      <div className="w-full mb-2.5 text-left">
-        <span className="text-sm font-bold tracking-wide text-white leading-none">
-          Group {groupId}
-        </span>
-        <div className="mt-1.5 h-[2px] w-full bg-white/30 rounded-full" />
+      {/* Group letter header */}
+      <div className="flex items-center gap-2 mb-2 px-1">
+        <span className="text-[11px] font-black text-zinc-500 uppercase tracking-[0.2em]">Group</span>
+        <span className="text-[22px] font-black text-white leading-none">{groupId}</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full flex-1">
-        {standings.map((s) => (
-          <div key={s.team.id} className="flex items-center gap-2 min-w-0">
-            <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-6" />
-            <span className="text-xs font-medium truncate text-white">
+      {/* Team list */}
+      <div className="w-full bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
+        {standings.map((s, i) => (
+          <div
+            key={s.team.id}
+            className={`flex items-center gap-2.5 px-3 py-2 ${i < standings.length - 1 ? 'border-b border-zinc-800/50' : ''}`}
+          >
+            <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3.5 flex-shrink-0" />
+            <span className="text-[12px] font-medium text-zinc-200 truncate leading-tight">
               {s.team.name}
             </span>
           </div>
@@ -231,12 +234,8 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
       <div
-        className="px-3 py-4 grid grid-cols-2 gap-3"
-        style={{
-          paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
-          minHeight: 'calc(100dvh - 3.5rem - env(safe-area-inset-top))',
-          gridAutoRows: '1fr',
-        }}
+        className="px-4 py-5 grid grid-cols-2 gap-x-4 gap-y-6"
+        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
           <GroupCard
