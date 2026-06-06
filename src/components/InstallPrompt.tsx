@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 type Platform = 'ios' | 'android' | 'other'
 type State = 'hidden' | 'ios-sheet' | 'android-banner'
 
-const STORAGE_KEY = 'wc26-install-dismissed'
+const STORAGE_KEY = 'wc26-install-ts'
+const COOLDOWN_MS = 24 * 60 * 60 * 1000  // 24 hours
 
 function getPlatform(): Platform {
   const ua = navigator.userAgent
@@ -22,12 +23,20 @@ function isStandalone(): boolean {
   )
 }
 
-function isDismissed(): boolean {
-  try { return localStorage.getItem(STORAGE_KEY) === '1' } catch { return false }
+function isOnCooldown(): boolean {
+  try {
+    const ts = localStorage.getItem(STORAGE_KEY)
+    if (!ts) return false
+    return Date.now() - parseInt(ts) < COOLDOWN_MS
+  } catch { return false }
 }
 
-function dismiss() {
-  try { localStorage.setItem(STORAGE_KEY, '1') } catch { /* ignore */ }
+function snooze() {
+  try { localStorage.setItem(STORAGE_KEY, String(Date.now())) } catch { /* ignore */ }
+}
+
+function forceReset() {
+  try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
 }
 
 export default function InstallPrompt() {
@@ -37,13 +46,18 @@ export default function InstallPrompt() {
   const [iosStep, setIosStep] = useState(0)
 
   useEffect(() => {
-    // Already installed or already dismissed — do nothing
-    if (isStandalone() || isDismissed()) return
+    // ?reset-install forces the prompt to show (for testing)
+    if (window.location.search.includes('reset-install')) forceReset()
+
+    // Already running as installed PWA — never show
+    if (isStandalone()) return
+
+    // On cooldown — skip
+    if (isOnCooldown()) return
 
     const platform = getPlatform()
 
     if (platform === 'android') {
-      // Capture Android native install prompt
       const handler = (e: Event) => {
         e.preventDefault()
         setDeferredPrompt(e)
@@ -54,11 +68,10 @@ export default function InstallPrompt() {
     }
 
     if (platform === 'ios') {
-      // Only show in Safari (not Chrome/Firefox on iOS)
-      const isSafari = /safari/i.test(navigator.userAgent) && !/chrome|crios|fxios/i.test(navigator.userAgent)
+      // Show on Safari (detect by absence of Chrome/Firefox UA strings)
+      const isSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|gsa/i.test(navigator.userAgent)
       if (!isSafari) return
-      // Small delay so the page loads first
-      const t = setTimeout(() => setState('ios-sheet'), 1500)
+      const t = setTimeout(() => setState('ios-sheet'), 800)
       return () => clearTimeout(t)
     }
   }, [])
@@ -67,13 +80,13 @@ export default function InstallPrompt() {
     if (!deferredPrompt) return
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') dismiss()
+    if (outcome === 'accepted') snooze()
     setDeferredPrompt(null)
     setState('hidden')
   }
 
   function handleDismiss() {
-    dismiss()
+    snooze()
     setState('hidden')
   }
 
@@ -91,18 +104,17 @@ export default function InstallPrompt() {
     {
       icon: '✅',
       title: 'Tap "Add"',
-      desc: 'Confirm by tapping Add in the top right — you\'re done!',
+      desc: "Confirm by tapping Add in the top right — you're done!",
     },
   ]
 
   if (state === 'hidden') return null
 
-  // ── Android one-tap banner ─────────────────────────────────────────────────
+  // ── Android one-tap banner ──────────────────────────────────────────────────
   if (state === 'android-banner') {
     return (
       <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2">
         <div className="bg-[#16161f] border border-white/10 rounded-2xl p-4 shadow-2xl shadow-black/60 flex items-center gap-4">
-          {/* Icon */}
           <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-white">Add to Home Screen</p>
@@ -115,10 +127,7 @@ export default function InstallPrompt() {
             >
               Install
             </button>
-            <button
-              onClick={handleDismiss}
-              className="text-zinc-500 text-xs text-center"
-            >
+            <button onClick={handleDismiss} className="text-zinc-500 text-xs text-center">
               Not now
             </button>
           </div>
@@ -127,35 +136,28 @@ export default function InstallPrompt() {
     )
   }
 
-  // ── iOS step-by-step bottom sheet ─────────────────────────────────────────
+  // ── iOS step-by-step bottom sheet ──────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-50 flex items-end">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleDismiss} />
-
-      {/* Sheet */}
       <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
-        {/* Handle */}
         <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-5" />
-
-        {/* Header */}
         <div className="flex items-center gap-3 mb-5">
           <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
           <div>
             <p className="text-base font-bold text-white">Add World Cup 2026</p>
             <p className="text-xs text-zinc-400">to your Home Screen</p>
           </div>
-          <button onClick={handleDismiss} className="ml-auto text-zinc-500 text-xl leading-none">✕</button>
+          <button onClick={handleDismiss} className="ml-auto text-zinc-500 text-2xl leading-none pb-1">✕</button>
         </div>
 
-        {/* Steps */}
         <div className="space-y-4 mb-6">
           {IOS_STEPS.map((step, i) => (
             <div
               key={i}
               className={`flex items-start gap-3 transition-opacity ${i <= iosStep ? 'opacity-100' : 'opacity-30'}`}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-base
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
                 ${i < iosStep ? 'bg-[#00d4ff]/20 text-[#00d4ff]' : i === iosStep ? 'bg-[#00d4ff] text-[#0a0a0f]' : 'bg-zinc-800 text-zinc-500'}`}>
                 {i < iosStep ? '✓' : i + 1}
               </div>
@@ -167,7 +169,6 @@ export default function InstallPrompt() {
           ))}
         </div>
 
-        {/* Step nav */}
         <div className="flex gap-3">
           {iosStep > 0 && (
             <button
