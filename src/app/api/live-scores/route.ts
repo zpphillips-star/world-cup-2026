@@ -1,18 +1,32 @@
 export const runtime = 'edge'
 
+export interface ScoringEvent {
+  playerName: string
+  minute: string
+  teamSide: 'home' | 'away'
+  type: 'goal' | 'og' | 'pen'
+}
+
 export interface ScoreUpdate {
   homeScore: number
   awayScore: number
   status: 'upcoming' | 'live' | 'ft'
-  clock?: string  // e.g. "67'"
+  clock?: string
+  scorers: ScoringEvent[]
 }
 
 function normalize(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
+function parseClock(raw?: string): string | undefined {
+  if (!raw) return undefined
+  // "67:00" -> "67'", "90:30" -> "90+'"
+  const match = raw.match(/^(\d+)/)
+  return match ? `${match[1]}'` : raw
+}
+
 function getTournamentDates(): string[] {
-  // Return today + yesterday in YYYYMMDD format (catches late games spanning midnight)
   const dates: string[] = []
   const now = new Date()
   for (let offset = -1; offset <= 1; offset++) {
@@ -51,13 +65,28 @@ export async function GET() {
           if (statusName === 'STATUS_IN_PROGRESS') status = 'live'
           else if (statusName === 'STATUS_FINAL' || comp.status?.type?.completed === true) status = 'ft'
 
-          // Key by normalized home|away names so we can match against our mockProvider data
+          // Parse scoring events from details
+          const scorers: ScoringEvent[] = []
+          for (const detail of comp.details ?? []) {
+            if (!detail.scoringPlay) continue
+            const playerName: string = detail.athletesInvolved?.[0]?.displayName ?? 'Unknown'
+            const minute = parseClock(detail.clock?.displayValue) ?? '?'
+            const teamSide: 'home' | 'away' = detail.team?.id === home.team.id ? 'home' : 'away'
+            const typeText: string = (detail.type?.text ?? '').toLowerCase()
+            const type: 'goal' | 'og' | 'pen' =
+              typeText.includes('own') ? 'og' :
+              typeText.includes('penalty') || typeText.includes('pen') ? 'pen' :
+              'goal'
+            scorers.push({ playerName, minute, teamSide, type })
+          }
+
           const key = `${normalize(home.team.displayName ?? home.team.name)}|${normalize(away.team.displayName ?? away.team.name)}`
           scores[key] = {
             homeScore: parseInt(home.score ?? '0', 10),
             awayScore: parseInt(away.score ?? '0', 10),
             status,
-            clock: comp.status?.displayClock ?? undefined,
+            clock: status === 'live' ? parseClock(comp.status?.displayClock) : undefined,
+            scorers,
           }
         }
       })

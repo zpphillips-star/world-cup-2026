@@ -130,18 +130,24 @@ function GroupTable({ groupId, standings, highlightIds }: {
   )
 }
 
+import type { ScoringEvent } from '@/app/api/live-scores/route'
+
 export default function MatchCard({
   match,
   userTimezone = 'UTC',
   homeStats,
   awayStats,
   groupStandings,
+  clock,
+  scorers,
 }: {
   match: Match
   userTimezone?: string
   homeStats?: TeamStats | null
   awayStats?: TeamStats | null
   groupStandings?: Standing[]
+  clock?: string
+  scorers?: ScoringEvent[]
 }) {
   const [open, setOpen] = useState(false)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
@@ -159,7 +165,10 @@ export default function MatchCard({
       >
         <div className="w-[72px] flex-shrink-0 flex flex-col items-start justify-center">
           {isLive ? (
-            <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase">LIVE</span>
+            <>
+              <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase">LIVE</span>
+              {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
+            </>
           ) : isFt ? (
             <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">FINAL</span>
           ) : (
@@ -289,10 +298,41 @@ export default function MatchCard({
                 <span className="text-sm">📍</span>
                 <span className="text-[12px] text-zinc-400">{match.venue.name}, {match.venue.city}</span>
               </div>
+              {isLive && clock && (
+                <div className="flex items-center justify-center gap-1.5 mt-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-[12px] font-bold text-red-400">{clock}</span>
+                </div>
+              )}
             </div>
 
             {/* Scrollable body */}
             <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
+
+              {/* Goal timeline — only when there are scorers */}
+              {scorers && scorers.length > 0 && (
+                <div className="mb-5">
+                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Goals</p>
+                  <div className="space-y-1.5">
+                    {scorers.map((s, i) => (
+                      <div
+                        key={i}
+                        className={`flex items-center gap-2 ${s.teamSide === 'away' ? 'flex-row-reverse' : ''}`}
+                      >
+                        <span className="text-base leading-none">⚽</span>
+                        <span className="text-[13px] font-semibold text-white">{s.playerName}</span>
+                        <span className="text-[11px] text-zinc-500">{s.minute}</span>
+                        {s.type !== 'goal' && (
+                          <span className="text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">
+                            {s.type === 'og' ? 'OG' : 'pen'}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 h-px bg-zinc-800" />
+                </div>
+              )}
               {/* Team stats */}
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">Team Stats</p>
               <div className="flex gap-4 items-start">

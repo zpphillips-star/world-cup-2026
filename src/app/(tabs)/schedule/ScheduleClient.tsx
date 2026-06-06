@@ -34,9 +34,7 @@ function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>):
       status: update.status,
     }
   })
-}
-
-export default function ScheduleClient({
+}export default function ScheduleClient({
   matches,
   statsMap = {},
   standingsMap = {},
@@ -134,16 +132,22 @@ export default function ScheduleClient({
             </div>
 
             <div>
-              {dayMatches.map((match) => (
-                <MatchCard
-                  key={match.id}
-                  match={match}
-                  userTimezone={userTimezone}
-                  homeStats={statsMap[match.homeTeam.id]}
-                  awayStats={statsMap[match.awayTeam.id]}
-                  groupStandings={match.group ? standingsMap[match.group] : undefined}
-                />
-              ))}
+              {dayMatches.map((match) => {
+                const key = `${normalize(match.homeTeam.name)}|${normalize(match.awayTeam.name)}`
+                const liveData = liveScores[key]
+                return (
+                  <MatchCard
+                    key={match.id}
+                    match={match}
+                    userTimezone={userTimezone}
+                    homeStats={statsMap[match.homeTeam.id]}
+                    awayStats={statsMap[match.awayTeam.id]}
+                    groupStandings={match.group ? standingsMap[match.group] : undefined}
+                    clock={liveData?.clock}
+                    scorers={liveData?.scorers}
+                  />
+                )
+              })}
             </div>
           </div>
         )
