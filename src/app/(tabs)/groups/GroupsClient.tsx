@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Standing, Group, Team } from '@/lib/types'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
@@ -128,6 +128,11 @@ function GroupSheet({
   onClose: () => void
   onTeamOpen: (team: Team) => void
 }) {
+  const [userTimezone, setUserTimezone] = useState('UTC')
+  useEffect(() => {
+    setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  }, [])
+
   const completedMatches = group.matches.filter(m => m.status === 'ft')
   const upcomingMatches = group.matches.filter(m => m.status === 'upcoming' || m.status === 'live')
 
@@ -209,6 +214,7 @@ function GroupSheet({
                   const time = new Date(m.kickoff).toLocaleString('en-US', {
                     month: 'short', day: 'numeric',
                     hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+                    timeZone: userTimezone,
                   })
                   return (
                     <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
