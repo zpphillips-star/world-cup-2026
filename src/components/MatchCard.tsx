@@ -175,9 +175,9 @@ export default function MatchCard({
               {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
             </>
           ) : isFt ? (
-            <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">FINAL</span>
+            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">FINAL</span>
           ) : (
-            <span className="text-[12px] font-medium text-zinc-600 dark:text-zinc-300 leading-snug whitespace-nowrap">
+            <span className="text-[12px] font-medium text-zinc-300 leading-snug whitespace-nowrap">
               {time} <span className="text-[10px] text-zinc-500">{tzAbbr}</span>
             </span>
           )}
@@ -185,14 +185,14 @@ export default function MatchCard({
 
         <div className="flex-1 flex items-center min-w-0">
           <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
-            <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
+            <span className="text-[13px] font-semibold text-white truncate text-right">{match.homeTeam.name}</span>
             <span className="flex-shrink-0">
               <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4" />
             </span>
           </div>
           <div className="w-12 flex-shrink-0 text-center">
             {hasScore ? (
-              <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-zinc-900 dark:text-zinc-100'}`}>
+              <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
                 {match.homeScore}–{match.awayScore}
               </span>
             ) : (
@@ -203,7 +203,7 @@ export default function MatchCard({
             <span className="flex-shrink-0">
               <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4" />
             </span>
-            <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
+            <span className="text-[13px] font-semibold text-white truncate">{match.awayTeam.name}</span>
           </div>
         </div>
 
