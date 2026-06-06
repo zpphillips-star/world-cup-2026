@@ -46,20 +46,39 @@ export function TeamSheet({ team, onClose }: Props) {
         onClick={onClose}
       />
 
-      {/* Jersey ad — floats in the dark space above the sheet */}
+      {/* Jersey ad — full-width prominent banner above the sheet */}
       {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
       <a
         href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center gap-3 px-4 py-3"
+        className="fixed left-0 right-0 z-50 px-4"
+        style={{ bottom: 'calc(88vh + 8px)' }}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2.5 bg-white/8 border border-white/10 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-lg">
-          <FlagImg teamId={team.id} fallback={team.flag} className="h-5" />
-          <span className="text-xs font-semibold text-white">{team.name}</span>
-          <span className="text-[10px] text-zinc-400 mx-0.5">·</span>
-          <span className="text-[10px] text-[#00d4ff] font-bold">Shop kits →</span>
+        <div
+          className="w-full rounded-2xl overflow-hidden flex items-center gap-3 px-4 py-3"
+          style={{
+            background: 'linear-gradient(135deg, #1a3a1a 0%, #0f2a0f 50%, #1a2a10 100%)',
+            border: '1px solid rgba(74,222,128,0.25)',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+          }}
+        >
+          <FlagImg teamId={team.id} fallback={team.flag} className="h-9 rounded-sm flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-bold text-white leading-tight">
+              {team.name} Official Jersey
+            </p>
+            <p className="text-[11px] text-emerald-400/80 leading-tight mt-0.5">
+              Shop 2026 World Cup kits on Amazon
+            </p>
+          </div>
+          <div className="flex-shrink-0 flex flex-col items-end gap-1">
+            <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">Ad</span>
+            <span className="text-[12px] font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
+              Shop →
+            </span>
+          </div>
         </div>
       </a>
 
