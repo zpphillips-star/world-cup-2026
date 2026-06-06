@@ -49,7 +49,7 @@ export function TeamSheet({ team, onClose }: Props) {
 
       {/* Ad — fixed to very top of screen, only visible when flag is open */}
       <a
-        href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}`}
+        href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}&tag=zpphillips-20`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-center gap-2 px-4 py-2.5 bg-[#0d0d16] border-b border-white/10 active:opacity-75 transition-opacity"
