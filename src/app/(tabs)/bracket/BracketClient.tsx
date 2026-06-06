@@ -160,7 +160,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
                     {/* Column label */}
                     <div className="h-7 flex items-center justify-center mb-0">
                       <span className={`text-[10px] font-bold uppercase tracking-widest
-                        ${isFinalRound ? 'text-yellow-400' : 'text-[#00d4ff]/80'}`}>
+                        ${isFinalRound ? 'text-yellow-400' : 'text-zinc-400'}`}>
                         {round.name}
                       </span>
                     </div>

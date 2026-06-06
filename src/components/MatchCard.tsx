@@ -231,7 +231,7 @@ export default function MatchCard({
 
               <div className="flex items-center gap-2 mb-2">
                 {match.group && (
-                  <span className="text-[11px] font-bold text-[#00d4ff] bg-[#00d4ff]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-zinc-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                     Group {match.group}
                   </span>
                 )}

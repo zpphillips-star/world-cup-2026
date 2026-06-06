@@ -103,7 +103,7 @@ function LiveNowSheet({
                     )}
                   </div>
                   {m.group && (
-                    <span className="text-[10px] font-bold text-[#00d4ff] bg-[#00d4ff]/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full">
                       Group {m.group}
                     </span>
                   )}
