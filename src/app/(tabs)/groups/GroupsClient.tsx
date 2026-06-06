@@ -234,8 +234,8 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
       <div
-        className="px-[5%] py-5 grid grid-cols-2 gap-x-4 gap-y-6"
-        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
+        className="mx-auto py-5 grid grid-cols-2 gap-x-4 gap-y-6"
+        style={{ width: '70%', paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
           <GroupCard
