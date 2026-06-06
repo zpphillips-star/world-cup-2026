@@ -55,24 +55,8 @@ export function TeamSheet({ team, onClose }: Props) {
         className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up bg-[#0f0f18]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        {/* Ad — very top of sheet, before all content */}
-        <a
-          href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 flex items-center gap-3 px-5 py-3 active:opacity-75 transition-opacity rounded-t-3xl"
-          style={{
-            background: `color-mix(in srgb, ${getTeamColor(team.id)} 15%, #0d0d16)`,
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          <FlagImg teamId={team.id} fallback={team.flag} className="h-5 rounded-sm flex-shrink-0 opacity-70" />
-          <span className="text-[12px] font-medium text-zinc-300 flex-1">Buy their gear on Amazon</span>
-          <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest">Ad</span>
-        </a>
-
         {/* Header */}
-        <div className="relative bg-gradient-to-b from-[#0a1628] to-[#0f0f18] px-5 pt-3 pb-5 flex-shrink-0 border-t border-white/5">
+        <div className="relative bg-gradient-to-b from-[#0a1628] to-[#0f0f18] px-5 pt-4 pb-5 flex-shrink-0">
           <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
           <button
             onClick={onClose}
