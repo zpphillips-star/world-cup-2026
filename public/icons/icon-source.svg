@@ -1,33 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- App background -->
+  <defs>
+    <clipPath id="ball-clip">
+      <circle cx="256" cy="256" r="200"/>
+    </clipPath>
+  </defs>
+
+  <!-- Dark background -->
   <rect width="512" height="512" rx="96" fill="#0d0d14"/>
 
-  <!-- Soccer ball — white circle base -->
-  <circle cx="256" cy="200" r="130" fill="white"/>
+  <!-- Soccer ball base -->
+  <circle cx="256" cy="256" r="200" fill="white"/>
 
-  <!-- Soccer ball black patches (classic pentagon pattern) -->
-  <!-- Center pentagon -->
-  <polygon points="256,128 296,157 280,204 232,204 216,157" fill="#111118"/>
-  <!-- Top-left patch -->
-  <polygon points="174,138 216,157 216,116 196,95 163,107" fill="#111118"/>
-  <!-- Top-right patch -->
-  <polygon points="338,138 296,157 296,116 316,95 349,107" fill="#111118"/>
-  <!-- Bottom-left patch -->
-  <polygon points="178,252 216,204 232,204 232,252 200,272" fill="#111118"/>
-  <!-- Bottom-right patch -->
-  <polygon points="334,252 296,204 280,204 280,252 312,272" fill="#111118"/>
-  <!-- Bottom patch -->
-  <polygon points="256,280 232,252 256,238 280,252" fill="#111118"/>
+  <!-- Black patches clipped to ball -->
+  <g clip-path="url(#ball-clip)" fill="#111118">
+    <!-- Center pentagon -->
+    <polygon points="256,175 310,214 290,275 222,275 202,214"/>
+    <!-- Top -->
+    <polygon points="256,56 295,84 290,140 256,175 222,140 217,84"/>
+    <!-- Top-right -->
+    <polygon points="370,140 400,180 385,235 330,240 310,188 340,148"/>
+    <!-- Bottom-right -->
+    <polygon points="400,310 410,360 375,400 330,385 315,330 355,295"/>
+    <!-- Bottom -->
+    <polygon points="256,455 215,430 222,375 290,375 297,430"/>
+    <!-- Bottom-left -->
+    <polygon points="112,310 157,295 197,330 182,385 137,400 100,360"/>
+    <!-- Top-left -->
+    <polygon points="142,140 172,148 202,188 157,240 102,235 87,180"/>
+  </g>
 
-  <!-- "2026" text -->
-  <text x="256" y="400"
-    font-family="Arial Black, Impact, sans-serif"
-    font-weight="900"
-    font-size="120"
-    fill="white"
-    text-anchor="middle"
-    letter-spacing="-4">2026</text>
+  <!-- Ball outline -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#0d0d14" stroke-width="3"/>
 
-  <!-- Thin cyan underline accent -->
-  <rect x="156" y="418" width="200" height="6" rx="3" fill="#00d4ff" opacity="0.7"/>
+  <!-- Cyan glow ring — brand accent -->
+  <circle cx="256" cy="256" r="206" fill="none" stroke="#00d4ff" stroke-width="4" opacity="0.35"/>
 </svg>
