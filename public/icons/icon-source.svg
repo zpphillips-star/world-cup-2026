@@ -1,37 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Dark navy background with rounded corners -->
-  <rect width="512" height="512" rx="100" fill="#001830"/>
-  
-  <!-- "2" numeral - large bold -->
-  <text x="20" y="360" 
-    font-family="Arial Black, Impact, sans-serif" 
-    font-weight="900" 
-    font-size="380" 
-    fill="white"
-    letter-spacing="-20">26</text>
-  
-  <!-- Trophy silhouette overlaid in dark navy to cut through the white numbers -->
-  <!-- Trophy cup body -->
-  <ellipse cx="256" cy="175" rx="75" ry="55" fill="#001830"/>
-  <rect x="181" y="170" width="150" height="100" fill="#001830"/>
-  <!-- Trophy handles -->
-  <path d="M181 195 Q140 200 145 240 Q150 270 185 270" stroke="#001830" stroke-width="22" fill="none"/>
-  <path d="M331 195 Q372 200 367 240 Q362 270 327 270" stroke="#001830" stroke-width="22" fill="none"/>
-  <!-- Trophy stem -->
-  <rect x="237" y="270" width="38" height="60" fill="#001830"/>
-  <!-- Trophy base -->
-  <rect x="200" y="325" width="112" height="20" rx="4" fill="#001830"/>
-  <rect x="185" y="342" width="142" height="22" rx="4" fill="#001830"/>
-  <!-- Trophy top dome -->
-  <ellipse cx="256" cy="170" rx="76" ry="50" fill="#001830"/>
-  <path d="M180 190 Q180 100 256 95 Q332 100 332 190" fill="#001830"/>
-  
-  <!-- FIFA text at bottom of trophy -->
-  <text x="256" y="358" 
-    font-family="Arial Black, sans-serif" 
-    font-weight="900" 
-    font-size="32" 
+  <!-- App background -->
+  <rect width="512" height="512" rx="96" fill="#0d0d14"/>
+
+  <!-- Soccer ball — white circle base -->
+  <circle cx="256" cy="200" r="130" fill="white"/>
+
+  <!-- Soccer ball black patches (classic pentagon pattern) -->
+  <!-- Center pentagon -->
+  <polygon points="256,128 296,157 280,204 232,204 216,157" fill="#111118"/>
+  <!-- Top-left patch -->
+  <polygon points="174,138 216,157 216,116 196,95 163,107" fill="#111118"/>
+  <!-- Top-right patch -->
+  <polygon points="338,138 296,157 296,116 316,95 349,107" fill="#111118"/>
+  <!-- Bottom-left patch -->
+  <polygon points="178,252 216,204 232,204 232,252 200,272" fill="#111118"/>
+  <!-- Bottom-right patch -->
+  <polygon points="334,252 296,204 280,204 280,252 312,272" fill="#111118"/>
+  <!-- Bottom patch -->
+  <polygon points="256,280 232,252 256,238 280,252" fill="#111118"/>
+
+  <!-- "2026" text -->
+  <text x="256" y="400"
+    font-family="Arial Black, Impact, sans-serif"
+    font-weight="900"
+    font-size="120"
     fill="white"
     text-anchor="middle"
-    letter-spacing="6">FIFA</text>
+    letter-spacing="-4">2026</text>
+
+  <!-- Thin cyan underline accent -->
+  <rect x="156" y="418" width="200" height="6" rx="3" fill="#00d4ff" opacity="0.7"/>
 </svg>
