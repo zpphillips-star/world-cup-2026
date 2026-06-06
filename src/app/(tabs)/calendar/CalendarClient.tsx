@@ -177,7 +177,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
               <h2 className="text-xl font-bold text-white pr-10">
                 {selectedKey ? formatDayHeading(selectedKey) : ''}
               </h2>
-              <p className="text-sm text-[#00d4ff] mt-0.5 font-medium">
+              <p className="text-sm text-zinc-400 mt-0.5 font-medium">
                 {selectedMatches.length} {selectedMatches.length === 1 ? 'Match' : 'Matches'}
               </p>
             </div>
@@ -193,7 +193,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                   <div key={m.id} className="bg-[#0a0a0f] rounded-xl p-4 border border-gray-800">
                     {/* Header row: group label + status badge */}
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-[11px] font-bold text-[#00d4ff] uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
                         {m.group ? `Group ${m.group}` : m.round}
                       </span>
                       {isLive && (
