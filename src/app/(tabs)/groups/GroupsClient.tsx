@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import type { Standing, Group, Team } from '@/lib/types'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
+import PageHeader from '@/components/PageHeader'
 
 // -- Standings table --------------------------------------------------------
 
@@ -257,11 +258,8 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
 
   return (
-    <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-      <div className="px-5 pt-5 pb-3">
-        <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · 12 Groups</p>
-      </div>
+    <div className="min-h-[100dvh] bg-[#0a0a0f] flex flex-col">
+      <PageHeader subtitle="FIFA World Cup 2026 · 12 Groups" />
       <div
         className="grid grid-cols-2 gap-4 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}

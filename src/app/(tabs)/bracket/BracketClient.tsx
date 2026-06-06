@@ -1,6 +1,7 @@
 'use client'
 
 import { FlagImg } from '@/components/FlagImg'
+import PageHeader from '@/components/PageHeader'
 
 import { useState } from 'react'
 import type { BracketRound, BracketSlot } from '@/lib/types'
@@ -107,10 +108,10 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Sticky header with round toggles */}
+    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+      <PageHeader subtitle="Knockout Bracket" />
+      {/* Sticky round toggles */}
       <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-4 pt-3 pb-3">
-        <h1 className="text-lg font-bold text-white mb-2.5">Knockout Bracket</h1>
         <div className="flex gap-2">
           {ROUND_ORDER.map(name => {
             const exists = mainRounds.find(r => r.name === name)
