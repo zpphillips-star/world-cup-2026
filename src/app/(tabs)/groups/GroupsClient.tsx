@@ -234,16 +234,17 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
       <div
-        className="py-5 grid grid-cols-2 gap-x-4 gap-y-6 px-4"
+        className="py-5 flex flex-wrap justify-center gap-4 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
-          <GroupCard
-            key={groupId}
-            groupId={groupId}
-            standings={groupStandings}
-            onOpen={() => setActiveGroup(groupId)}
-          />
+          <div key={groupId} style={{ width: 'calc(50% - 10px)' }}>
+            <GroupCard
+              groupId={groupId}
+              standings={groupStandings}
+              onOpen={() => setActiveGroup(groupId)}
+            />
+          </div>
         ))}
       </div>
 
