@@ -16,7 +16,7 @@ export default function SchedulePage() {
   const standingsMap: Record<string, Standing[]> = dataProvider.getStandings()
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="min-h-screen bg-[#0a0a0f] pt-6" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1.5rem)' }}>
       <ScheduleClient matches={matches} statsMap={statsMap} standingsMap={standingsMap} />
     </div>
   )
