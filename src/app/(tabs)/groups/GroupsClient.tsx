@@ -67,7 +67,7 @@ function GroupCard({
   return (
     <button
       onClick={onOpen}
-      className="relative flex flex-col text-left w-full active:scale-[0.97] transition-transform"
+      className="relative flex flex-col text-left active:scale-[0.97] transition-transform"
     >
       {/* Group letter header */}
       <div className="flex items-center gap-2 mb-2 px-1">
@@ -75,15 +75,15 @@ function GroupCard({
         <span className="text-[22px] font-black text-white leading-none">{groupId}</span>
       </div>
 
-      {/* Team list */}
-      <div className="w-full bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
+      {/* Team list — content width only */}
+      <div className="bg-[#13131a] rounded-xl overflow-hidden border border-zinc-800/60">
         {standings.map((s, i) => (
           <div
             key={s.team.id}
             className={`flex items-center gap-2.5 px-3 py-2 ${i < standings.length - 1 ? 'border-b border-zinc-800/50' : ''}`}
           >
             <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3.5 flex-shrink-0" />
-            <span className="text-[12px] font-medium text-zinc-200 truncate leading-tight">
+            <span className="text-[12px] font-medium text-zinc-200 leading-tight whitespace-nowrap">
               {s.team.name}
             </span>
           </div>
