@@ -294,10 +294,11 @@ export default function ScheduleClient({
         const isToday = isoDate === today
         return (
           <div key={isoDate}>
-            <div className="px-4 pt-5 pb-2 border-b-2 border-zinc-200 dark:border-zinc-700">
-              <span className={`text-sm tracking-wide ${isToday ? 'font-bold text-zinc-700 dark:text-zinc-200' : 'font-normal text-zinc-500 dark:text-zinc-400'}`}>
+            <div className="px-4 pt-6 pb-1.5">
+              <span className={`text-[11px] uppercase tracking-widest font-bold ${isToday ? 'text-[#00d4ff]' : 'text-zinc-500'}`}>
                 {formatDateHeader(isoDate, userTimezone)}
               </span>
+              <div className="mt-1.5 h-px bg-zinc-800/60" />
             </div>
             <div>
               {dayMatches.map((match) => {

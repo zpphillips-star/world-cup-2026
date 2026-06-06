@@ -164,10 +164,10 @@ export default function MatchCard({
     <>
       {/* Match row */}
       <div
-        className="flex items-center px-4 py-2.5 border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors cursor-pointer select-none"
+        className="flex items-center px-4 py-2 border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors cursor-pointer select-none"
         onClick={() => setOpen(true)}
       >
-        <div className="w-[72px] flex-shrink-0 flex flex-col items-start justify-center">
+        <div className="w-[80px] flex-shrink-0 flex flex-col items-start justify-center">
           {isLive ? (
             <>
               <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase">LIVE</span>
@@ -176,34 +176,33 @@ export default function MatchCard({
           ) : isFt ? (
             <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">FINAL</span>
           ) : (
-            <>
-              <span className="text-[13px] font-medium text-zinc-700 dark:text-zinc-200 leading-tight">{time}</span>
-              {tzAbbr && <span className="text-[10px] text-zinc-400 dark:text-zinc-500 leading-tight">{tzAbbr}</span>}
-            </>
+            <span className="text-[12px] font-medium text-zinc-600 dark:text-zinc-300 leading-snug whitespace-nowrap">
+              {time} <span className="text-[10px] text-zinc-500">{tzAbbr}</span>
+            </span>
           )}
         </div>
 
         <div className="flex-1 flex items-center min-w-0">
           <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
-            <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
+            <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100 truncate text-right">{match.homeTeam.name}</span>
             <span className="flex-shrink-0">
-              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5" />
+              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4" />
             </span>
           </div>
-          <div className="w-14 flex-shrink-0 text-center">
+          <div className="w-12 flex-shrink-0 text-center">
             {hasScore ? (
-              <span className={`text-[15px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-zinc-900 dark:text-zinc-100'}`}>
-                {match.homeScore} – {match.awayScore}
+              <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-zinc-900 dark:text-zinc-100'}`}>
+                {match.homeScore}–{match.awayScore}
               </span>
             ) : (
-              <span className="text-[13px] font-medium text-zinc-400">vs</span>
+              <span className="text-[12px] font-medium text-zinc-400">vs</span>
             )}
           </div>
           <div className="flex-1 flex items-center gap-1.5 min-w-0">
             <span className="flex-shrink-0">
-              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5" />
+              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4" />
             </span>
-            <span className="text-[15px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
+            <span className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100 truncate">{match.awayTeam.name}</span>
           </div>
         </div>
 
