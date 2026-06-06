@@ -289,6 +289,27 @@ export default function MatchCard({
               )}
             </div>
 
+            {/* Sticky ad strip — top of sheet, always visible */}
+            <a
+              href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-3 px-5 py-2.5 active:opacity-75 transition-opacity border-b border-white/5"
+              style={{
+                background: `color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 12%, #111118)`,
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4 rounded-sm opacity-80" />
+                <span className="text-zinc-600 text-[9px] mx-0.5">vs</span>
+                <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4 rounded-sm opacity-80" />
+              </div>
+              <span className="text-[12px] font-semibold text-white flex-1">Buy their gear</span>
+              <span className="text-[10px] text-zinc-500">Shop Amazon</span>
+              <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest ml-1">Ad</span>
+            </a>
+
             {/* Scrollable body */}
             <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
 
@@ -336,35 +357,6 @@ export default function MatchCard({
 
             {/* Sticky ad footer — team-colored, whole card is tappable */}
             {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
-            <a
-              href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 block mx-4 mb-4 rounded-2xl overflow-hidden active:opacity-75 transition-opacity"
-              style={{
-                background: `color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 18%, #1a1a24)`,
-                border: `1px solid color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 40%, transparent)`,
-              }}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-3 px-4 py-3.5">
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-7 rounded-sm" />
-                  <span className="text-zinc-600 text-[10px] mx-0.5">vs</span>
-                  <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-7 rounded-sm" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-bold text-white leading-tight truncate">
-                    Buy their gear
-                  </p>
-                  <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">
-                    Shop on Amazon
-                  </p>
-                </div>
-                <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest flex-shrink-0">Ad</span>
-              </div>
-            </a>
-
           </div>
         </>
       )}

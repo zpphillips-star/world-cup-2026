@@ -85,6 +85,23 @@ export function TeamSheet({ team, onClose }: Props) {
           )}
         </div>
 
+        {/* Sticky ad strip — just below header, always visible */}
+        <a
+          href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 flex items-center gap-3 px-5 py-2.5 active:opacity-75 transition-opacity border-b border-white/5"
+          style={{
+            background: `color-mix(in srgb, ${getTeamColor(team.id)} 12%, #111118)`,
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <FlagImg teamId={team.id} fallback={team.flag} className="h-5 rounded-sm flex-shrink-0 opacity-80" />
+          <span className="text-[12px] font-semibold text-white flex-1">Buy their gear</span>
+          <span className="text-[10px] text-zinc-500">Shop Amazon</span>
+          <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest ml-1">Ad</span>
+        </a>
+
         {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-4 pt-4 pb-6 space-y-5">
 
@@ -171,34 +188,6 @@ export function TeamSheet({ team, onClose }: Props) {
             </div>
           )}
         </div>
-
-        {/* Sticky ad footer — team-colored, whole card is tappable */}
-        {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
-        <a
-          href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 block mx-4 mb-4 rounded-2xl overflow-hidden active:opacity-75 transition-opacity"
-          style={{
-            background: `color-mix(in srgb, ${getTeamColor(team.id)} 18%, #1a1a24)`,
-            border: `1px solid color-mix(in srgb, ${getTeamColor(team.id)} 40%, transparent)`,
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          <div className="flex items-center gap-3 px-4 py-3.5">
-            <FlagImg teamId={team.id} fallback={team.flag} className="h-8 rounded-sm flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-bold text-white leading-tight">
-                Buy their gear
-              </p>
-              <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">
-                Shop on Amazon
-              </p>
-            </div>
-            <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest flex-shrink-0">Ad</span>
-          </div>
-        </a>
-
       </div>
     </>
   )
