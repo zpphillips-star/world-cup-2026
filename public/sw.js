@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wc2026-v2';
+const CACHE_NAME = 'wc2026-v3';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icons/icon-192.png',
@@ -39,3 +39,4 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
