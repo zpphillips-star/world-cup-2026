@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Match, TeamStats, Standing, Team } from '@/lib/types'
 import { TeamSheet } from '@/components/TeamSheet'
+import { getTeamColor } from '@/lib/teamColors'
 
 function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
   try {
@@ -333,17 +334,16 @@ export default function MatchCard({
               )}
             </div>
 
-            {/* Sticky ad footer — always visible */}
+            {/* Sticky ad footer — team-colored, whole card is tappable */}
             {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
             <a
               href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-shrink-0 block mx-4 mb-4 rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
+              className="flex-shrink-0 block mx-4 mb-4 rounded-2xl overflow-hidden active:opacity-75 transition-opacity"
               style={{
-                background: '#1a1a24',
-                border: '1px solid rgba(255,107,0,0.3)',
-                boxShadow: '0 0 20px rgba(255,107,0,0.08)',
+                background: `color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 18%, #1a1a24)`,
+                border: `1px solid color-mix(in srgb, ${getTeamColor(match.homeTeam.id)} 40%, transparent)`,
               }}
               onClick={e => e.stopPropagation()}
             >
@@ -361,12 +361,7 @@ export default function MatchCard({
                     2026 World Cup kits on Amazon
                   </p>
                 </div>
-                <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
-                  <span className="text-[9px] font-semibold text-zinc-600 uppercase tracking-widest">Ad</span>
-                  <span className="text-[11px] font-bold text-[#ff6b00] bg-[#ff6b00]/10 border border-[#ff6b00]/30 px-2.5 py-1 rounded-lg">
-                    Shop →
-                  </span>
-                </div>
+                <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest flex-shrink-0">Ad</span>
               </div>
             </a>
 
