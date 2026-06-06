@@ -16,11 +16,10 @@ export default function SchedulePage() {
   const standingsMap: Record<string, Standing[]> = dataProvider.getStandings()
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
-      <div className="sticky top-0 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-sm z-20 px-4 border-b border-zinc-200 dark:border-zinc-800"
-        style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))', paddingBottom: '0.75rem' }}>
-        <h1 className="text-xl font-bold">Schedule</h1>
-        <p className="text-xs text-gray-400 mt-0.5">2026 FIFA World Cup · June–July 2026</p>
+    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Schedule</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · June–July 2026</p>
       </div>
       <ScheduleClient matches={matches} statsMap={statsMap} standingsMap={standingsMap} />
     </div>
