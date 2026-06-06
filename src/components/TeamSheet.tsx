@@ -47,17 +47,17 @@ export function TeamSheet({ team, onClose }: Props) {
         onClick={onClose}
       />
 
-      {/* Ad — fixed to very top of screen, only visible when flag is open */}
+      {/* Shop strip — fixed to very top of screen, only visible when flag is open */}
       <a
         href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}&tag=zpphillips-20`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-center gap-2 px-4 py-2.5 bg-[#0d0d16] border-b border-white/10 active:opacity-75 transition-opacity"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.625rem)' }}
+        className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-center gap-2 px-4 bg-gradient-to-r from-cyan-950/80 via-[#0d0d16] to-cyan-950/80 border-b border-cyan-500/20 active:opacity-75 transition-opacity"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.5rem)', paddingBottom: '0.5rem' }}
       >
-        <FlagImg teamId={team.id} fallback={team.flag} className="h-4" />
-        <span className="text-[12px] font-medium text-zinc-200">Buy their gear on Amazon</span>
-        <span className="text-[9px] text-zinc-600 uppercase tracking-widest ml-1">Ad</span>
+        <FlagImg teamId={team.id} fallback={team.flag} className="h-4 w-auto" />
+        <span className="text-[12px] font-semibold text-cyan-300">Get {team.name}&apos;s 2026 jersey</span>
+        <span className="text-cyan-400 text-[11px]">→</span>
       </a>
 
       {/* Sheet */}
