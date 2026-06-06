@@ -70,39 +70,39 @@ function GroupCard({
       className="w-full text-left active:scale-[0.97] transition-transform"
     >
       <div
-        className="rounded-2xl overflow-hidden"
+        className="rounded-2xl overflow-hidden relative"
         style={{
-          background: 'linear-gradient(145deg, #1c1c26 0%, #16161e 100%)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+          background: 'linear-gradient(160deg, #1a1a24 0%, #111118 100%)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.6)',
         }}
       >
-        {/* Cyan accent bar */}
-        <div
-          className="h-[2px]"
-          style={{ background: 'linear-gradient(90deg, #00d4ff 0%, #0066ff 100%)' }}
-        />
+        {/* Watermark group letter */}
+        <span
+          className="absolute right-2 bottom-[-4px] font-black text-[56px] leading-none select-none pointer-events-none"
+          style={{ color: 'rgba(255,255,255,0.04)' }}
+        >
+          {groupId}
+        </span>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-3.5 pt-2.5 pb-2">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[9px] font-bold uppercase tracking-[0.18em]" style={{ color: 'rgba(0,212,255,0.5)' }}>
-              Group
-            </span>
-            <span className="text-[20px] font-black text-white leading-none">{groupId}</span>
+        <div className="px-3 pt-3 pb-1.5 flex items-baseline justify-between">
+          <div className="flex items-baseline gap-1">
+            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Group</span>
+            <span className="text-[17px] font-bold text-white leading-none ml-1">{groupId}</span>
           </div>
-          <span className="text-zinc-600 text-sm">›</span>
+          <span className="text-zinc-700 text-xs">›</span>
         </div>
 
-        {/* Subtle divider */}
-        <div className="mx-3.5 h-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
+        {/* Divider */}
+        <div className="mx-3 h-px bg-white/[0.04] mb-2" />
 
         {/* Teams */}
-        <div className="px-3.5 py-2.5 space-y-[9px]">
+        <div className="px-3 pb-3 space-y-2">
           {standings.map((s) => (
             <div key={s.team.id} className="flex items-center gap-2">
-              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-[15px] flex-shrink-0" />
-              <span className="text-[12.5px] font-medium text-zinc-100 leading-tight truncate">
+              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3.5 flex-shrink-0 rounded-[1px]" />
+              <span className="text-[12px] font-medium text-zinc-200 leading-tight truncate">
                 {s.team.name}
               </span>
             </div>

@@ -3,7 +3,7 @@
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { Match, Team } from '@/lib/types'
 
 function getDaysInMonth(year: number, month: number) {
@@ -14,18 +14,29 @@ function getFirstDayOfWeek(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
 
-function formatDayHeading(year: number, month: number, day: number): string {
-  const d = new Date(year, month, day)
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+// Returns "YYYY-MM-DD" in the given timezone
+function getLocalDateKey(kickoff: string, timezone: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
 }
 
-function formatMatchTime(kickoff: string): string {
+// Converts a DayKey {year, month(0-indexed), day} → "YYYY-MM-DD"
+function dayKeyToIso(year: number, month: number, day: number): string {
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+function formatDayHeading(isoDate: string): string {
+  const [y, mo, d] = isoDate.split('-').map(Number)
+  const date = new Date(y, mo - 1, d, 12, 0, 0)
+  return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+}
+
+function formatMatchTime(kickoff: string, timezone: string): string {
   try {
-    const d = new Date(kickoff)
-    return d.toLocaleTimeString('en-US', {
+    return new Date(kickoff).toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       timeZoneName: 'short',
+      timeZone: timezone,
     })
   } catch {
     return '--:--'
@@ -37,15 +48,22 @@ interface DayKey { year: number; month: number; day: number }
 export default function CalendarClient({ matches }: { matches: Match[] }) {
   const [selectedDay, setSelectedDay] = useState<DayKey | null>(null)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
+  const [userTimezone, setUserTimezone] = useState('UTC')
 
-  // Build map: "year-month-day" (UTC) -> Match[]
-  const matchDayMap: Record<string, Match[]> = {}
-  for (const m of matches) {
-    const d = new Date(m.kickoff)
-    const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`
-    if (!matchDayMap[key]) matchDayMap[key] = []
-    matchDayMap[key].push(m)
-  }
+  useEffect(() => {
+    setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  }, [])
+
+  // Build map: "YYYY-MM-DD" (local tz) -> Match[]
+  const matchDayMap = useMemo(() => {
+    const map: Record<string, Match[]> = {}
+    for (const m of matches) {
+      const key = getLocalDateKey(m.kickoff, userTimezone)
+      if (!map[key]) map[key] = []
+      map[key].push(m)
+    }
+    return map
+  }, [matches, userTimezone])
 
   const months = [
     { year: 2026, month: 5, name: 'June 2026' },
@@ -53,7 +71,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   ]
 
   const selectedKey = selectedDay
-    ? `${selectedDay.year}-${selectedDay.month}-${selectedDay.day}`
+    ? dayKeyToIso(selectedDay.year, selectedDay.month, selectedDay.day)
     : null
   const selectedMatches = selectedKey
     ? [...(matchDayMap[selectedKey] ?? [])].sort(
@@ -83,8 +101,8 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                 ))}
                 {Array.from({ length: daysInMonth }, (_, i) => {
                   const day = i + 1
-                  const key = `${year}-${month}-${day}`
-                  const dayMatches = matchDayMap[key] ?? []
+                  const isoKey = dayKeyToIso(year, month, day)
+                  const dayMatches = matchDayMap[isoKey] ?? []
                   const statuses = dayMatches.map(m => m.status)
                   const hasLive = statuses.includes('live')
                   const hasFt = statuses.includes('ft')
@@ -151,7 +169,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
               </button>
 
               <h2 className="text-xl font-bold text-white pr-10">
-                {formatDayHeading(selectedDay.year, selectedDay.month, selectedDay.day)}
+                {selectedKey ? formatDayHeading(selectedKey) : ''}
               </h2>
               <p className="text-sm text-[#00d4ff] mt-0.5 font-medium">
                 {selectedMatches.length} {selectedMatches.length === 1 ? 'Match' : 'Matches'}
@@ -183,7 +201,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                         </span>
                       )}
                       {m.status === 'upcoming' && (
-                        <span className="text-[11px] text-gray-400">{formatMatchTime(m.kickoff)}</span>
+                        <span className="text-[11px] text-gray-400">{formatMatchTime(m.kickoff, userTimezone)}</span>
                       )}
                     </div>
 
