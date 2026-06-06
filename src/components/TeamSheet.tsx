@@ -47,40 +47,7 @@ export function TeamSheet({ team, onClose }: Props) {
       />
 
       {/* Jersey ad — full-width prominent banner above the sheet */}
-      {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
-      <a
-        href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed left-0 right-0 z-50 px-4"
-        style={{ bottom: 'calc(88vh + 8px)' }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div
-          className="w-full rounded-2xl overflow-hidden flex items-center gap-3 px-4 py-3"
-          style={{
-            background: 'linear-gradient(135deg, #1a3a1a 0%, #0f2a0f 50%, #1a2a10 100%)',
-            border: '1px solid rgba(74,222,128,0.25)',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
-          }}
-        >
-          <FlagImg teamId={team.id} fallback={team.flag} className="h-9 rounded-sm flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-bold text-white leading-tight">
-              {team.name} Official Jersey
-            </p>
-            <p className="text-[11px] text-emerald-400/80 leading-tight mt-0.5">
-              Shop 2026 World Cup kits on Amazon
-            </p>
-          </div>
-          <div className="flex-shrink-0 flex flex-col items-end gap-1">
-            <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">Ad</span>
-            <span className="text-[12px] font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-              Shop →
-            </span>
-          </div>
-        </div>
-      </a>
+      {/* Jersey ad — removed from fixed position, now inside sheet as sticky footer */}
 
       {/* Sheet */}
       <div
@@ -203,6 +170,39 @@ export function TeamSheet({ team, onClose }: Props) {
             </div>
           )}
         </div>
+
+        {/* Sticky ad footer — always visible at bottom of sheet */}
+        {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
+        <a
+          href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' soccer jersey 2026')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 block mx-3 mb-3 rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
+          style={{
+            background: 'linear-gradient(100deg, #ff6b00 0%, #ff8c00 100%)',
+            boxShadow: '0 2px 16px rgba(255,107,0,0.35)',
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex items-center gap-3 px-4 py-3">
+            <span className="text-2xl flex-shrink-0">👕</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-black text-white leading-tight">
+                {team.name} Official Jersey
+              </p>
+              <p className="text-[11px] text-orange-100/80 leading-tight mt-0.5">
+                Shop 2026 World Cup kits on Amazon
+              </p>
+            </div>
+            <div className="flex-shrink-0 flex flex-col items-end gap-1">
+              <span className="text-[9px] font-semibold text-orange-200/60 uppercase tracking-widest">Ad</span>
+              <span className="text-[12px] font-bold text-white bg-black/20 px-3 py-1 rounded-full">
+                Shop →
+              </span>
+            </div>
+          </div>
+        </a>
+
       </div>
     </>
   )

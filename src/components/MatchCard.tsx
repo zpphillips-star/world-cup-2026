@@ -215,43 +215,6 @@ export default function MatchCard({
 
           {/* Jersey ad banner — full-width prominent, anchored just above the sheet */}
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
-          <a
-            href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="fixed left-0 right-0 z-50 px-4"
-            style={{ bottom: 'calc(88vh + 8px)' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div
-              className="w-full rounded-2xl overflow-hidden flex items-center gap-3 px-4 py-3"
-              style={{
-                background: 'linear-gradient(135deg, #1a3a1a 0%, #0f2a0f 50%, #1a2a10 100%)',
-                border: '1px solid rgba(74,222,128,0.25)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
-              }}
-            >
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-8 rounded-sm" />
-                <span className="text-zinc-600 text-xs">vs</span>
-                <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-8 rounded-sm" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-white leading-tight truncate">
-                  {match.homeTeam.name} &amp; {match.awayTeam.name}
-                </p>
-                <p className="text-[11px] text-emerald-400/80 leading-tight mt-0.5">
-                  Shop 2026 World Cup kits on Amazon
-                </p>
-              </div>
-              <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest">Ad</span>
-                <span className="text-[12px] font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-                  Shop →
-                </span>
-              </div>
-            </div>
-          </a>
 
           <div
             className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
@@ -369,6 +332,43 @@ export default function MatchCard({
                 />
               )}
             </div>
+
+            {/* Sticky ad footer — always visible */}
+            {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
+            <a
+              href={`https://www.amazon.com/s?k=${encodeURIComponent(match.homeTeam.name + ' ' + match.awayTeam.name + ' soccer jersey 2026')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 block mx-3 mb-3 rounded-2xl overflow-hidden active:opacity-80 transition-opacity"
+              style={{
+                background: 'linear-gradient(100deg, #ff6b00 0%, #ff8c00 100%)',
+                boxShadow: '0 2px 16px rgba(255,107,0,0.35)',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-7 rounded-sm" />
+                  <span className="text-white/40 text-xs mx-0.5">vs</span>
+                  <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-7 rounded-sm" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-black text-white leading-tight truncate">
+                    Shop Official Jerseys
+                  </p>
+                  <p className="text-[11px] text-orange-100/80 leading-tight mt-0.5">
+                    2026 World Cup kits on Amazon
+                  </p>
+                </div>
+                <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                  <span className="text-[9px] font-semibold text-orange-200/60 uppercase tracking-widest">Ad</span>
+                  <span className="text-[12px] font-bold text-white bg-black/20 px-3 py-1 rounded-full">
+                    Shop →
+                  </span>
+                </div>
+              </div>
+            </a>
+
           </div>
         </>
       )}
