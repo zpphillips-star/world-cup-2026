@@ -229,7 +229,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                         ) : (
                           <>
                             <span className="text-lg font-medium text-gray-500">vs</span>
-                            <span className="text-[11px] text-gray-500 mt-0.5">{formatMatchTime(m.kickoff)}</span>
+                            <span className="text-[11px] text-gray-500 mt-0.5">{formatMatchTime(m.kickoff, userTimezone)}</span>
                           </>
                         )}
                       </div>
