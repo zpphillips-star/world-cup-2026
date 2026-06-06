@@ -259,7 +259,7 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div
-        className="grid grid-cols-2 gap-4 px-4"
+        className="grid grid-cols-2 gap-4 px-4 pt-5"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
