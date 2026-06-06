@@ -355,10 +355,10 @@ export default function MatchCard({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-bold text-white leading-tight truncate">
-                    Shop Official Jerseys
+                    Buy their gear
                   </p>
                   <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">
-                    2026 World Cup kits on Amazon
+                    Shop on Amazon
                   </p>
                 </div>
                 <span className="text-[9px] font-semibold text-zinc-500 uppercase tracking-widest flex-shrink-0">Ad</span>
