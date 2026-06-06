@@ -293,17 +293,22 @@ export default function ScheduleClient({
       {byDate.map(([isoDate, dayMatches], idx) => {
         const isToday = isoDate === today
         return (
-          <div key={isoDate} className={idx > 0 ? 'mt-6' : ''}>
-            <div className="px-4 pt-2 pb-2">
-              <div className="flex items-center gap-3">
-                <span className={`text-[11px] uppercase tracking-widest font-bold ${isToday ? 'text-[#00d4ff]' : 'text-zinc-400'}`}>
-                  {formatDateHeader(isoDate, userTimezone)}
-                </span>
-                {isToday && (
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#00d4ff] bg-[#00d4ff]/10 px-2 py-0.5 rounded-full">Today</span>
-                )}
-              </div>
-              <div className="mt-2 h-px bg-zinc-800" />
+          <div key={isoDate}>
+            {/* Day separator — spacer between days */}
+            {idx > 0 && <div className="h-5" />}
+
+            {/* Sticky date header */}
+            <div
+              className="sticky top-0 z-10 px-4 py-2.5 flex items-center gap-3"
+              style={{ background: 'rgba(10,10,15,0.96)', backdropFilter: 'blur(8px)' }}
+            >
+              <span className={`text-[12px] uppercase tracking-widest font-bold ${isToday ? 'text-[#00d4ff]' : 'text-white'}`}>
+                {formatDateHeader(isoDate, userTimezone)}
+              </span>
+              {isToday && (
+                <span className="text-[9px] font-bold uppercase tracking-wider text-[#00d4ff] bg-[#00d4ff]/10 px-2 py-0.5 rounded-full">Today</span>
+              )}
+              <div className="flex-1 h-px bg-zinc-800" />
             </div>
             <div>
               {dayMatches.map((match) => {
