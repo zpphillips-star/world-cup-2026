@@ -140,6 +140,8 @@ export default function MatchCard({
   groupStandings,
   clock,
   scorers,
+  defaultOpen = false,
+  onCloseExternal,
 }: {
   match: Match
   userTimezone?: string
@@ -148,8 +150,10 @@ export default function MatchCard({
   groupStandings?: Standing[]
   clock?: string
   scorers?: ScoringEvent[]
+  defaultOpen?: boolean
+  onCloseExternal?: () => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
@@ -213,7 +217,7 @@ export default function MatchCard({
       {/* Slide-up sheet */}
       {open && (
         <>
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={() => { setOpen(false); onCloseExternal?.() }} />
 
           {/* Jersey ad banner — lives in the dark space above the sheet */}
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
@@ -242,7 +246,7 @@ export default function MatchCard({
             <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0">
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => { setOpen(false); onCloseExternal?.() }}
                 className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
               >✕</button>
 
