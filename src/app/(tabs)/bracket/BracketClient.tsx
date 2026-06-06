@@ -100,7 +100,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }}>
+    <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }}>
       <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Knockout Bracket</h1>
         <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 · Elimination Rounds</p>
