@@ -69,14 +69,14 @@ function GroupCard({
       onClick={onOpen}
       className="relative flex flex-col items-start p-4 rounded-2xl bg-[#1a1a24] active:scale-95 transition-transform overflow-hidden text-left w-full h-full shadow-lg shadow-black/40"
     >
-      <div className="w-full mb-3 text-left">
+      <div className="w-full mb-2.5 text-left">
         <span className="text-sm font-bold tracking-wide text-white leading-none">
           Group {groupId}
         </span>
         <div className="mt-1.5 h-[2px] w-full bg-white/30 rounded-full" />
       </div>
 
-      <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full mb-4 flex-1">
+      <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 w-full flex-1">
         {standings.map((s) => (
           <div key={s.team.id} className="flex items-center gap-2 min-w-0">
             <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-6" />
@@ -85,11 +85,6 @@ function GroupCard({
             </span>
           </div>
         ))}
-      </div>
-
-      <div className="flex items-center gap-1 mt-auto">
-        <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-        <span className="text-[10px] text-green-400">Top 2 advance</span>
       </div>
     </button>
   )
