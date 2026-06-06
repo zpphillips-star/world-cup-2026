@@ -16,7 +16,7 @@ export default function SchedulePage() {
   const standingsMap: Record<string, Standing[]> = dataProvider.getStandings()
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="h-full overflow-y-auto bg-[#0a0a0f]">
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Schedule</h1>
         <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · June–July 2026</p>

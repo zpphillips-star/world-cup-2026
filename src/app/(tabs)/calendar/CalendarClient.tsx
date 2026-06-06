@@ -80,7 +80,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
     : []
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="h-full overflow-y-auto bg-[#0a0a0f]">
 
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Calendar</h1>

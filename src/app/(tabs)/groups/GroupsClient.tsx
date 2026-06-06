@@ -257,7 +257,7 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
 
   return (
-    <div className="min-h-[100dvh] bg-[#0a0a0f]">
+    <div className="h-full overflow-y-auto bg-[#0a0a0f]">
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
         <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · 12 Groups</p>
