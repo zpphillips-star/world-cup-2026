@@ -107,10 +107,11 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       {/* Sticky header with round toggles */}
-      <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-4 pt-3 pb-3">
-        <h1 className="text-lg font-bold text-white mb-2.5">Knockout Bracket</h1>
+      <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Knockout Bracket</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 · Elimination Rounds</p>
         <div className="flex gap-2">
           {ROUND_ORDER.map(name => {
             const exists = mainRounds.find(r => r.name === name)
