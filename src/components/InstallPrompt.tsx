@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 type Platform = 'ios' | 'android' | 'other'
-type State = 'hidden' | 'ios-sheet' | 'android-banner' | 'debug'
+type State = 'hidden' | 'ios-sheet' | 'ios-safari-redirect' | 'android-banner' | 'debug'
 
 const STORAGE_KEY = 'wc26-install-ts'
 const COOLDOWN_MS = 24 * 60 * 60 * 1000
@@ -82,9 +82,17 @@ export default function InstallPrompt() {
       return () => window.removeEventListener('beforeinstallprompt', handler as EventListener)
     }
 
-    if (platform === 'ios' && isSafari) {
-      const t = setTimeout(() => setState('ios-sheet'), 800)
-      return () => clearTimeout(t)
+    if (platform === 'ios') {
+      const isSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|gsa/i.test(navigator.userAgent)
+      if (isSafari) {
+        // Safari: show step-by-step walkthrough
+        const t = setTimeout(() => setState('ios-sheet'), 800)
+        return () => clearTimeout(t)
+      } else {
+        // Chrome/Firefox on iOS can't install PWAs — prompt to switch to Safari
+        const t = setTimeout(() => setState('ios-safari-redirect'), 800)
+        return () => clearTimeout(t)
+      }
     }
   }, [])
 
@@ -109,6 +117,41 @@ export default function InstallPrompt() {
   ]
 
   if (state === 'hidden') return null
+
+  // ── iOS: not in Safari — redirect to Safari ────────────────────────────────
+  if (state === 'ios-safari-redirect') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-end">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleDismiss} />
+        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
+          <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-5" />
+          <div className="flex items-center gap-3 mb-4">
+            <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
+            <div>
+              <p className="text-base font-bold text-white">Install World Cup 2026</p>
+              <p className="text-xs text-zinc-400">One more step needed</p>
+            </div>
+            <button onClick={handleDismiss} className="ml-auto text-zinc-500 text-2xl leading-none pb-1">✕</button>
+          </div>
+          <div className="bg-zinc-800/60 rounded-2xl px-4 py-3.5 mb-5">
+            <p className="text-sm text-white font-semibold mb-1">🧭 Open this page in Safari</p>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              iOS only allows installing apps from Safari. Copy the link and paste it into Safari to get the install option.
+            </p>
+          </div>
+          <button
+            onClick={() => { navigator.clipboard?.writeText('https://wcscorelive.com'); handleDismiss() }}
+            className="w-full py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform"
+          >
+            Copy Link → Open in Safari
+          </button>
+          <button onClick={handleDismiss} className="w-full py-2.5 mt-2 text-zinc-500 text-xs text-center">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   // ── Debug overlay ───────────────────────────────────────────────────────────
   if (state === 'debug') {
