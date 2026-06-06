@@ -5,15 +5,11 @@ import { mockProvider } from '@/lib/mockProvider'
 import { FlagImg } from '@/components/FlagImg'
 
 function getTodayMatches() {
-  const now = new Date()
+  const todayLocal = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD in device timezone
   const all = mockProvider.getMatches()
   return all.filter(m => {
-    const d = new Date(m.kickoff)
-    return (
-      d.getUTCFullYear() === now.getUTCFullYear() &&
-      d.getUTCMonth() === now.getUTCMonth() &&
-      d.getUTCDate() === now.getUTCDate()
-    )
+    const matchDate = new Date(m.kickoff).toLocaleDateString('en-CA')
+    return matchDate === todayLocal
   })
 }
 
@@ -22,7 +18,7 @@ function formatKickoff(iso: string) {
     hour: 'numeric',
     minute: '2-digit',
     timeZoneName: 'short',
-    timeZone: 'America/New_York',
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   })
 }
 

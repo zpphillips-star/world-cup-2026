@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
@@ -224,17 +224,20 @@ export default function ScheduleClient({
     } catch { /* fail silently */ }
   }, [])
 
+  const liveScoresRef = useRef(liveScores)
+  useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+
   useEffect(() => {
     fetchScores()
     let interval = setInterval(fetchScores, 30_000)
     const adaptivePoller = setInterval(() => {
-      const hasLive = Object.values(liveScores).some(s => s.status === 'live')
+      const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
       const newRate = hasLive ? 2_000 : 30_000
       clearInterval(interval)
       interval = setInterval(fetchScores, newRate)
     }, 5_000)
     return () => { clearInterval(interval); clearInterval(adaptivePoller) }
-  }, [fetchScores, liveScores])
+  }, [fetchScores])
 
   const liveMatches = useMemo(() => applyLiveScores(matches, liveScores), [matches, liveScores])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wc2026-v9';
+const CACHE_NAME = 'wc2026-v10';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192-v4.png',
@@ -26,7 +26,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // Navigation requests: always go network-first so redirects and fresh HTML work
+  // Navigation requests: network-first so fresh HTML always loads
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/schedule') || caches.match('/'))
@@ -34,9 +34,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache-first
+  // Next.js static chunks (_next/static): cache-first, they're content-hashed
+  if (url.pathname.startsWith('/_next/static/')) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // Everything else: network-first with cache fallback
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 

@@ -26,15 +26,15 @@ function MatchRow({ slot, label, isFinal = false }: { slot: BracketSlot; label: 
   const awayLabel = awayTeam ? awayTeam.name : (slot.away as string)
 
   return (
-    <div className={ounded-xl border px-4 py-3 + (
+    <div className={`rounded-xl border px-4 py-3 ${
       isFinal
         ? 'border-yellow-500/40 bg-gradient-to-r from-yellow-950/30 to-[#0d0d15]'
         : 'border-zinc-800 bg-[#13131a]'
-    )}>
-      <p className={	ext-[10px] font-bold uppercase tracking-widest mb-2  + (isFinal ? 'text-yellow-400' : 'text-zinc-500')}>
+    }`}>
+      <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${isFinal ? 'text-yellow-400' : 'text-zinc-500'}`}>
         {label}
       </p>
-      <div className={lex items-center justify-between gap-2  + (isTbd ? 'opacity-40' : '')}>
+      <div className={`flex items-center justify-between gap-2 ${isTbd ? 'opacity-40' : ''}`}>
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {homeTeam && <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-5 flex-shrink-0" />}
           <span className="text-sm font-semibold text-white truncate">{homeLabel}</span>
@@ -42,7 +42,7 @@ function MatchRow({ slot, label, isFinal = false }: { slot: BracketSlot; label: 
         {hasScore && <span className="text-sm font-black text-white tabular-nums">{slot.homeScore ?? 0}</span>}
       </div>
       <div className="border-t border-zinc-800/60 my-2" />
-      <div className={lex items-center justify-between gap-2  + (isTbd ? 'opacity-40' : '')}>
+      <div className={`flex items-center justify-between gap-2 ${isTbd ? 'opacity-40' : ''}`}>
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {awayTeam && <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-5 flex-shrink-0" />}
           <span className="text-sm font-semibold text-white truncate">{awayLabel}</span>
@@ -78,11 +78,11 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
               <button
                 key={name}
                 onClick={() => setActiveRound(name)}
-                className={lex-1 py-2 rounded-xl text-xs font-bold transition-all active:scale-95  + (
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 ${
                   active
                     ? (name === 'Final' ? 'bg-yellow-400 text-zinc-900' : 'bg-[#00d4ff] text-[#0a0a0f]')
                     : 'bg-[#1a1a24] text-zinc-400'
-                )}
+                }`}
               >
                 {ROUND_SHORT[name] || name}
               </button>
@@ -105,7 +105,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
           })
         )}
         {isFinalRound && thirdPlace?.matches[0] && (
-          <MatchRow slot={thirdPlace.matches[0]} label="🥉 Third Place" />
+          <MatchRow slot={thirdPlace.matches[0]} label="🥇 Third Place" />
         )}
       </div>
     </div>
