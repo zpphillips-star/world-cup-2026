@@ -72,7 +72,15 @@ export default function InstallPrompt() {
     if (cooldown) return
 
     if (platform === 'android' || platform === 'other') {
-      // Works on Android Chrome, desktop Chrome, Edge, etc.
+      // Check for pre-captured event (fired before React mounted)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const preCapture = (window as any).__installPromptEvent
+      if (preCapture) {
+        setDeferredPrompt(preCapture)
+        setState('android-banner')
+        return
+      }
+      // Fallback: listen if event hasn't fired yet
       const handler = (e: Event) => {
         e.preventDefault()
         setDeferredPrompt(e)

@@ -110,7 +110,7 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
+    <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Assistant</h1>
