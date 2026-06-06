@@ -89,6 +89,10 @@ function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>):
     [liveScores]
   )
 
+  const liveCount = useMemo(
+    () => Object.values(liveScores).filter(s => s.status === 'live').length,
+    [liveScores]
+  )
   const sortedMatches = useMemo(
     () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),
     [liveMatches]
@@ -108,11 +112,28 @@ function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>):
 
   return (
     <div className="pb-16 max-w-2xl mx-auto">
-      {/* Live indicator */}
+      {/* Live banner */}
       {hasAnyLive && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-b border-red-500/20">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-xs font-semibold text-red-400 uppercase tracking-wider">Live now — updating every 2s</span>
+        <div className="relative overflow-hidden mx-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-950/60 via-red-900/30 to-transparent" />
+          <div className="relative flex items-center justify-between px-4 py-3 border-b border-red-500/20">
+            <div className="flex items-center gap-2.5">
+              {/* Pulsing ring + dot */}
+              <div className="relative flex-shrink-0">
+                <span className="absolute inset-0 rounded-full bg-red-500/30 animate-ping" />
+                <span className="relative block w-2.5 h-2.5 rounded-full bg-red-500" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[13px] font-bold text-white leading-tight tracking-wide">
+                  {liveCount === 1 ? '1 match live' : `${liveCount} matches live`}
+                </span>
+                <span className="text-[10px] text-red-400/80 leading-tight">Scores updating every 2s</span>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-red-400 bg-red-500/15 border border-red-500/25 px-2.5 py-1 rounded-full uppercase tracking-widest">
+              Live
+            </span>
+          </div>
         </div>
       )}
 
