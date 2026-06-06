@@ -82,7 +82,11 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   return (
     <div className="min-h-screen bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
 
-      <div className="px-4 pt-5 pb-4 space-y-12">
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Calendar</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · June–July 2026</p>
+      </div>
+      <div className="px-4 pt-2 pb-4 space-y-12">
         {months.map(({ year, month, name }) => {
           const daysInMonth = getDaysInMonth(year, month)
           const firstDay = getFirstDayOfWeek(year, month)

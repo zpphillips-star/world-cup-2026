@@ -258,8 +258,12 @@ export default function GroupsClient({ standings, groups }: GroupsClientProps) {
 
   return (
     <div className="min-h-[100dvh] bg-[#0a0a0f]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · 12 Groups</p>
+      </div>
       <div
-        className="grid grid-cols-2 gap-4 px-4 pt-5"
+        className="grid grid-cols-2 gap-4 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
         {Object.entries(standings).map(([groupId, groupStandings]) => (
