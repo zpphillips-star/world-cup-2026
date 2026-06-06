@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 
 type Platform = 'ios' | 'android' | 'other'
-type State = 'hidden' | 'ios-sheet' | 'android-banner'
+type State = 'hidden' | 'ios-sheet' | 'android-banner' | 'debug'
 
 const STORAGE_KEY = 'wc26-install-ts'
-const COOLDOWN_MS = 24 * 60 * 60 * 1000  // 24 hours
+const COOLDOWN_MS = 24 * 60 * 60 * 1000
 
 function getPlatform(): Platform {
   const ua = navigator.userAgent
@@ -35,27 +35,41 @@ function snooze() {
   try { localStorage.setItem(STORAGE_KEY, String(Date.now())) } catch { /* ignore */ }
 }
 
-function forceReset() {
-  try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+function clearStorage() {
+  try {
+    localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem('wc26-install-dismissed')
+  } catch { /* ignore */ }
 }
 
 export default function InstallPrompt() {
   const [state, setState] = useState<State>('hidden')
+  const [debugInfo, setDebugInfo] = useState('')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [iosStep, setIosStep] = useState(0)
 
   useEffect(() => {
-    // ?reset-install forces the prompt to show (for testing)
-    if (window.location.search.includes('reset-install')) forceReset()
+    const params = window.location.search
+    const isDebug = params.includes('debug-install')
+    const isReset = params.includes('reset-install')
 
-    // Already running as installed PWA — never show
-    if (isStandalone()) return
-
-    // On cooldown — skip
-    if (isOnCooldown()) return
+    if (isReset || isDebug) clearStorage()
 
     const platform = getPlatform()
+    const standalone = isStandalone()
+    const cooldown = isOnCooldown()
+    const ua = navigator.userAgent.slice(0, 80)
+    const isSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|gsa/i.test(navigator.userAgent)
+
+    if (isDebug) {
+      setDebugInfo(`platform=${platform} | standalone=${standalone} | cooldown=${cooldown} | safari=${isSafari} | ua=${ua}`)
+      setState('debug')
+      return
+    }
+
+    if (standalone) return
+    if (cooldown) return
 
     if (platform === 'android') {
       const handler = (e: Event) => {
@@ -67,10 +81,7 @@ export default function InstallPrompt() {
       return () => window.removeEventListener('beforeinstallprompt', handler as EventListener)
     }
 
-    if (platform === 'ios') {
-      // Show on Safari (detect by absence of Chrome/Firefox UA strings)
-      const isSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|gsa/i.test(navigator.userAgent)
-      if (!isSafari) return
+    if (platform === 'ios' && isSafari) {
       const t = setTimeout(() => setState('ios-sheet'), 800)
       return () => clearTimeout(t)
     }
@@ -91,24 +102,33 @@ export default function InstallPrompt() {
   }
 
   const IOS_STEPS = [
-    {
-      icon: '⬆️',
-      title: 'Tap the Share button',
-      desc: 'At the bottom of Safari, tap the square with an arrow pointing up',
-    },
-    {
-      icon: '➕',
-      title: 'Tap "Add to Home Screen"',
-      desc: 'Scroll down in the share sheet and tap "Add to Home Screen"',
-    },
-    {
-      icon: '✅',
-      title: 'Tap "Add"',
-      desc: "Confirm by tapping Add in the top right — you're done!",
-    },
+    { icon: '⬆️', title: 'Tap the Share button', desc: 'At the bottom of Safari, tap the square with an arrow pointing up' },
+    { icon: '➕', title: 'Tap "Add to Home Screen"', desc: 'Scroll down in the share sheet and tap "Add to Home Screen"' },
+    { icon: '✅', title: 'Tap "Add"', desc: "Tap Add in the top right — you're done!" },
   ]
 
   if (state === 'hidden') return null
+
+  // ── Debug overlay ───────────────────────────────────────────────────────────
+  if (state === 'debug') {
+    return (
+      <div className="fixed inset-0 z-50 flex items-end">
+        <div className="absolute inset-0 bg-black/70" onClick={() => setState('hidden')} />
+        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10">
+          <p className="text-xs font-bold text-[#00d4ff] mb-3 uppercase tracking-widest">Install Prompt Debug</p>
+          <p className="text-xs text-zinc-300 break-all leading-relaxed font-mono">{debugInfo}</p>
+          <div className="flex gap-3 mt-5">
+            <button onClick={() => setState('ios-sheet')} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold">
+              Show iOS Sheet
+            </button>
+            <button onClick={() => setState('hidden')} className="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-semibold">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   // ── Android one-tap banner ──────────────────────────────────────────────────
   if (state === 'android-banner') {
@@ -121,15 +141,10 @@ export default function InstallPrompt() {
             <p className="text-xs text-zinc-400 mt-0.5">Install for quick access — no app store needed</p>
           </div>
           <div className="flex flex-col gap-2 flex-shrink-0">
-            <button
-              onClick={handleAndroidInstall}
-              className="bg-[#00d4ff] text-[#0a0a0f] text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-transform"
-            >
+            <button onClick={handleAndroidInstall} className="bg-[#00d4ff] text-[#0a0a0f] text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-transform">
               Install
             </button>
-            <button onClick={handleDismiss} className="text-zinc-500 text-xs text-center">
-              Not now
-            </button>
+            <button onClick={handleDismiss} className="text-zinc-500 text-xs text-center">Not now</button>
           </div>
         </div>
       </div>
@@ -150,13 +165,9 @@ export default function InstallPrompt() {
           </div>
           <button onClick={handleDismiss} className="ml-auto text-zinc-500 text-2xl leading-none pb-1">✕</button>
         </div>
-
         <div className="space-y-4 mb-6">
           {IOS_STEPS.map((step, i) => (
-            <div
-              key={i}
-              className={`flex items-start gap-3 transition-opacity ${i <= iosStep ? 'opacity-100' : 'opacity-30'}`}
-            >
+            <div key={i} className={`flex items-start gap-3 transition-opacity ${i <= iosStep ? 'opacity-100' : 'opacity-30'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
                 ${i < iosStep ? 'bg-[#00d4ff]/20 text-[#00d4ff]' : i === iosStep ? 'bg-[#00d4ff] text-[#0a0a0f]' : 'bg-zinc-800 text-zinc-500'}`}>
                 {i < iosStep ? '✓' : i + 1}
@@ -168,28 +179,18 @@ export default function InstallPrompt() {
             </div>
           ))}
         </div>
-
         <div className="flex gap-3">
           {iosStep > 0 && (
-            <button
-              onClick={() => setIosStep(s => s - 1)}
-              className="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-semibold active:scale-95 transition-transform"
-            >
+            <button onClick={() => setIosStep(s => s - 1)} className="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-semibold active:scale-95 transition-transform">
               Back
             </button>
           )}
           {iosStep < IOS_STEPS.length - 1 ? (
-            <button
-              onClick={() => setIosStep(s => s + 1)}
-              className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform"
-            >
+            <button onClick={() => setIosStep(s => s + 1)} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
               Next →
             </button>
           ) : (
-            <button
-              onClick={handleDismiss}
-              className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform"
-            >
+            <button onClick={handleDismiss} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
               Done ✓
             </button>
           )}
