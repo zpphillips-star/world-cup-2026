@@ -1,8 +1,8 @@
-const CACHE_NAME = 'wc2026-v7';
+const CACHE_NAME = 'wc2026-v8';
 const STATIC_ASSETS = [
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  '/icon-192-v4.png',
+  '/icon-512-v4.png',
 ];
 
 self.addEventListener('install', (event) => {
