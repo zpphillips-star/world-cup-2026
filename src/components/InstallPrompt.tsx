@@ -71,7 +71,8 @@ export default function InstallPrompt() {
     if (standalone) return
     if (cooldown) return
 
-    if (platform === 'android') {
+    if (platform === 'android' || platform === 'other') {
+      // Works on Android Chrome, desktop Chrome, Edge, etc.
       const handler = (e: Event) => {
         e.preventDefault()
         setDeferredPrompt(e)
