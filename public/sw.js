@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wc2026-v12';
+const CACHE_NAME = 'wc2026-v13';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192-v4.png',
