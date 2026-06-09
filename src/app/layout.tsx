@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     siteName: 'WCScores',
     images: [
       {
-        url: 'https://www.wcscores.com/wc26-lockup-cyan.png',
-        width: 1200,
-        height: 630,
+        url: 'https://www.wcscores.com/og-image.png',
+        width: 512,
+        height: 512,
         alt: 'World Cup 2026',
       },
     ],
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'World Cup 2026',
     description: '2026 FIFA World Cup Companion App',
-    images: ['https://www.wcscores.com/wc26-lockup-cyan.png'],
+    images: ['https://www.wcscores.com/og-image.png'],
   },
   appleWebApp: {
     capable: true,

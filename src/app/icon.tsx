@@ -19,7 +19,7 @@ export default function Icon() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="https://www.wcscores.com/icons/icon-192.png"
+          src="https://www.wcscores.com/icons/icon-192-v2.png"
           width={192}
           height={192}
           alt="icon"
