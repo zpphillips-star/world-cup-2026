@@ -55,13 +55,14 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
   const touchStartX = useRef<number | null>(null)
   const touchStartY = useRef<number | null>(null)
+  const sheetTouchStartX = useRef<number | null>(null)
+  const sheetTouchStartY = useRef<number | null>(null)
 
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
-    // Start on the current month if we're in the tournament window
     const now = new Date()
     if (now.getFullYear() === 2026 && now.getMonth() === 6) {
-      setMonthIndex(1) // July
+      setMonthIndex(1)
     }
   }, [])
 
@@ -74,6 +75,12 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
     }
     return map
   }, [matches, userTimezone])
+
+  // Sorted list of all days that have matches
+  const matchDays = useMemo(() =>
+    Object.keys(matchDayMap).sort(),
+    [matchDayMap]
+  )
 
   const { year, month, name } = MONTHS[monthIndex]
   const daysInMonth = getDaysInMonth(year, month)
@@ -97,13 +104,45 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
     if (touchStartX.current === null || touchStartY.current === null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
     const dy = e.changedTouches[0].clientY - touchStartY.current
-    // Only trigger if horizontal movement dominates and is significant
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-      if (dx < 0 && monthIndex < MONTHS.length - 1) setMonthIndex(i => i + 1) // swipe left → future
-      if (dx > 0 && monthIndex > 0) setMonthIndex(i => i - 1)                 // swipe right → past
+      if (dx < 0 && monthIndex < MONTHS.length - 1) setMonthIndex(i => i + 1)
+      if (dx > 0 && monthIndex > 0) setMonthIndex(i => i - 1)
     }
     touchStartX.current = null
     touchStartY.current = null
+  }
+
+  function handleSheetTouchStart(e: React.TouchEvent) {
+    sheetTouchStartX.current = e.touches[0].clientX
+    sheetTouchStartY.current = e.touches[0].clientY
+  }
+
+  function handleSheetTouchEnd(e: React.TouchEvent) {
+    if (sheetTouchStartX.current === null || sheetTouchStartY.current === null) return
+    const dx = e.changedTouches[0].clientX - sheetTouchStartX.current
+    const dy = e.changedTouches[0].clientY - sheetTouchStartY.current
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50 && selectedKey) {
+      const currentIdx = matchDays.indexOf(selectedKey)
+      if (dx < 0 && currentIdx < matchDays.length - 1) {
+        // swipe left → next match day
+        const next = matchDays[currentIdx + 1]
+        const [y, mo, d] = next.split('-').map(Number)
+        setSelectedDay({ year: y, month: mo - 1, day: d })
+        // also update month view if needed
+        const newMonthIdx = MONTHS.findIndex(m => m.year === y && m.month === mo - 1)
+        if (newMonthIdx >= 0) setMonthIndex(newMonthIdx)
+      }
+      if (dx > 0 && currentIdx > 0) {
+        // swipe right → previous match day
+        const prev = matchDays[currentIdx - 1]
+        const [y, mo, d] = prev.split('-').map(Number)
+        setSelectedDay({ year: y, month: mo - 1, day: d })
+        const newMonthIdx = MONTHS.findIndex(m => m.year === y && m.month === mo - 1)
+        if (newMonthIdx >= 0) setMonthIndex(newMonthIdx)
+      }
+    }
+    sheetTouchStartX.current = null
+    sheetTouchStartY.current = null
   }
 
   return (
@@ -179,7 +218,10 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={() => setSelectedDay(null)}
           />
-          <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[82vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up">
+          <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[82vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
+            onTouchStart={handleSheetTouchStart}
+            onTouchEnd={handleSheetTouchEnd}
+          >
             <div className="relative bg-gradient-to-b from-[#0c2540] to-[#13131a] px-5 pt-4 pb-4 flex-shrink-0">
               <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
               <button
