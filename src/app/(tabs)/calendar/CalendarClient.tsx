@@ -117,35 +117,9 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
         <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · June–July 2026</p>
       </div>
 
-      {/* Month nav */}
-      <div className="px-4 pb-2 flex items-center justify-between">
-        <button
-          onClick={() => setMonthIndex(i => Math.max(0, i - 1))}
-          disabled={monthIndex === 0}
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-[#13131a] text-white disabled:opacity-20 active:scale-90 transition-transform"
-          aria-label="Previous month"
-        >
-          ‹
-        </button>
+      {/* Month title only — navigation is swipe-only */}
+      <div className="px-4 pb-4 text-center">
         <span className="text-base font-semibold text-white">{name}</span>
-        <button
-          onClick={() => setMonthIndex(i => Math.min(MONTHS.length - 1, i + 1))}
-          disabled={monthIndex === MONTHS.length - 1}
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-[#13131a] text-white disabled:opacity-20 active:scale-90 transition-transform"
-          aria-label="Next month"
-        >
-          ›
-        </button>
-      </div>
-
-      {/* Swipe hint dots */}
-      <div className="flex justify-center gap-1.5 pb-4">
-        {MONTHS.map((_, i) => (
-          <div
-            key={i}
-            className={`h-1.5 rounded-full transition-all ${i === monthIndex ? 'w-4 bg-[#00d4ff]' : 'w-1.5 bg-gray-700'}`}
-          />
-        ))}
       </div>
 
       <div className="px-4 pb-4">
