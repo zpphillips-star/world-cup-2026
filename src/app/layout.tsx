@@ -9,6 +9,27 @@ export const metadata: Metadata = {
   title: 'World Cup 2026',
   description: '2026 FIFA World Cup Companion App',
   manifest: '/manifest.json',
+  openGraph: {
+    title: 'World Cup 2026',
+    description: '2026 FIFA World Cup Companion App',
+    url: 'https://www.wcscores.com',
+    siteName: 'WCScores',
+    images: [
+      {
+        url: 'https://www.wcscores.com/wc26-lockup-cyan.png',
+        width: 1200,
+        height: 630,
+        alt: 'World Cup 2026',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'World Cup 2026',
+    description: '2026 FIFA World Cup Companion App',
+    images: ['https://www.wcscores.com/wc26-lockup-cyan.png'],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
