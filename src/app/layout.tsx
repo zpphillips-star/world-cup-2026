@@ -43,7 +43,25 @@ export default function RootLayout({
             __html: `
               window.__installPromptEvent = null;
               window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window.__installPromptEvent = e; });
-              if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').catch(function(e) { console.log('SW error:', e); }); }); }
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function(e) { console.log('SW error:', e); });
+                  // Force any waiting SW to activate immediately
+                  navigator.serviceWorker.getRegistration('/sw.js').then(function(reg) {
+                    if (reg && reg.waiting) {
+                      reg.waiting.postMessage({type:'SKIP_WAITING'});
+                    }
+                    if (reg) reg.update();
+                  });
+                });
+                // When a new SW takes over, reload once so the page uses fresh assets
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                  if (!sessionStorage.getItem('sw_reloaded')) {
+                    sessionStorage.setItem('sw_reloaded', '1');
+                    window.location.reload();
+                  }
+                });
+              }
             `,
           }}
         />

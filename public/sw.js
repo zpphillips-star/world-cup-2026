@@ -1,3 +1,9 @@
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 const CACHE_NAME = 'wc2026-v13';
 const STATIC_ASSETS = [
   '/manifest.json',
