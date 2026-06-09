@@ -25,11 +25,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  async headers() {
+  async redirects() {
     return [
       {
-        source: "/(.*)",
-        headers: securityHeaders,
+        source: '/',
+        destination: '/schedule',
+        permanent: false,
       },
     ];
   },

@@ -1,15 +1,23 @@
 {
   "theme_color": "#0a0a0f",
   "icons": [
-    { "src": "/icon-192-v4.png", "type": "image/png", "sizes": "192x192", "purpose": "any maskable" },
-    { "src": "/icon-512-v4.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" }
-  ],
-  "description": "Track the 2026 FIFA World Cup",
-  "background_color": "#0a0a0f",
-  "name": "World Cup 2026",
-  "display": "standalone",
-  "orientation": "portrait",
-  "start_url": "/schedule",
-  "scope": "/",
-  "short_name": "World Cup"
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
