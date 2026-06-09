@@ -61,6 +61,17 @@ export interface BracketRound {
   matches: BracketSlot[]
 }
 
+export interface TeamStats {
+  fifaRank: number
+  worldCupAppearances: number
+  wcWins: number
+  wcDraws: number
+  wcLosses: number
+  wcGoalsFor: number
+  wcGoalsAgainst: number
+  bestFinish: string
+}
+
 export interface DataProvider {
   getMatches(): Match[]
   getMatch(id: string): Match | null
@@ -68,4 +79,5 @@ export interface DataProvider {
   getStandings(): Record<string, Standing[]>
   getBracket(): BracketRound[]
   getTeam(id: string): Team | null
+  getTeamStats(teamId: string): TeamStats | null
 }
