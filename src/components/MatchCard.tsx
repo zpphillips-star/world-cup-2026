@@ -209,6 +209,25 @@ export default function MatchCard({
 
       </div>
 
+      {/* Live score bar — shown below the row when the match is in progress */}
+      {isLive && hasScore && (
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-red-950/30 border-b border-red-500/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+          {clock && <span className="text-[11px] font-bold text-red-400 tabular-nums">{clock}</span>}
+          <span className="text-[12px] font-black text-red-300 tabular-nums">
+            {match.homeScore} – {match.awayScore}
+          </span>
+          {scorers && scorers.length > 0 && (
+            <span className="flex items-center gap-1 text-[10px] text-zinc-400 truncate">
+              <span>⚽</span>
+              {scorers.map((s, i) => (
+                <span key={i}>{s.playerName} {s.minute}{i < scorers.length - 1 ? ',' : ''}</span>
+              ))}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Slide-up sheet */}
       {open && (
         <>
@@ -255,9 +274,17 @@ export default function MatchCard({
                 </div>
                 <div className="flex flex-col items-center gap-1 min-w-[80px]">
                   {hasScore ? (
-                    <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
-                      {match.homeScore} – {match.awayScore}
-                    </span>
+                    <>
+                      <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
+                        {match.homeScore} – {match.awayScore}
+                      </span>
+                      {isLive && clock && (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                          <span className="text-[13px] font-bold text-red-400">{clock}</span>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <>
                       <span className="text-2xl font-bold text-zinc-500">vs</span>
@@ -281,12 +308,6 @@ export default function MatchCard({
                 <span className="text-sm">📍</span>
                 <span className="text-[12px] text-zinc-400">{match.venue.name}, {match.venue.city}</span>
               </div>
-              {isLive && clock && (
-                <div className="flex items-center justify-center gap-1.5 mt-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[12px] font-bold text-red-400">{clock}</span>
-                </div>
-              )}
             </div>
 
             {/* Scrollable body */}

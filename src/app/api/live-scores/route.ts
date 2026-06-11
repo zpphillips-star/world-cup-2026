@@ -61,8 +61,13 @@ export async function GET() {
           if (!home || !away) continue
 
           const statusName: string = comp.status?.type?.name ?? ''
+          const statusState: string = comp.status?.type?.state ?? ''
           let status: 'upcoming' | 'live' | 'ft' = 'upcoming'
-          if (statusName === 'STATUS_IN_PROGRESS') status = 'live'
+          if (
+            statusName === 'STATUS_IN_PROGRESS' ||
+            statusName === 'STATUS_HALFTIME' ||
+            statusState === 'in'
+          ) status = 'live'
           else if (statusName === 'STATUS_FINAL' || comp.status?.type?.completed === true) status = 'ft'
 
           // Parse scoring events from details
@@ -78,6 +83,11 @@ export async function GET() {
               typeText.includes('penalty') || typeText.includes('pen') ? 'pen' :
               'goal'
             scorers.push({ playerName, minute, teamSide, type })
+          }
+
+          // Fallback: if there are scoring events and status is still "upcoming", treat as live
+          if (status === 'upcoming' && scorers.length > 0) {
+            status = comp.status?.type?.completed === true ? 'ft' : 'live'
           }
 
           const key = `${normalize(home.team.displayName ?? home.team.name)}|${normalize(away.team.displayName ?? away.team.name)}`

@@ -8,29 +8,22 @@ export default function Icon() {
     (
       <div
         style={{
-          background: 'linear-gradient(135deg, #0d1b3e 0%, #0a4d2e 100%)',
+          background: '#0d0d14',
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 0,
+          borderRadius: 36,
         }}
       >
-        <div style={{ fontSize: 110, display: 'flex', lineHeight: 1 }}>⚽</div>
-        <div
-          style={{
-            fontSize: 28,
-            fontWeight: 900,
-            color: 'white',
-            letterSpacing: 3,
-            fontFamily: 'Arial Black, Arial, sans-serif',
-            marginTop: 6,
-          }}
-        >
-          WC26
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://www.wcscores.com/icons/icon-192-v2.png"
+          width={192}
+          height={192}
+          alt="icon"
+        />
       </div>
     ),
     { ...size }
