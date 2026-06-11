@@ -3,7 +3,7 @@
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { Match, Team } from '@/lib/types'
 
 function getDaysInMonth(year: number, month: number) {
@@ -14,10 +14,12 @@ function getFirstDayOfWeek(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
 
+// Returns "YYYY-MM-DD" in the given timezone
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
 }
 
+// Converts a DayKey {year, month(0-indexed), day} → "YYYY-MM-DD"
 function dayKeyToIso(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
@@ -47,13 +49,12 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
   const [selectedDay, setSelectedDay] = useState<DayKey | null>(null)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
   const [userTimezone, setUserTimezone] = useState('UTC')
-  const sheetTouchStartX = useRef<number | null>(null)
-  const sheetTouchStartY = useRef<number | null>(null)
 
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
 
+  // Build map: "YYYY-MM-DD" (local tz) -> Match[]
   const matchDayMap = useMemo(() => {
     const map: Record<string, Match[]> = {}
     for (const m of matches) {
@@ -64,21 +65,10 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
     return map
   }, [matches, userTimezone])
 
-  // Sorted list of all days that have matches
-  const matchDays = useMemo(() =>
-    Object.keys(matchDayMap).sort(),
-    [matchDayMap]
-  )
-
   const months = [
     { year: 2026, month: 5, name: 'June 2026' },
     { year: 2026, month: 6, name: 'July 2026' },
   ]
-
-  const todayKey = useMemo(() => {
-    const now = new Date()
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  }, [])
 
   const selectedKey = selectedDay
     ? dayKeyToIso(selectedDay.year, selectedDay.month, selectedDay.day)
@@ -88,33 +78,6 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
         (a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()
       )
     : []
-
-  function handleSheetTouchStart(e: React.TouchEvent) {
-    sheetTouchStartX.current = e.touches[0].clientX
-    sheetTouchStartY.current = e.touches[0].clientY
-  }
-
-  function handleSheetTouchEnd(e: React.TouchEvent) {
-    if (sheetTouchStartX.current === null || sheetTouchStartY.current === null) return
-    const dx = e.changedTouches[0].clientX - sheetTouchStartX.current
-    const dy = e.changedTouches[0].clientY - sheetTouchStartY.current
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50 && selectedKey) {
-      const currentIdx = matchDays.indexOf(selectedKey)
-      if (dx < 0 && currentIdx < matchDays.length - 1) {
-        // swipe left → next match day (future)
-        const next = matchDays[currentIdx + 1]
-        const [y, mo, d] = next.split('-').map(Number)
-        setSelectedDay({ year: y, month: mo - 1, day: d })
-      } else if (dx > 0 && currentIdx > 0) {
-        // swipe right → previous match day (past)
-        const prev = matchDays[currentIdx - 1]
-        const [y, mo, d] = prev.split('-').map(Number)
-        setSelectedDay({ year: y, month: mo - 1, day: d })
-      }
-    }
-    sheetTouchStartX.current = null
-    sheetTouchStartY.current = null
-  }
 
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]">
@@ -149,23 +112,16 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                   const hasFt = statuses.includes('ft')
                   const hasUpcoming = statuses.includes('upcoming')
                   const hasMatches = dayMatches.length > 0
-                  const isToday = isoKey === todayKey
-
-                  let cellClass = 'aspect-square flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all '
-                  if (isToday) {
-                    cellClass += 'border-2 border-[#00d4ff] '
-                  }
-                  if (hasMatches) {
-                    cellClass += `bg-[#13131a] ${isToday ? '' : 'border border-gray-700 '} hover:border-[#00d4ff] cursor-pointer active:scale-95`
-                  } else {
-                    cellClass += 'text-gray-600 cursor-default'
-                  }
 
                   return (
                     <button
                       key={day}
                       onClick={() => hasMatches && setSelectedDay({ year, month, day })}
-                      className={cellClass}
+                      className={`aspect-square flex flex-col items-center justify-center rounded-lg text-sm font-medium transition-all
+                        ${hasMatches
+                          ? 'bg-[#13131a] border border-gray-700 hover:border-[#00d4ff] cursor-pointer active:scale-95'
+                          : 'text-gray-600 cursor-default'
+                        }`}
                     >
                       <span className={hasMatches ? 'text-white' : ''}>{day}</span>
                       {hasMatches && (
@@ -190,20 +146,22 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
         </div>
       </div>
 
-      {/* Day sheet */}
+      {/* Day sheet — hidden while team sheet is open */}
       {selectedDay && !teamSheet && (
         <>
+          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={() => setSelectedDay(null)}
           />
 
+          {/* Sheet */}
           <div
             className="fixed bottom-0 left-0 right-0 z-[60] max-h-[82vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
-            onTouchStart={handleSheetTouchStart}
-            onTouchEnd={handleSheetTouchEnd}
           >
+            {/* Gradient header */}
             <div className="relative bg-gradient-to-b from-[#0c2540] to-[#13131a] px-5 pt-4 pb-4 flex-shrink-0">
+              {/* drag handle */}
               <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
 
               <button
@@ -222,6 +180,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
               </p>
             </div>
 
+            {/* Scrollable match cards */}
             <div className="overflow-y-auto bg-[#13131a] px-4 py-3 space-y-3 flex-1" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
               {selectedMatches.map(m => {
                 const isLive = m.status === 'live'
@@ -230,13 +189,14 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
                 return (
                   <div key={m.id} className="bg-[#0a0a0f] rounded-xl p-4 border border-gray-800">
+                    {/* Header row: group label + status badge */}
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
                         {m.group ? `Group ${m.group}` : m.round}
                       </span>
                       {isLive && (
                         <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">
-                          🔴 LIVE
+                          ● LIVE
                         </span>
                       )}
                       {isFt && (
@@ -249,7 +209,9 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                       )}
                     </div>
 
+                    {/* Teams + score */}
                     <div className="flex items-center gap-3">
+                      {/* Home team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
                         <button
                           className="active:scale-90 transition-transform"
@@ -262,6 +224,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                         </span>
                       </div>
 
+                      {/* Score / vs */}
                       <div className="flex flex-col items-center min-w-[64px]">
                         {hasScore ? (
                           <span className={`text-2xl font-bold tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
@@ -275,6 +238,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                         )}
                       </div>
 
+                      {/* Away team */}
                       <div className="flex-1 flex flex-col items-center gap-1.5">
                         <button
                           className="active:scale-90 transition-transform"
@@ -288,6 +252,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
                       </div>
                     </div>
 
+                    {/* Venue */}
                     <p className="text-center text-[11px] text-gray-500 mt-3">
                       📍 {m.venue.name}, {m.venue.city}
                     </p>
@@ -299,7 +264,7 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
         </>
       )}
 
-      {/* Team sheet */}
+      {/* Team sheet — closes back to day sheet */}
       {teamSheet && (
         <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
       )}
