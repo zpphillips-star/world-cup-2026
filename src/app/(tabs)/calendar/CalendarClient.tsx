@@ -1,8 +1,48 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import type { Match } from '@/lib/types'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import type { Match, TeamStats, Standing } from '@/lib/types'
+import type { ScoreUpdate } from '@/app/api/live-scores/route'
+import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
+
+function normalize(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
+  if (Object.keys(scores).length === 0) return matches
+  return matches.map(m => {
+    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+    const update = scores[key]
+    if (!update) return m
+    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
+  })
+}
+
+function mergeStandings(
+  base: Record<string, Standing[]>,
+  espn: Record<string, StandingRow[]>
+): Record<string, Standing[]> {
+  const result: Record<string, Standing[]> = { ...base }
+  for (const [group, rows] of Object.entries(espn)) {
+    const baseGroup = base[group]
+    if (!baseGroup) continue
+    const merged = rows.map(row => {
+      const existing = baseGroup.find(s =>
+        s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
+        row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
+      ) ?? baseGroup[0]
+      return {
+        team: existing.team,
+        played: row.gp, won: row.w, drawn: row.d, lost: row.l,
+        goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
+      }
+    })
+    result[group] = merged
+  }
+  return result
+}
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
@@ -16,20 +56,68 @@ const MONTHS = [
   { year: 2026, month: 6, name: 'July 2026' },
 ]
 
-export default function CalendarClient({ matches }: { matches: Match[] }) {
+export default function CalendarClient({
+  matches,
+  statsMap = {},
+  standingsMap = {},
+}: {
+  matches: Match[]
+  statsMap?: Record<string, TeamStats | null>
+  standingsMap?: Record<string, Standing[]>
+}) {
   const now = new Date()
-  const defaultMonthIdx = now.getMonth() === 6 ? 1 : 0 // July=1, else June=0
+  const defaultMonthIdx = now.getMonth() === 6 ? 1 : 0
   const [monthIdx, setMonthIdx] = useState(defaultMonthIdx)
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [userTimezone, setUserTimezone] = useState('UTC')
+  const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
+  const liveScoresRef = useRef(liveScores)
+  useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
 
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
 
+  const fetchScores = useCallback(async () => {
+    try {
+      const res = await fetch('/api/live-scores')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveScores(data.scores ?? {})
+    } catch { /* fail silently */ }
+  }, [])
+
+  const fetchStandings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/standings')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveStandingsMap(mergeStandings(standingsMap, data.standings ?? {}))
+    } catch { /* fail silently */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [standingsMap])
+
+  useEffect(() => {
+    fetchScores()
+    fetchStandings()
+    let interval = setInterval(fetchScores, 30_000)
+    const standingsInterval = setInterval(fetchStandings, 60_000)
+    const adaptivePoller = setInterval(() => {
+      const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
+      const newRate = hasLive ? 2_000 : 30_000
+      clearInterval(interval)
+      interval = setInterval(fetchScores, newRate)
+    }, 5_000)
+    return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
+  }, [fetchScores, fetchStandings])
+
+  const liveMatches = applyLiveScores(matches, liveScores)
+
   // Build match days index: key = "year-utcMonth-utcDate"
   const matchDays: Record<string, Match[]> = {}
-  for (const m of matches) {
+  for (const m of liveMatches) {
     const d = new Date(m.kickoff)
     const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`
     if (!matchDays[key]) matchDays[key] = []
@@ -217,13 +305,45 @@ export default function CalendarClient({ matches }: { matches: Match[] }) {
 
             {/* Matches */}
             <div className="overflow-y-auto px-4 pt-3 pb-20">
-              {sheetMatches.map(m => (
-                <MatchCard key={m.id} match={m} userTimezone={userTimezone} />
-              ))}
+              {sheetMatches.map(m => {
+                const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+                const liveData = liveScores[key]
+                return (
+                  <MatchCard
+                    key={m.id}
+                    match={m}
+                    userTimezone={userTimezone}
+                    homeStats={statsMap[m.homeTeam.id]}
+                    awayStats={statsMap[m.awayTeam.id]}
+                    groupStandings={m.group ? liveStandingsMap[m.group] : undefined}
+                    clock={liveData?.clock}
+                    scorers={liveData?.scorers}
+                  />
+                )
+              })}
             </div>
           </div>
         </div>
       )}
+
+      {/* Full-detail popup when tapping a match */}
+      {selectedMatch && (() => {
+        const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
+        const liveData = liveScores[key]
+        return (
+          <MatchCard
+            match={selectedMatch}
+            userTimezone={userTimezone}
+            homeStats={statsMap[selectedMatch.homeTeam.id]}
+            awayStats={statsMap[selectedMatch.awayTeam.id]}
+            groupStandings={selectedMatch.group ? liveStandingsMap[selectedMatch.group] : undefined}
+            clock={liveData?.clock}
+            scorers={liveData?.scorers}
+            defaultOpen
+            onCloseExternal={() => setSelectedMatch(null)}
+          />
+        )
+      })()}
     </>
   )
 }

@@ -5,6 +5,7 @@ import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
+import type { StandingRow } from '@/app/api/standings/route'
 
 function normalize(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -182,7 +183,7 @@ function LiveNowSheet({
             userTimezone={userTimezone}
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
-            groupStandings={selectedMatch.group ? standingsMap[selectedMatch.group] : undefined}
+            groupStandings={selectedMatch.group ? liveStandingsMap[selectedMatch.group] : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
             defaultOpen
@@ -207,12 +208,44 @@ export default function ScheduleClient({
 }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [liveSheetOpen, setLiveSheetOpen] = useState(false)
 
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
+
+  // Merge ESPN live standings rows into our Standing[] (preserving Team objects)
+  function mergeStandings(
+    base: Record<string, Standing[]>,
+    espn: Record<string, StandingRow[]>
+  ): Record<string, Standing[]> {
+    const result: Record<string, Standing[]> = { ...base }
+    for (const [group, rows] of Object.entries(espn)) {
+      const baseGroup = base[group]
+      if (!baseGroup) continue
+      const merged = rows.map(row => {
+        const existing = baseGroup.find(s =>
+          s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
+          row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
+        ) ?? baseGroup[0]
+        return {
+          team: existing.team,
+          played: row.gp,
+          won: row.w,
+          drawn: row.d,
+          lost: row.l,
+          goalsFor: row.gf,
+          goalsAgainst: row.ga,
+          goalDiff: row.gd,
+          points: row.pts,
+        }
+      })
+      result[group] = merged
+    }
+    return result
+  }
 
   const fetchScores = useCallback(async () => {
     try {
@@ -224,20 +257,32 @@ export default function ScheduleClient({
     } catch { /* fail silently */ }
   }, [])
 
+  const fetchStandings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/standings')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveStandingsMap(prev => mergeStandings(standingsMap, data.standings ?? {}))
+    } catch { /* fail silently */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [standingsMap])
+
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
 
   useEffect(() => {
     fetchScores()
+    fetchStandings()
     let interval = setInterval(fetchScores, 30_000)
+    const standingsInterval = setInterval(fetchStandings, 60_000)
     const adaptivePoller = setInterval(() => {
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
       const newRate = hasLive ? 2_000 : 30_000
       clearInterval(interval)
       interval = setInterval(fetchScores, newRate)
     }, 5_000)
-    return () => { clearInterval(interval); clearInterval(adaptivePoller) }
-  }, [fetchScores])
+    return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
+  }, [fetchScores, fetchStandings])
 
   const liveMatches = useMemo(() => applyLiveScores(matches, liveScores), [matches, liveScores])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
@@ -324,7 +369,7 @@ export default function ScheduleClient({
                     userTimezone={userTimezone}
                     homeStats={statsMap[match.homeTeam.id]}
                     awayStats={statsMap[match.awayTeam.id]}
-                    groupStandings={match.group ? standingsMap[match.group] : undefined}
+                    groupStandings={match.group ? liveStandingsMap[match.group] : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
                   />
@@ -347,7 +392,7 @@ export default function ScheduleClient({
           liveMatches={currentlyLive}
           liveScores={liveScores}
           statsMap={statsMap}
-          standingsMap={standingsMap}
+          standingsMap={liveStandingsMap}
           onClose={() => setLiveSheetOpen(false)}
           userTimezone={userTimezone}
         />
