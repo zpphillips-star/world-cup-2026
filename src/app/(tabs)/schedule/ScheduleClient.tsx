@@ -183,7 +183,7 @@ function LiveNowSheet({
             userTimezone={userTimezone}
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
-            groupStandings={selectedMatch.group ? liveStandingsMap[selectedMatch.group] : undefined}
+            groupStandings={selectedMatch.group ? standingsMap[selectedMatch.group] : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
             defaultOpen
