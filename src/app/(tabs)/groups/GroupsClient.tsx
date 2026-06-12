@@ -242,6 +242,48 @@ function GroupSheet({
   )
 }
 
+// -- Merge live ESPN standings into base standings --------------------------
+
+interface EspnRow {
+  teamName: string; gp: number; w: number; d: number; l: number
+  gf: number; ga: number; gd: number; pts: number
+}
+
+function mergeLiveStandings(
+  base: Record<string, Standing[]>,
+  espn: Record<string, EspnRow[]>
+): Record<string, Standing[]> {
+  const result: Record<string, Standing[]> = { ...base }
+  for (const [group, rows] of Object.entries(espn)) {
+    const baseGroup = base[group]
+    if (!baseGroup) continue
+    const seen = new Set<string>()
+    const merged = rows
+      .filter(row => {
+        const key = row.teamName.toLowerCase()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      .map(row => {
+        const existing = baseGroup.find(s =>
+          s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
+          row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
+        )
+        if (!existing) return null
+        return {
+          team: existing.team,
+          played: row.gp, won: row.w, drawn: row.d, lost: row.l,
+          goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
+        }
+      })
+      .filter((s): s is Standing => s !== null)
+      .sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor)
+    if (merged.length > 0) result[group] = merged
+  }
+  return result
+}
+
 // -- Main export ------------------------------------------------------------
 
 interface GroupsClientProps {
@@ -249,9 +291,26 @@ interface GroupsClientProps {
   groups: Group[]
 }
 
-export default function GroupsClient({ standings, groups }: GroupsClientProps) {
+export default function GroupsClient({ standings: baseStandings, groups }: GroupsClientProps) {
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
+  const [standings, setStandings] = useState<Record<string, Standing[]>>(baseStandings)
+
+  // Fetch live standings on mount and refresh every 60s
+  useEffect(() => {
+    async function fetchStandings() {
+      try {
+        const res = await fetch('/api/standings')
+        if (!res.ok) return
+        const data = await res.json()
+        setStandings(mergeLiveStandings(baseStandings, data.standings ?? {}))
+      } catch { /* fail silently */ }
+    }
+    fetchStandings()
+    const interval = setInterval(fetchStandings, 60_000)
+    return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const activeStandings = activeGroup ? standings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
