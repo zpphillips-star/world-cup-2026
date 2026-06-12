@@ -23,11 +23,15 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   return `${weekday} · ${mon} ${day}`
 }
 
-function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
+function applyLiveScores(
+  matches: Match[],
+  scores: Record<string, ScoreUpdate>,
+  aliases: Record<string, string>
+): Match[] {
   if (Object.keys(scores).length === 0) return matches
   return matches.map(m => {
     const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key]
+    const update = scores[key] ?? scores[aliases[key]]
     if (!update) return m
     return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
   })
@@ -38,6 +42,7 @@ function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>):
 function LiveNowSheet({
   liveMatches,
   liveScores,
+  liveAliases,
   statsMap,
   standingsMap,
   onClose,
@@ -45,6 +50,7 @@ function LiveNowSheet({
 }: {
   liveMatches: Match[]
   liveScores: Record<string, ScoreUpdate>
+  liveAliases: Record<string, string>
   statsMap: Record<string, TeamStats | null>
   standingsMap: Record<string, Standing[]>
   onClose: () => void
@@ -84,7 +90,7 @@ function LiveNowSheet({
         >
           {liveMatches.map(m => {
             const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-            const liveData = liveScores[key]
+            const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
             const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
             const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
 
@@ -176,7 +182,7 @@ function LiveNowSheet({
       {/* Full match detail — opened from a card tap */}
       {selectedMatch && (() => {
         const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
-        const liveData = liveScores[key]
+        const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
         return (
           <MatchCard
             match={selectedMatch}
@@ -208,6 +214,7 @@ export default function ScheduleClient({
 }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [liveSheetOpen, setLiveSheetOpen] = useState(false)
@@ -253,6 +260,7 @@ export default function ScheduleClient({
       if (!res.ok) return
       const data = await res.json()
       setLiveScores(data.scores ?? {})
+      setLiveAliases(data.aliases ?? {})
       setLastUpdated(Date.now())
     } catch { /* fail silently */ }
   }, [])
@@ -304,7 +312,7 @@ export default function ScheduleClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => applyLiveScores(matches, liveScores), [matches, liveScores])
+  const liveMatches = useMemo(() => applyLiveScores(matches, liveScores, liveAliases), [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
@@ -381,7 +389,7 @@ export default function ScheduleClient({
             <div>
               {dayMatches.map((match) => {
                 const key = `${normalize(match.homeTeam.name)}|${normalize(match.awayTeam.name)}`
-                const liveData = liveScores[key]
+                const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
                 return (
                   <MatchCard
                     key={match.id}
@@ -411,6 +419,7 @@ export default function ScheduleClient({
         <LiveNowSheet
           liveMatches={currentlyLive}
           liveScores={liveScores}
+          liveAliases={liveAliases}
           statsMap={statsMap}
           standingsMap={liveStandingsMap}
           onClose={() => setLiveSheetOpen(false)}

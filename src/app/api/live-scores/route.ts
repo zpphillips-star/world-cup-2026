@@ -69,6 +69,8 @@ export async function GET() {
   try {
     const dates = getTournamentDates()
     const scores: Record<string, ScoreUpdate> = {}
+    // aliases[altKey] = canonicalKey — lets client resolve alternate name variants
+    const aliases: Record<string, string> = {}
 
     await Promise.all(
       dates.map(async (date) => {
@@ -123,17 +125,22 @@ export async function GET() {
 
           const homeNames = normalizeTeamName(home.team.displayName ?? home.team.name)
           const awayNames = normalizeTeamName(away.team.displayName ?? away.team.name)
-          const entry = {
+
+          // Canonical key = ESPN's primary display name (index 0)
+          const canonicalKey = `${homeNames[0]}|${awayNames[0]}`
+          scores[canonicalKey] = {
             homeScore: parseInt(home.score ?? '0', 10),
             awayScore: parseInt(away.score ?? '0', 10),
             status,
             clock: status === 'live' ? parseClock(comp.status?.displayClock) : undefined,
             scorers,
           }
-          // Write all key combinations so client-side name mismatches (e.g. "Czechia" vs "Czech Republic") still match
+
+          // Register alias keys so clients using different name variants still resolve to canonical
           for (const h of homeNames) {
             for (const a of awayNames) {
-              scores[`${h}|${a}`] = entry
+              const k = `${h}|${a}`
+              if (k !== canonicalKey) aliases[k] = canonicalKey
             }
           }
         }
@@ -141,10 +148,10 @@ export async function GET() {
     )
 
     return Response.json(
-      { scores, fetchedAt: Date.now() },
+      { scores, aliases, fetchedAt: Date.now() },
       { headers: { 'Cache-Control': 's-maxage=2, stale-while-revalidate=3' } }
     )
   } catch {
-    return Response.json({ scores: {}, fetchedAt: Date.now() })
+    return Response.json({ scores: {}, aliases: {}, fetchedAt: Date.now() })
   }
 }
