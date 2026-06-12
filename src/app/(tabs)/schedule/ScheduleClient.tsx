@@ -265,6 +265,10 @@ export default function ScheduleClient({
           points: row.pts,
         })
       }
+      // sort: pts desc → goalDiff desc → goalsFor desc
+      merged.sort((a, b) =>
+        b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor
+      )
       // only replace if we matched all 4 teams; otherwise keep base to avoid partial table
       if (merged.length === baseGroup.length) result[group] = merged
     }
