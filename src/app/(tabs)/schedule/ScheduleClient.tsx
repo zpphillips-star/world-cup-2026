@@ -270,17 +270,37 @@ export default function ScheduleClient({
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
 
+  // Keep a ref to matches so the adaptive poller can check kickoff times without stale closure
+  const matchesRef = useRef(matches)
+  useEffect(() => { matchesRef.current = matches }, [matches])
+
   useEffect(() => {
     fetchScores()
     fetchStandings()
     let interval = setInterval(fetchScores, 30_000)
     const standingsInterval = setInterval(fetchStandings, 60_000)
+
     const adaptivePoller = setInterval(() => {
+      const now = Date.now()
+
+      // Fast polling if ESPN reports a live game
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
-      const newRate = hasLive ? 2_000 : 30_000
+
+      // ALSO fast poll if any match kicks off within the next 10 min (or started up to 120min ago and isn't marked ft)
+      // This means we go fast BEFORE ESPN even notices, purely from our own schedule data
+      const kickoffActive = matchesRef.current.some(m => {
+        const kick = new Date(m.kickoff).getTime()
+        const msSinceKick = now - kick
+        return kick <= now + 10 * 60_000     // within 10 min of kickoff
+            && msSinceKick < 120 * 60_000    // game can't be more than 120 min old
+            && m.status !== 'ft'             // not already marked final in our data
+      })
+
+      const newRate = (hasLive || kickoffActive) ? 2_000 : 30_000
       clearInterval(interval)
       interval = setInterval(fetchScores, newRate)
     }, 5_000)
+
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
