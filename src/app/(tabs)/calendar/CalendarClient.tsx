@@ -245,13 +245,13 @@ export default function CalendarClient({
 
       {/* Day sheet */}
       {selectedDay && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-[55]">
           <div
-            className="absolute inset-0 bg-black/60"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
             onClick={() => setSelectedDay(null)}
           />
           <div
-            className="absolute bottom-0 left-0 right-0 bg-[#0f0f18] rounded-t-2xl max-h-[80vh] flex flex-col"
+            className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up bg-[#0f0f18]"
             onTouchStart={handleSheetTouchStart}
             onTouchEnd={handleSheetTouchEnd}
           >
@@ -306,3 +306,4 @@ export default function CalendarClient({
     </>
   )
 }
+
