@@ -2,12 +2,147 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { Match, TeamStats, Standing } from '@/lib/types'
-import type { ScoreUpdate } from '@/app/api/live-scores/route'
+import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
 import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
+import { FlagImg } from '@/components/FlagImg'
+import { normalize, teamNamesMatch } from '@/lib/espnAliases'
 
-function normalize(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '')
+// ── Compact match preview card for the calendar day sheet ──────────────────
+// Shows big flags + location. Tap → opens full MatchCard popup.
+function DayMatchCard({
+  match,
+  userTimezone,
+  homeStats,
+  awayStats,
+  groupStandings,
+  clock,
+  scorers,
+}: {
+  match: Match
+  userTimezone: string
+  homeStats?: TeamStats | null
+  awayStats?: TeamStats | null
+  groupStandings?: Standing[]
+  clock?: string
+  scorers?: ScoringEvent[]
+}) {
+  const [open, setOpen] = useState(false)
+  const isLive = match.status === 'live'
+  const isFt = match.status === 'ft'
+  const hasScore = isLive || isFt
+
+  const timeStr = (() => {
+    try {
+      return new Date(match.kickoff).toLocaleTimeString('en-US', {
+        hour: 'numeric', minute: '2-digit', timeZone: userTimezone,
+        timeZoneName: 'short',
+      })
+    } catch { return '' }
+  })()
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="w-full text-left active:scale-[0.97] transition-transform mb-3"
+      >
+        <div
+          className="rounded-2xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(160deg, #0a1628 0%, #13131a 100%)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
+          }}
+        >
+          {/* Top bar — group + status */}
+          <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+            {match.group && (
+              <span className="text-[10px] font-bold text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Group {match.group}
+              </span>
+            )}
+            {isLive && (
+              <span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full animate-pulse">
+                ● LIVE {clock && `· ${clock}`}
+              </span>
+            )}
+            {isFt && (
+              <span className="text-[10px] font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">
+                FINAL
+              </span>
+            )}
+            {match.status === 'upcoming' && (
+              <span className="text-[10px] text-zinc-400">{timeStr}</span>
+            )}
+          </div>
+
+          {/* Flags + score row */}
+          <div className="flex items-center justify-between px-5 py-3">
+            {/* Home team */}
+            <div className="flex-1 flex flex-col items-center gap-1.5">
+              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10 rounded-sm shadow-md" />
+              <span className="text-[12px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
+                {match.homeTeam.name}
+              </span>
+            </div>
+
+            {/* Score / VS */}
+            <div className="flex flex-col items-center gap-0.5 px-2">
+              {hasScore ? (
+                <span className={`text-3xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
+                  {match.homeScore} – {match.awayScore}
+                </span>
+              ) : (
+                <span className="text-xl font-bold text-zinc-400">VS</span>
+              )}
+              {/* Goal scorers */}
+              {scorers && scorers.length > 0 && (
+                <div className="flex flex-col items-center gap-0.5 mt-1">
+                  {scorers.map((s, i) => (
+                    <span key={i} className={`text-[10px] text-zinc-400 ${s.teamSide === 'home' ? 'self-start' : 'self-end'}`}>
+                      ⚽ {s.playerName} {s.minute}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Away team */}
+            <div className="flex-1 flex flex-col items-center gap-1.5">
+              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10 rounded-sm shadow-md" />
+              <span className="text-[12px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
+                {match.awayTeam.name}
+              </span>
+            </div>
+          </div>
+
+          {/* Location */}
+          {match.venue && (
+            <div className="flex items-center justify-center gap-1.5 pb-3 text-[11px] text-zinc-400">
+              <span>📍</span>
+              <span>{match.venue.name}{match.venue.city ? `, ${match.venue.city}` : ''}</span>
+            </div>
+          )}
+        </div>
+      </button>
+
+      {/* Full detail popup */}
+      {open && (
+        <MatchCard
+          match={match}
+          userTimezone={userTimezone}
+          homeStats={homeStats}
+          awayStats={awayStats}
+          groupStandings={groupStandings}
+          clock={clock}
+          scorers={scorers}
+          defaultOpen={true}
+          onCloseExternal={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
 }
 
 function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
@@ -287,7 +422,7 @@ export default function CalendarClient({
                 const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
                 const liveData = liveScores[key]
                 return (
-                  <MatchCard
+                  <DayMatchCard
                     key={m.id}
                     match={m}
                     userTimezone={userTimezone}

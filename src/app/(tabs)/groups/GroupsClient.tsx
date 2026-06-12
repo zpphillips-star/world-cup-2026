@@ -1,10 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import type { Standing, Group, Team } from '@/lib/types'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import type { Standing, Group, Team, Match } from '@/lib/types'
+import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
-import { teamNamesMatch } from '@/lib/espnAliases'
+import { teamNamesMatch, normalize } from '@/lib/espnAliases'
+
+// Apply live scores to a list of matches
+function applyLiveScoresToMatches(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
+  if (Object.keys(scores).length === 0) return matches
+  return matches.map(m => {
+    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+    const update = scores[key]
+    if (!update) return m
+    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
+  })
+}
 
 // -- Standings table --------------------------------------------------------
 
@@ -287,8 +299,21 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
   const [standings, setStandings] = useState<Record<string, Standing[]>>(baseStandings)
+  const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const liveScoresRef = useRef(liveScores)
+  useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+
+  const fetchScores = useCallback(async () => {
+    try {
+      const res = await fetch('/api/live-scores')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveScores(data.scores ?? {})
+    } catch { /* fail silently */ }
+  }, [])
 
   // Fetch live standings on mount and refresh every 60s
+  // Also fetch live scores for match status updates
   useEffect(() => {
     async function fetchStandings() {
       try {
@@ -299,13 +324,26 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
       } catch { /* fail silently */ }
     }
     fetchStandings()
-    const interval = setInterval(fetchStandings, 60_000)
-    return () => clearInterval(interval)
+    fetchScores()
+    const standingsInterval = setInterval(fetchStandings, 60_000)
+    let scoresInterval = setInterval(fetchScores, 30_000)
+    // Adaptive polling: 2s when live, 30s otherwise
+    const adaptivePoller = setInterval(() => {
+      const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
+      const rate = hasLive ? 2_000 : 30_000
+      clearInterval(scoresInterval)
+      scoresInterval = setInterval(fetchScores, rate)
+    }, 5_000)
+    return () => { clearInterval(standingsInterval); clearInterval(scoresInterval); clearInterval(adaptivePoller) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const activeStandings = activeGroup ? standings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
+  // Apply live scores to the active group's matches so completed games show results
+  const activeGroupWithLiveScores = activeGroupData
+    ? { ...activeGroupData, matches: applyLiveScoresToMatches(activeGroupData.matches, liveScores) }
+    : null
 
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]">
@@ -328,11 +366,11 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
       </div>
 
       {/* Group sheet — hidden while team sheet is open */}
-      {activeGroup && activeStandings && activeGroupData && !teamSheet && (
+      {activeGroup && activeStandings && activeGroupWithLiveScores && !teamSheet && (
         <GroupSheet
           groupId={activeGroup}
           standings={activeStandings}
-          group={activeGroupData}
+          group={activeGroupWithLiveScores}
           onClose={() => setActiveGroup(null)}
           onTeamOpen={(team) => setTeamSheet(team)}
         />
