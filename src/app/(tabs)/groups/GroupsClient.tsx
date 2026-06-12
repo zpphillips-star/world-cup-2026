@@ -249,6 +249,26 @@ interface EspnRow {
   gf: number; ga: number; gd: number; pts: number
 }
 
+const ESPN_NAME_ALIASES: Record<string, string> = {
+  'czechia': 'czech republic',
+  'korea republic': 'south korea',
+  'republic of ireland': 'ireland',
+  'usa': 'united states',
+  'united states of america': 'united states',
+  'bosnia-herzegovina': 'bosnia & herzegovina',
+  'bosnia and herzegovina': 'bosnia & herzegovina',
+  'türkiye': 'turkey',
+  'turkiye': 'turkey',
+  'congo dr': 'dr congo',
+  "cote d'ivoire": 'ivory coast',
+  "côte d'ivoire": 'ivory coast',
+}
+
+function normalizeTeamName(name: string): string {
+  const lower = name.toLowerCase()
+  return ESPN_NAME_ALIASES[lower] ?? lower
+}
+
 function mergeLiveStandings(
   base: Record<string, Standing[]>,
   espn: Record<string, EspnRow[]>
@@ -257,29 +277,33 @@ function mergeLiveStandings(
   for (const [group, rows] of Object.entries(espn)) {
     const baseGroup = base[group]
     if (!baseGroup) continue
-    const seen = new Set<string>()
-    const merged = rows
-      .filter(row => {
-        const key = row.teamName.toLowerCase()
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
-      .map(row => {
-        const existing = baseGroup.find(s =>
-          s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
-          row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
-        )
-        if (!existing) return null
-        return {
-          team: existing.team,
-          played: row.gp, won: row.w, drawn: row.d, lost: row.l,
-          goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
+
+    // Build a map of normalized ESPN name → stats row (deduplicated)
+    const espnMap = new Map<string, EspnRow>()
+    for (const row of rows) {
+      const normalized = normalizeTeamName(row.teamName)
+      if (!espnMap.has(normalized)) espnMap.set(normalized, row)
+    }
+
+    // For each base team, find matching ESPN row (or keep base stats)
+    const merged: Standing[] = baseGroup.map(s => {
+      const sn = s.team.name.toLowerCase()
+      let row = espnMap.get(sn)
+      if (!row) {
+        for (const [key, r] of espnMap) {
+          if (sn.includes(key) || key.includes(sn)) { row = r; break }
         }
-      })
-      .filter((s): s is Standing => s !== null)
-      .sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor)
-    if (merged.length > 0) result[group] = merged
+      }
+      if (!row) return s
+      return {
+        team: s.team,
+        played: row.gp, won: row.w, drawn: row.d, lost: row.l,
+        goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
+      }
+    })
+
+    merged.sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor)
+    result[group] = merged
   }
   return result
 }

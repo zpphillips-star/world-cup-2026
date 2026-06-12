@@ -231,6 +231,13 @@ export default function ScheduleClient({
     'republic of ireland': 'ireland',
     'usa': 'united states',
     'united states of america': 'united states',
+    'bosnia-herzegovina': 'bosnia & herzegovina',
+    'bosnia and herzegovina': 'bosnia & herzegovina',
+    'türkiye': 'turkey',
+    'turkiye': 'turkey',
+    'congo dr': 'dr congo',
+    "cote d'ivoire": 'ivory coast',
+    'côte d\'ivoire': 'ivory coast',
   }
   function normalizeTeamName(name: string): string {
     const lower = name.toLowerCase()
@@ -245,16 +252,27 @@ export default function ScheduleClient({
     for (const [group, rows] of Object.entries(espn)) {
       const baseGroup = base[group]
       if (!baseGroup) continue
-      const merged: Standing[] = []
+
+      // Build a map of normalized ESPN name → stats row
+      const espnMap = new Map<string, StandingRow>()
       for (const row of rows) {
         const normalized = normalizeTeamName(row.teamName)
-        const existing = baseGroup.find(s => {
-          const sn = s.team.name.toLowerCase()
-          return sn === normalized || sn.includes(normalized) || normalized.includes(sn)
-        })
-        if (!existing) continue // skip unmatched — don't fall back to wrong team
-        merged.push({
-          team: existing.team,
+        if (!espnMap.has(normalized)) espnMap.set(normalized, row)
+      }
+
+      // For each base team, find a matching ESPN row (or keep base stats)
+      const merged: Standing[] = baseGroup.map(s => {
+        const sn = s.team.name.toLowerCase()
+        // Try exact match first, then substring match
+        let row = espnMap.get(sn)
+        if (!row) {
+          for (const [key, r] of espnMap) {
+            if (sn.includes(key) || key.includes(sn)) { row = r; break }
+          }
+        }
+        if (!row) return s // keep base if ESPN doesn't have this team
+        return {
+          team: s.team,
           played: row.gp,
           won: row.w,
           drawn: row.d,
@@ -263,14 +281,14 @@ export default function ScheduleClient({
           goalsAgainst: row.ga,
           goalDiff: row.gd,
           points: row.pts,
-        })
-      }
+        }
+      })
+
       // sort: pts desc → goalDiff desc → goalsFor desc
       merged.sort((a, b) =>
         b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor
       )
-      // only replace if we matched all 4 teams; otherwise keep base to avoid partial table
-      if (merged.length === baseGroup.length) result[group] = merged
+      result[group] = merged
     }
     return result
   }
