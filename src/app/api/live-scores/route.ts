@@ -19,6 +19,31 @@ function normalize(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
+// ESPN uses different country names than FIFA/our schedule data — map them here
+const ESPN_NAME_ALIASES: Record<string, string> = {
+  'czechia': 'czech republic',
+  'czech republic': 'czechia', // both directions so we generate dual keys
+  'republic of ireland': 'ireland',
+  'ir iran': 'iran',
+  'usa': 'united states',
+  'united states': 'usa',
+  'côte divoire': 'ivory coast',
+  'ivory coast': 'côte divoire',
+  'trinidad & tobago': 'trinidad and tobago',
+  'trinidad and tobago': 'trinidad & tobago',
+  'dr congo': 'democratic republic of congo',
+  'democratic republic of congo': 'dr congo',
+  'korea republic': 'south korea',
+  'south korea': 'korea republic',
+}
+
+function normalizeTeamName(name: string): string[] {
+  const n = normalize(name)
+  const lower = name.toLowerCase()
+  const alias = ESPN_NAME_ALIASES[lower]
+  return alias ? [n, normalize(alias)] : [n]
+}
+
 function parseClock(raw?: string): string | undefined {
   if (!raw) return undefined
   // "67:00" -> "67'", "90:30" -> "90+'"
@@ -68,7 +93,13 @@ export async function GET() {
             statusName === 'STATUS_HALFTIME' ||
             statusState === 'in'
           ) status = 'live'
-          else if (statusName === 'STATUS_FINAL' || comp.status?.type?.completed === true) status = 'ft'
+          else if (
+            statusName === 'STATUS_FINAL' ||
+            statusName === 'STATUS_FULL_TIME' ||
+            statusName === 'STATUS_FULL_PEN' ||
+            statusName === 'STATUS_EXTRA_TIME' && comp.status?.type?.completed === true ||
+            comp.status?.type?.completed === true
+          ) status = 'ft'
 
           // Parse scoring events from details
           const scorers: ScoringEvent[] = []
@@ -90,13 +121,20 @@ export async function GET() {
             status = comp.status?.type?.completed === true ? 'ft' : 'live'
           }
 
-          const key = `${normalize(home.team.displayName ?? home.team.name)}|${normalize(away.team.displayName ?? away.team.name)}`
-          scores[key] = {
+          const homeNames = normalizeTeamName(home.team.displayName ?? home.team.name)
+          const awayNames = normalizeTeamName(away.team.displayName ?? away.team.name)
+          const entry = {
             homeScore: parseInt(home.score ?? '0', 10),
             awayScore: parseInt(away.score ?? '0', 10),
             status,
             clock: status === 'live' ? parseClock(comp.status?.displayClock) : undefined,
             scorers,
+          }
+          // Write all key combinations so client-side name mismatches (e.g. "Czechia" vs "Czech Republic") still match
+          for (const h of homeNames) {
+            for (const a of awayNames) {
+              scores[`${h}|${a}`] = entry
+            }
           }
         }
       })
