@@ -15,33 +15,20 @@ export interface ScoreUpdate {
   scorers: ScoringEvent[]
 }
 
-function normalize(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '')
-}
+import { normalize, resolveEspnName, ESPN_TO_SCHEDULE } from '@/lib/espnAliases'
 
-// ESPN uses different country names than FIFA/our schedule data — map them here
-const ESPN_NAME_ALIASES: Record<string, string> = {
-  'czechia': 'czech republic',
-  'czech republic': 'czechia', // both directions so we generate dual keys
-  'republic of ireland': 'ireland',
-  'ir iran': 'iran',
-  'usa': 'united states',
-  'united states': 'usa',
-  'côte divoire': 'ivory coast',
-  'ivory coast': 'côte divoire',
-  'trinidad & tobago': 'trinidad and tobago',
-  'trinidad and tobago': 'trinidad & tobago',
-  'dr congo': 'democratic republic of congo',
-  'democratic republic of congo': 'dr congo',
-  'korea republic': 'south korea',
-  'south korea': 'korea republic',
-}
-
+// Generate all key variants for a team name so match keys resolve regardless of ESPN naming
 function normalizeTeamName(name: string): string[] {
   const n = normalize(name)
+  const resolved = resolveEspnName(name)
+  const rn = normalize(resolved)
+  const keys = new Set([n, rn])
+  // Also add reverse aliases (schedule→ESPN) so we generate dual keys
   const lower = name.toLowerCase()
-  const alias = ESPN_NAME_ALIASES[lower]
-  return alias ? [n, normalize(alias)] : [n]
+  for (const [espnKey, schedKey] of Object.entries(ESPN_TO_SCHEDULE)) {
+    if (schedKey === lower) keys.add(normalize(espnKey))
+  }
+  return Array.from(keys)
 }
 
 function parseClock(raw?: string): string | undefined {

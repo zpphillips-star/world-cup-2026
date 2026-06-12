@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import type { Standing, Group, Team } from '@/lib/types'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
+import { teamNamesMatch } from '@/lib/espnAliases'
 
 // -- Standings table --------------------------------------------------------
 
@@ -249,26 +250,7 @@ interface EspnRow {
   gf: number; ga: number; gd: number; pts: number
 }
 
-const ESPN_NAME_ALIASES: Record<string, string> = {
-  'czechia': 'czech republic',
-  'korea republic': 'south korea',
-  'republic of ireland': 'ireland',
-  'usa': 'united states',
-  'united states of america': 'united states',
-  'bosnia-herzegovina': 'bosnia & herzegovina',
-  'bosnia and herzegovina': 'bosnia & herzegovina',
-  'türkiye': 'turkey',
-  'turkiye': 'turkey',
-  'congo dr': 'dr congo',
-  "cote d'ivoire": 'ivory coast',
-  "côte d'ivoire": 'ivory coast',
-}
-
-function normalizeTeamName(name: string): string {
-  const lower = name.toLowerCase()
-  return ESPN_NAME_ALIASES[lower] ?? lower
-}
-
+// Uses shared espnAliases lib — add new ESPN name variants there, not here
 function mergeLiveStandings(
   base: Record<string, Standing[]>,
   espn: Record<string, EspnRow[]>
@@ -278,22 +260,8 @@ function mergeLiveStandings(
     const baseGroup = base[group]
     if (!baseGroup) continue
 
-    // Build a map of normalized ESPN name → stats row (deduplicated)
-    const espnMap = new Map<string, EspnRow>()
-    for (const row of rows) {
-      const normalized = normalizeTeamName(row.teamName)
-      if (!espnMap.has(normalized)) espnMap.set(normalized, row)
-    }
-
-    // For each base team, find matching ESPN row (or keep base stats)
     const merged: Standing[] = baseGroup.map(s => {
-      const sn = s.team.name.toLowerCase()
-      let row = espnMap.get(sn)
-      if (!row) {
-        for (const [key, r] of espnMap) {
-          if (sn.includes(key) || key.includes(sn)) { row = r; break }
-        }
-      }
+      const row = rows.find(r => teamNamesMatch(r.teamName, s.team.name))
       if (!row) return s
       return {
         team: s.team,

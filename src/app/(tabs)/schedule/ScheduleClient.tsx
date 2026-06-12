@@ -6,10 +6,7 @@ import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
 import type { StandingRow } from '@/app/api/standings/route'
-
-function normalize(name: string) {
-  return name.toLowerCase().replace(/[^a-z0-9]/g, '')
-}
+import { teamNamesMatch, normalize } from '@/lib/espnAliases'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
@@ -224,26 +221,7 @@ export default function ScheduleClient({
   }, [])
 
   // Merge ESPN live standings rows into our Standing[] (preserving Team objects)
-  // ESPN uses different names for some teams — map them to our schedule names
-  const ESPN_NAME_ALIASES: Record<string, string> = {
-    'czechia': 'czech republic',
-    'korea republic': 'south korea',
-    'republic of ireland': 'ireland',
-    'usa': 'united states',
-    'united states of america': 'united states',
-    'bosnia-herzegovina': 'bosnia & herzegovina',
-    'bosnia and herzegovina': 'bosnia & herzegovina',
-    'türkiye': 'turkey',
-    'turkiye': 'turkey',
-    'congo dr': 'dr congo',
-    "cote d'ivoire": 'ivory coast',
-    'côte d\'ivoire': 'ivory coast',
-  }
-  function normalizeTeamName(name: string): string {
-    const lower = name.toLowerCase()
-    return ESPN_NAME_ALIASES[lower] ?? lower
-  }
-
+  // Merge ESPN live standings — uses shared espnAliases lib for consistent name resolution
   function mergeStandings(
     base: Record<string, Standing[]>,
     espn: Record<string, StandingRow[]>
@@ -253,38 +231,17 @@ export default function ScheduleClient({
       const baseGroup = base[group]
       if (!baseGroup) continue
 
-      // Build a map of normalized ESPN name → stats row
-      const espnMap = new Map<string, StandingRow>()
-      for (const row of rows) {
-        const normalized = normalizeTeamName(row.teamName)
-        if (!espnMap.has(normalized)) espnMap.set(normalized, row)
-      }
-
-      // For each base team, find a matching ESPN row (or keep base stats)
+      // For each base team, find matching ESPN row using shared teamNamesMatch()
       const merged: Standing[] = baseGroup.map(s => {
-        const sn = s.team.name.toLowerCase()
-        // Try exact match first, then substring match
-        let row = espnMap.get(sn)
-        if (!row) {
-          for (const [key, r] of espnMap) {
-            if (sn.includes(key) || key.includes(sn)) { row = r; break }
-          }
-        }
-        if (!row) return s // keep base if ESPN doesn't have this team
+        const row = rows.find(r => teamNamesMatch(r.teamName, s.team.name))
+        if (!row) return s
         return {
           team: s.team,
-          played: row.gp,
-          won: row.w,
-          drawn: row.d,
-          lost: row.l,
-          goalsFor: row.gf,
-          goalsAgainst: row.ga,
-          goalDiff: row.gd,
-          points: row.pts,
+          played: row.gp, won: row.w, drawn: row.d, lost: row.l,
+          goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
         }
       })
 
-      // sort: pts desc → goalDiff desc → goalsFor desc
       merged.sort((a, b) =>
         b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor
       )
