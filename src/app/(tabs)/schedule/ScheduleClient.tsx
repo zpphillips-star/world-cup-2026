@@ -224,6 +224,19 @@ export default function ScheduleClient({
   }, [])
 
   // Merge ESPN live standings rows into our Standing[] (preserving Team objects)
+  // ESPN uses different names for some teams — map them to our schedule names
+  const ESPN_NAME_ALIASES: Record<string, string> = {
+    'czechia': 'czech republic',
+    'korea republic': 'south korea',
+    'republic of ireland': 'ireland',
+    'usa': 'united states',
+    'united states of america': 'united states',
+  }
+  function normalizeTeamName(name: string): string {
+    const lower = name.toLowerCase()
+    return ESPN_NAME_ALIASES[lower] ?? lower
+  }
+
   function mergeStandings(
     base: Record<string, Standing[]>,
     espn: Record<string, StandingRow[]>
@@ -232,12 +245,15 @@ export default function ScheduleClient({
     for (const [group, rows] of Object.entries(espn)) {
       const baseGroup = base[group]
       if (!baseGroup) continue
-      const merged = rows.map(row => {
-        const existing = baseGroup.find(s =>
-          s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
-          row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
-        ) ?? baseGroup[0]
-        return {
+      const merged: Standing[] = []
+      for (const row of rows) {
+        const normalized = normalizeTeamName(row.teamName)
+        const existing = baseGroup.find(s => {
+          const sn = s.team.name.toLowerCase()
+          return sn === normalized || sn.includes(normalized) || normalized.includes(sn)
+        })
+        if (!existing) continue // skip unmatched — don't fall back to wrong team
+        merged.push({
           team: existing.team,
           played: row.gp,
           won: row.w,
@@ -247,9 +263,14 @@ export default function ScheduleClient({
           goalsAgainst: row.ga,
           goalDiff: row.gd,
           points: row.pts,
-        }
-      })
-      result[group] = merged
+        })
+      }
+      // sort: pts desc → goalDiff desc → goalsFor desc
+      merged.sort((a, b) =>
+        b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor
+      )
+      // only replace if we matched all 4 teams; otherwise keep base to avoid partial table
+      if (merged.length === baseGroup.length) result[group] = merged
     }
     return result
   }

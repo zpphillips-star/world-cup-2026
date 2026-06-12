@@ -26,12 +26,16 @@ export async function GET() {
       const groupLetter: string = group.abbreviation?.replace('Group ', '') ?? group.name?.replace('Group ', '')
       if (!groupLetter) continue
 
+      const seenTeams = new Set<string>()
       const rows: StandingRow[] = []
       for (const entry of group.standings?.entries ?? []) {
+        const teamName: string = entry.team?.displayName ?? entry.team?.name ?? ''
+        if (!teamName || seenTeams.has(teamName)) continue
+        seenTeams.add(teamName)
         const stats: { name: string; value: number }[] = entry.stats ?? []
         const getStat = (name: string) => stats.find((s: { name: string }) => s.name === name)?.value ?? 0
         rows.push({
-          teamName: entry.team?.displayName ?? entry.team?.name ?? '',
+          teamName,
           gp: getStat('gamesPlayed'),
           w: getStat('wins'),
           d: getStat('ties'),
