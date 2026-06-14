@@ -40,14 +40,18 @@ function parseClock(raw?: string): string | undefined {
 
 function getTournamentDates(): string[] {
   const dates: string[] = []
+  // Fetch from tournament start (June 11, 2026 UTC) through tomorrow
+  const start = new Date('2026-06-11T00:00:00Z')
   const now = new Date()
-  for (let offset = -1; offset <= 1; offset++) {
-    const d = new Date(now)
-    d.setUTCDate(d.getUTCDate() + offset)
-    const y = d.getUTCFullYear()
-    const m = String(d.getUTCMonth() + 1).padStart(2, '0')
-    const day = String(d.getUTCDate()).padStart(2, '0')
+  const end = new Date(now)
+  end.setUTCDate(end.getUTCDate() + 1)
+  const cur = new Date(start)
+  while (cur <= end) {
+    const y = cur.getUTCFullYear()
+    const m = String(cur.getUTCMonth() + 1).padStart(2, '0')
+    const day = String(cur.getUTCDate()).padStart(2, '0')
     dates.push(`${y}${m}${day}`)
+    cur.setUTCDate(cur.getUTCDate() + 1)
   }
   return dates
 }
