@@ -9,7 +9,7 @@ import { FlagImg } from '@/components/FlagImg'
 import { normalize, teamNamesMatch } from '@/lib/espnAliases'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
-// Shows big flags + location. Tap → opens full MatchCard popup.
+// Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
 function DayMatchCard({
   match,
   userTimezone,
@@ -18,6 +18,7 @@ function DayMatchCard({
   groupStandings,
   clock,
   scorers,
+  onOpen,
 }: {
   match: Match
   userTimezone: string
@@ -26,8 +27,9 @@ function DayMatchCard({
   groupStandings?: Standing[]
   clock?: string
   scorers?: ScoringEvent[]
+  onOpen: () => void
 }) {
-  const [open, setOpen] = useState(false)
+  // no local open state — parent controls MatchCard
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
@@ -44,7 +46,7 @@ function DayMatchCard({
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={onOpen}
         className="w-full text-left active:scale-[0.97] transition-transform mb-3"
       >
         <div
@@ -126,21 +128,6 @@ function DayMatchCard({
           )}
         </div>
       </button>
-
-      {/* Full detail popup */}
-      {open && (
-        <MatchCard
-          match={match}
-          userTimezone={userTimezone}
-          homeStats={homeStats}
-          awayStats={awayStats}
-          groupStandings={groupStandings}
-          clock={clock}
-          scorers={scorers}
-          defaultOpen={true}
-          onCloseExternal={() => setOpen(false)}
-        />
-      )}
     </>
   )
 }
@@ -213,6 +200,7 @@ export default function CalendarClient({
 }) {
   const now = new Date()
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [userTimezone, setUserTimezone] = useState('UTC')
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
@@ -431,6 +419,7 @@ export default function CalendarClient({
                     groupStandings={m.group ? liveStandingsMap[m.group] : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
+                    onOpen={() => setSelectedMatch(m)}
                   />
                 )
               })}
@@ -438,6 +427,25 @@ export default function CalendarClient({
           </div>
         </div>
       )}
+
+      {/* MatchCard popup — rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}
+      {selectedMatch && (() => {
+        const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
+        const liveData = liveScores[key]
+        return (
+          <MatchCard
+            match={selectedMatch}
+            userTimezone={userTimezone}
+            homeStats={statsMap[selectedMatch.homeTeam.id]}
+            awayStats={statsMap[selectedMatch.awayTeam.id]}
+            groupStandings={selectedMatch.group ? liveStandingsMap[selectedMatch.group] : undefined}
+            clock={liveData?.clock}
+            scorers={liveData?.scorers}
+            defaultOpen={true}
+            onCloseExternal={() => setSelectedMatch(null)}
+          />
+        )
+      })()}
     </>
   )
 }
