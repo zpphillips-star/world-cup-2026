@@ -68,21 +68,21 @@ function FeaturedMatchCard({
         className={`rounded-3xl overflow-hidden relative`}
         style={{
           background: isLive
-            ? 'linear-gradient(160deg, #280a0a 0%, #1f0606 40%, #150404 100%)'
+            ? 'linear-gradient(160deg, #13131a 0%, #0f0f16 100%)'
             : isFt
             ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
             : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
           border: isLive
-            ? '2px solid rgba(239,68,68,0.65)'
+            ? '1.5px solid rgba(239,68,68,0.35)'
             : '1px solid rgba(255,255,255,0.06)',
           boxShadow: isLive
-            ? '0 0 0 1px rgba(239,68,68,0.2), 0 12px 60px rgba(239,68,68,0.35), 0 4px 12px rgba(0,0,0,0.9)'
+            ? '0 0 0 1px rgba(239,68,68,0.08), 0 8px 32px rgba(239,68,68,0.12), 0 2px 12px rgba(0,0,0,0.8)'
             : '0 2px 16px rgba(0,0,0,0.5)',
         }}
       >
         {/* Live: full-width pulsing red top bar */}
         {isLive && (
-          <div className="h-[3px] bg-gradient-to-r from-red-700 via-red-500 to-red-700 animate-pulse" />
+          <div className="h-[2px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
         )}
 
         {/* Top row: group badge + status */}
@@ -130,7 +130,7 @@ function FeaturedMatchCard({
           <div className="flex flex-col items-center gap-1 px-2 min-w-[80px]">
             {hasScore ? (
               <>
-                <span className={`${featured ? 'text-[52px]' : 'text-[32px]'} font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
+                <span className={`${featured ? 'text-[52px]' : 'text-[32px]'} font-black tabular-nums leading-none text-white`}>
                   {match.homeScore}–{match.awayScore}
                 </span>
                 {isFt && (
