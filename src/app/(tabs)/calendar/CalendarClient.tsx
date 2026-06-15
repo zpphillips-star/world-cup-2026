@@ -258,7 +258,9 @@ export default function CalendarClient({
     }
   }
 
-  const sheetMatches = selectedDay ? (matchDays[selectedDay] ?? []) : []
+  const sheetMatches = selectedDay
+    ? [...(matchDays[selectedDay] ?? [])].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
+    : []
   const sheetDayIdx = selectedDay ? sortedMatchDayKeys.indexOf(selectedDay) : -1
 
   return (
