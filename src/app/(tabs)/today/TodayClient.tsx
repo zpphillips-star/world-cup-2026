@@ -58,8 +58,8 @@ function FeaturedMatchCard({
         <div
           className="absolute inset-0 rounded-3xl pointer-events-none"
           style={{
-            boxShadow: '0 0 0 2px rgba(239,68,68,0.6), 0 0 40px rgba(239,68,68,0.35)',
-            animation: 'liveCardGlow 2s ease-in-out infinite',
+            boxShadow: '0 0 0 1.5px rgba(0,212,255,0.4), 0 0 40px rgba(0,212,255,0.15)',
+            animation: 'liveCardGlow 2.5s ease-in-out infinite',
             borderRadius: '1.5rem',
           }}
         />
@@ -68,28 +68,28 @@ function FeaturedMatchCard({
         className={`rounded-3xl overflow-hidden relative`}
         style={{
           background: isLive
-            ? 'linear-gradient(160deg, #13131a 0%, #0f0f16 100%)'
+            ? 'linear-gradient(160deg, #1a1a2e 0%, #16162a 100%)'
             : isFt
             ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
             : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
           border: isLive
-            ? '1.5px solid rgba(239,68,68,0.35)'
+            ? '1.5px solid rgba(0,212,255,0.25)'
             : '1px solid rgba(255,255,255,0.06)',
           boxShadow: isLive
-            ? '0 0 0 1px rgba(239,68,68,0.08), 0 8px 32px rgba(239,68,68,0.12), 0 2px 12px rgba(0,0,0,0.8)'
+            ? '0 0 0 1px rgba(0,212,255,0.06), 0 8px 40px rgba(0,212,255,0.1), 0 4px 16px rgba(0,0,0,0.9)'
             : '0 2px 16px rgba(0,0,0,0.5)',
         }}
       >
-        {/* Live: full-width pulsing red top bar */}
+        {/* Live: thin cyan top accent bar */}
         {isLive && (
-          <div className="h-[2px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+          <div className="h-[2px] bg-gradient-to-r from-transparent via-[#00d4ff]/40 to-transparent" />
         )}
 
         {/* Top row: group badge + status */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <div className="flex items-center gap-2">
             {match.group && (
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${isLive ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-zinc-500'}`}>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${isLive ? 'bg-[#00d4ff]/10 text-[#00d4ff]' : 'bg-white/5 text-zinc-500'}`}>
                 Group {match.group}
               </span>
             )}
