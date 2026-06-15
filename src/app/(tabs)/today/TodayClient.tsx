@@ -3,11 +3,11 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
+import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import { normalize } from '@/lib/espnAliases'
 import { computeStandingsFromMatches, mergeStandings } from '@/lib/standingsUtils'
-import type { StandingRow } from '@/app/api/standings/route'
 
 function applyLiveScores(
   matches: Match[],
@@ -23,117 +23,207 @@ function applyLiveScores(
   })
 }
 
-// Compact match row for Today view — tappable
-function TodayMatchRow({
+// ── Featured match card ───────────────────────────────────────────────────────
+function FeaturedMatchCard({
   match,
   liveData,
   onClick,
+  userTimezone,
 }: {
   match: Match
   liveData?: ScoreUpdate
   onClick: () => void
+  userTimezone: string
 }) {
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
 
+  const kickoffTime = new Date(match.kickoff).toLocaleTimeString('en-US', {
+    hour: 'numeric', minute: '2-digit', timeZone: userTimezone,
+  })
+
+  const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
+  const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
+
   return (
     <button
       onClick={onClick}
-      className="w-full text-left active:scale-[0.98] transition-transform"
+      className="w-full text-left active:scale-[0.97] transition-transform"
     >
       <div
-        className={`rounded-2xl overflow-hidden relative ${
-          isLive
-            ? 'border border-red-500/30 bg-gradient-to-r from-red-950/30 to-[#13131a]'
+        className="rounded-3xl overflow-hidden"
+        style={{
+          background: isLive
+            ? 'linear-gradient(160deg, #1a0808 0%, #110808 50%, #0d0d14 100%)'
             : isFt
-            ? 'border border-white/5 bg-[#13131a]'
-            : 'border border-white/5 bg-[#13131a]'
-        }`}
+            ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
+            : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
+          border: isLive
+            ? '1px solid rgba(239,68,68,0.25)'
+            : '1px solid rgba(255,255,255,0.06)',
+          boxShadow: isLive
+            ? '0 4px 32px rgba(239,68,68,0.12), 0 2px 8px rgba(0,0,0,0.6)'
+            : '0 2px 16px rgba(0,0,0,0.5)',
+        }}
       >
-        {/* Live pulse bar */}
+        {/* Live top accent bar */}
         {isLive && (
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-red-500/0 via-red-500 to-red-500/0" />
+          <div className="h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent" />
         )}
 
-        <div className="px-4 py-3 flex items-center gap-3">
-          {/* Status badge */}
-          <div className="w-14 flex-shrink-0 flex flex-col items-center gap-0.5">
-            {isLive ? (
-              <>
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-red-400 uppercase">Live</span>
-                </span>
-                {liveData?.clock && (
-                  <span className="text-[10px] text-red-400 tabular-nums">{liveData.clock}</span>
-                )}
-              </>
-            ) : isFt ? (
-              <span className="text-[11px] font-semibold text-zinc-400 uppercase">Final</span>
-            ) : (
-              <span className="text-[11px] text-zinc-400 text-center leading-tight">
-                {new Date(match.kickoff).toLocaleTimeString('en-US', {
-                  hour: 'numeric', minute: '2-digit',
-                  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                })}
+        {/* Top row: group badge + status */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-2">
+          <div className="flex items-center gap-2">
+            {match.group && (
+              <span className="text-[10px] font-bold text-zinc-500 bg-white/5 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                Group {match.group}
               </span>
             )}
+            <span className="text-[10px] text-zinc-600 truncate max-w-[160px]">
+              {match.venue.name}, {match.venue.city}
+            </span>
           </div>
+          {isLive && (
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">Live</span>
+              {liveData?.clock && (
+                <span className="text-[11px] font-semibold text-red-300 tabular-nums">{liveData.clock}</span>
+              )}
+            </div>
+          )}
+          {isFt && (
+            <span className="text-[11px] font-bold text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              Final
+            </span>
+          )}
+          {!hasScore && (
+            <span className="text-[11px] font-semibold text-[#00d4ff]">{kickoffTime}</span>
+          )}
+        </div>
 
-          {/* Home */}
-          <div className="flex-1 flex items-center justify-end gap-2 min-w-0">
-            <span className={`text-[13px] font-semibold truncate text-right ${hasScore ? 'text-white' : 'text-zinc-300'}`}>
+        {/* Main score/matchup row */}
+        <div className="flex items-center justify-between px-5 py-3 gap-2">
+          {/* Home team */}
+          <div className="flex-1 flex flex-col items-center gap-2">
+            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-12 rounded shadow-lg" />
+            <span className="text-[13px] font-bold text-white text-center leading-tight max-w-[90px]">
               {match.homeTeam.name}
             </span>
-            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-5 flex-shrink-0" />
           </div>
 
           {/* Score / VS */}
-          <div className="w-14 flex-shrink-0 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-1 px-2 min-w-[80px]">
             {hasScore ? (
-              <span className={`text-[15px] font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
-                {match.homeScore}–{match.awayScore}
-              </span>
+              <>
+                <span className={`text-[38px] font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
+                  {match.homeScore}–{match.awayScore}
+                </span>
+                {isFt && (
+                  <span className="text-[10px] text-zinc-600 uppercase tracking-widest">Full Time</span>
+                )}
+              </>
             ) : (
-              <span className="text-[12px] text-zinc-500 font-medium">vs</span>
+              <>
+                <span className="text-[22px] font-black text-zinc-500">vs</span>
+                <span className="text-[10px] text-zinc-600 text-center leading-tight">
+                  {new Date(match.kickoff).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', timeZone: userTimezone,
+                  })}
+                </span>
+              </>
             )}
           </div>
 
-          {/* Away */}
-          <div className="flex-1 flex items-center gap-2 min-w-0">
-            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-5 flex-shrink-0" />
-            <span className={`text-[13px] font-semibold truncate ${hasScore ? 'text-white' : 'text-zinc-300'}`}>
+          {/* Away team */}
+          <div className="flex-1 flex flex-col items-center gap-2">
+            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-12 rounded shadow-lg" />
+            <span className="text-[13px] font-bold text-white text-center leading-tight max-w-[90px]">
               {match.awayTeam.name}
             </span>
           </div>
         </div>
 
-        {/* Scorers strip */}
-        {isLive && liveData?.scorers && liveData.scorers.length > 0 && (
-          <div className="px-4 pb-2.5 flex items-center gap-1.5 flex-wrap">
-            {liveData.scorers.map((s, i) => (
-              <span key={i} className="text-[10px] text-zinc-400">
-                ⚽ {s.playerName} {s.minute}{i < liveData.scorers!.length - 1 ? ' ·' : ''}
-              </span>
-            ))}
+        {/* Goal scorers — visible on the card, no tap needed */}
+        {(homeScorers.length > 0 || awayScorers.length > 0) && (
+          <div className="mx-5 mb-4 pt-3 border-t border-white/5">
+            <div className="flex gap-3">
+              {/* Home scorers */}
+              <div className="flex-1 space-y-1">
+                {homeScorers.map((s, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <span className="text-sm leading-none">⚽</span>
+                    <span className="text-[11px] font-medium text-zinc-300 truncate">{s.playerName}</span>
+                    <span className="text-[10px] text-zinc-500 flex-shrink-0">{s.minute}</span>
+                    {s.type !== 'goal' && (
+                      <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded flex-shrink-0">
+                        {s.type === 'og' ? 'OG' : 'pen'}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Away scorers */}
+              <div className="flex-1 space-y-1 flex flex-col items-end">
+                {awayScorers.map((s, i) => (
+                  <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
+                    <span className="text-sm leading-none">⚽</span>
+                    <span className="text-[11px] font-medium text-zinc-300 truncate">{s.playerName}</span>
+                    <span className="text-[10px] text-zinc-500 flex-shrink-0">{s.minute}</span>
+                    {s.type !== 'goal' && (
+                      <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded flex-shrink-0">
+                        {s.type === 'og' ? 'OG' : 'pen'}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Group badge + venue */}
-        <div className="px-4 pb-2 flex items-center gap-2">
-          {match.group && (
-            <span className="text-[9px] font-bold text-zinc-600 bg-zinc-800/60 px-1.5 py-0.5 rounded uppercase tracking-wider">
-              Group {match.group}
-            </span>
-          )}
-          <span className="text-[10px] text-zinc-600 truncate">📍 {match.venue.name}</span>
+        {/* Upcoming — countdown feel */}
+        {!hasScore && (
+          <div className="px-5 pb-4 flex items-center justify-center gap-2">
+            <span className="text-[11px] text-zinc-500">Kickoff at</span>
+            <span className="text-[13px] font-bold text-[#00d4ff]">{kickoffTime}</span>
+            <span className="text-[11px] text-zinc-600">·</span>
+            <span className="text-[11px] text-zinc-500">{match.venue.city}</span>
+          </div>
+        )}
+
+        {/* Tap hint */}
+        <div className="px-5 pb-3 flex justify-end">
+          <span className="text-[10px] text-zinc-700">Tap for details ›</span>
         </div>
       </div>
     </button>
   )
 }
 
+// ── Section header ────────────────────────────────────────────────────────────
+function SectionHeader({ label, color, count, pulse }: {
+  label: string
+  color: string
+  count?: number
+  pulse?: boolean
+}) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4">
+      <span className={`w-2.5 h-2.5 rounded-sm ${color} ${pulse ? 'animate-pulse' : ''}`} />
+      <span className={`text-[13px] font-black uppercase tracking-widest text-white`}>{label}</span>
+      {count != null && (
+        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${pulse ? 'bg-red-500/15 text-red-400' : 'bg-white/5 text-zinc-400'}`}>
+          {count}
+        </span>
+      )}
+      <div className="flex-1 h-px bg-white/5" />
+    </div>
+  )
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function TodayClient({
   matches,
   statsMap = {},
@@ -151,9 +241,7 @@ export default function TodayClient({
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
 
-  useEffect(() => {
-    setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
-  }, [])
+  useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
 
   const fetchScores = useCallback(async () => {
     try {
@@ -182,9 +270,8 @@ export default function TodayClient({
     const standingsInterval = setInterval(fetchStandings, 60_000)
     const adaptivePoller = setInterval(() => {
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
-      const newRate = hasLive ? 2_000 : 30_000
       clearInterval(interval)
-      interval = setInterval(fetchScores, newRate)
+      interval = setInterval(fetchScores, hasLive ? 2_000 : 30_000)
     }, 5_000)
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
@@ -194,7 +281,6 @@ export default function TodayClient({
     [matches, liveScores, liveAliases]
   )
 
-  // Compute live standings
   const computedStandingsMap = useMemo(
     () => computeStandingsFromMatches(liveMatches, standingsMap),
     [liveMatches, standingsMap]
@@ -209,20 +295,21 @@ export default function TodayClient({
     return result
   }, [computedStandingsMap, liveStandingsMap])
 
-  // Filter to today's matches in user timezone
   const todayMatches = useMemo(() => {
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date())
     return liveMatches
-      .filter(m => {
-        const d = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date(m.kickoff))
-        return d === today
-      })
+      .filter(m => new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date(m.kickoff)) === today)
       .sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
   }, [liveMatches, userTimezone])
 
+  const liveToday    = todayMatches.filter(m => m.status === 'live')
   const finishedToday = todayMatches.filter(m => m.status === 'ft')
-  const liveToday = todayMatches.filter(m => m.status === 'live')
   const upcomingToday = todayMatches.filter(m => m.status === 'upcoming')
+
+  const getLiveData = (m: Match) => {
+    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+    return liveScores[key] ?? liveScores[liveAliases[key]]
+  }
 
   const todayLabel = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', timeZone: userTimezone,
@@ -230,47 +317,39 @@ export default function TodayClient({
 
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
+
       {/* Header */}
-      <div className="px-5 pt-5 pb-4">
-        <div className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icons/icon-192-v2.png" className="w-8 h-8 rounded-xl" alt="WC26" />
-          <div>
-            <h1 className="text-[22px] font-bold text-white tracking-tight leading-none">Today</h1>
-            <p className="text-[12px] text-zinc-500 mt-0.5">{todayLabel}</p>
-          </div>
-        </div>
+      <div className="px-5 pt-6 pb-5">
+        <p className="text-[12px] font-semibold text-zinc-500 uppercase tracking-widest mb-1">FIFA World Cup 2026</p>
+        <h1 className="text-[32px] font-black text-white tracking-tight leading-none">{todayLabel.split(',')[0]}</h1>
+        <p className="text-[14px] text-zinc-400 mt-1">{todayLabel.split(',').slice(1).join(',').trim()}</p>
       </div>
 
       {todayMatches.length === 0 ? (
-        <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
-          <span className="text-5xl mb-4">⚽</span>
-          <p className="text-zinc-400 font-semibold text-lg">No matches today</p>
-          <p className="text-zinc-600 text-sm mt-1">Check the Schedule tab for upcoming games</p>
+        <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
+          <div className="w-20 h-20 rounded-3xl bg-zinc-900 flex items-center justify-center mb-5">
+            <span className="text-4xl">⚽</span>
+          </div>
+          <p className="text-white font-bold text-xl">No matches today</p>
+          <p className="text-zinc-500 text-sm mt-2 leading-relaxed">Check the Schedule tab for upcoming games</p>
         </div>
       ) : (
-        <div className="px-4 space-y-6">
+        <div className="px-4 space-y-8">
 
           {/* LIVE */}
           {liveToday.length > 0 && (
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[11px] font-bold text-red-400 uppercase tracking-widest">Live Now</span>
-                <span className="text-[11px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">{liveToday.length}</span>
-              </div>
-              <div className="space-y-3">
-                {liveToday.map(m => {
-                  const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-                  return (
-                    <TodayMatchRow
-                      key={m.id}
-                      match={m}
-                      liveData={liveScores[key] ?? liveScores[liveAliases[key]]}
-                      onClick={() => setSelectedMatch(m)}
-                    />
-                  )
-                })}
+              <SectionHeader label="Live Now" color="bg-red-500" count={liveToday.length} pulse />
+              <div className="space-y-4">
+                {liveToday.map(m => (
+                  <FeaturedMatchCard
+                    key={m.id}
+                    match={m}
+                    liveData={getLiveData(m)}
+                    userTimezone={userTimezone}
+                    onClick={() => setSelectedMatch(m)}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -278,15 +357,14 @@ export default function TodayClient({
           {/* FINISHED */}
           {finishedToday.length > 0 && (
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-2 h-2 rounded-sm bg-zinc-500" />
-                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">Final</span>
-              </div>
-              <div className="space-y-3">
+              <SectionHeader label="Final" color="bg-zinc-500" count={finishedToday.length} />
+              <div className="space-y-4">
                 {finishedToday.map(m => (
-                  <TodayMatchRow
+                  <FeaturedMatchCard
                     key={m.id}
                     match={m}
+                    liveData={getLiveData(m)}
+                    userTimezone={userTimezone}
                     onClick={() => setSelectedMatch(m)}
                   />
                 ))}
@@ -297,15 +375,13 @@ export default function TodayClient({
           {/* UPCOMING */}
           {upcomingToday.length > 0 && (
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-2 h-2 rounded-sm bg-[#00d4ff]" />
-                <span className="text-[11px] font-bold text-[#00d4ff] uppercase tracking-widest">Upcoming</span>
-              </div>
-              <div className="space-y-3">
+              <SectionHeader label="Upcoming" color="bg-[#00d4ff]" count={upcomingToday.length} />
+              <div className="space-y-4">
                 {upcomingToday.map(m => (
-                  <TodayMatchRow
+                  <FeaturedMatchCard
                     key={m.id}
                     match={m}
+                    userTimezone={userTimezone}
                     onClick={() => setSelectedMatch(m)}
                   />
                 ))}
@@ -325,14 +401,8 @@ export default function TodayClient({
           awayStats={statsMap[selectedMatch.awayTeam.id]}
           groupStandings={selectedMatch.group ? effectiveStandingsMap[selectedMatch.group] : undefined}
           groupMatches={selectedMatch.group ? liveMatches.filter(m => m.group === selectedMatch.group) : undefined}
-          clock={(() => {
-            const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
-            return (liveScores[key] ?? liveScores[liveAliases[key]])?.clock
-          })()}
-          scorers={(() => {
-            const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
-            return (liveScores[key] ?? liveScores[liveAliases[key]])?.scorers
-          })()}
+          clock={getLiveData(selectedMatch)?.clock}
+          scorers={getLiveData(selectedMatch)?.scorers}
           defaultOpen
           onCloseExternal={() => setSelectedMatch(null)}
         />
