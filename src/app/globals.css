@@ -71,3 +71,14 @@ body {
 /* Hide scrollbar for chip rows */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes liveCardGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 2px rgba(239,68,68,0.55), 0 0 40px rgba(239,68,68,0.3);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.8), 0 0 60px rgba(239,68,68,0.5);
+    opacity: 1;
+  }
+}

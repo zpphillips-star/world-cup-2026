@@ -51,34 +51,45 @@ function FeaturedMatchCard({
   return (
     <button
       onClick={onClick}
-      className="w-full text-left active:scale-[0.97] transition-transform"
+      className="w-full text-left active:scale-[0.97] transition-transform relative"
     >
+      {/* Animated glow ring for live */}
+      {isLive && (
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none"
+          style={{
+            boxShadow: '0 0 0 2px rgba(239,68,68,0.6), 0 0 40px rgba(239,68,68,0.35)',
+            animation: 'liveCardGlow 2s ease-in-out infinite',
+            borderRadius: '1.5rem',
+          }}
+        />
+      )}
       <div
-        className="rounded-3xl overflow-hidden"
+        className={`rounded-3xl overflow-hidden relative`}
         style={{
           background: isLive
-            ? 'linear-gradient(160deg, #1a0808 0%, #110808 50%, #0d0d14 100%)'
+            ? 'linear-gradient(160deg, #280a0a 0%, #1f0606 40%, #150404 100%)'
             : isFt
             ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
             : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
           border: isLive
-            ? '1px solid rgba(239,68,68,0.25)'
+            ? '2px solid rgba(239,68,68,0.65)'
             : '1px solid rgba(255,255,255,0.06)',
           boxShadow: isLive
-            ? '0 4px 32px rgba(239,68,68,0.12), 0 2px 8px rgba(0,0,0,0.6)'
+            ? '0 0 0 1px rgba(239,68,68,0.2), 0 12px 60px rgba(239,68,68,0.35), 0 4px 12px rgba(0,0,0,0.9)'
             : '0 2px 16px rgba(0,0,0,0.5)',
         }}
       >
-        {/* Live top accent bar */}
+        {/* Live: full-width pulsing red top bar */}
         {isLive && (
-          <div className="h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent" />
+          <div className="h-[3px] bg-gradient-to-r from-red-700 via-red-500 to-red-700 animate-pulse" />
         )}
 
         {/* Top row: group badge + status */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <div className="flex items-center gap-2">
             {match.group && (
-              <span className="text-[10px] font-bold text-zinc-500 bg-white/5 px-2 py-0.5 rounded-full uppercase tracking-widest">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${isLive ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-zinc-500'}`}>
                 Group {match.group}
               </span>
             )}
@@ -87,11 +98,11 @@ function FeaturedMatchCard({
             </span>
           </div>
           {isLive && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider">Live</span>
+              <span className="text-[12px] font-black text-red-400 uppercase tracking-wider">Live</span>
               {liveData?.clock && (
-                <span className="text-[11px] font-semibold text-red-300 tabular-nums">{liveData.clock}</span>
+                <span className="text-[12px] font-bold text-red-300 tabular-nums">{liveData.clock}</span>
               )}
             </div>
           )}
@@ -109,8 +120,8 @@ function FeaturedMatchCard({
         <div className="flex items-center justify-between px-5 py-3 gap-2">
           {/* Home team */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className={`${featured ? 'h-16' : 'h-10'} rounded shadow-lg`} />
-            <span className={`${featured ? 'text-[14px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
+            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className={`${featured ? 'h-20' : 'h-10'} rounded shadow-lg`} />
+            <span className={`${featured ? 'text-[15px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
               {match.homeTeam.name}
             </span>
           </div>
@@ -119,7 +130,7 @@ function FeaturedMatchCard({
           <div className="flex flex-col items-center gap-1 px-2 min-w-[80px]">
             {hasScore ? (
               <>
-                <span className={`${featured ? 'text-[44px]' : 'text-[32px]'} font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
+                <span className={`${featured ? 'text-[52px]' : 'text-[32px]'} font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
                   {match.homeScore}–{match.awayScore}
                 </span>
                 {isFt && (
@@ -140,8 +151,8 @@ function FeaturedMatchCard({
 
           {/* Away team */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className={`${featured ? 'h-16' : 'h-10'} rounded shadow-lg`} />
-            <span className={`${featured ? 'text-[14px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
+            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className={`${featured ? 'h-20' : 'h-10'} rounded shadow-lg`} />
+            <span className={`${featured ? 'text-[15px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
               {match.awayTeam.name}
             </span>
           </div>
@@ -358,8 +369,15 @@ export default function TodayClient({
           {/* LIVE — middle, most featured */}
           {liveToday.length > 0 && (
             <div>
-              <SectionHeader label="Live Now" color="bg-red-500" count={liveToday.length} pulse />
-              <div className="space-y-4">
+              <div className="flex items-center gap-2.5 mb-4">
+                <span className="w-2.5 h-2.5 rounded-sm bg-red-500 animate-pulse" />
+                <span className="text-[14px] font-black uppercase tracking-widest text-red-400">Live Now</span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/20">
+                  {liveToday.length}
+                </span>
+                <div className="flex-1 h-px bg-red-500/20" />
+              </div>
+              <div className="space-y-4 -mx-1">
                 {liveToday.map(m => (
                   <FeaturedMatchCard
                     key={m.id}
