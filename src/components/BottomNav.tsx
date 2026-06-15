@@ -92,26 +92,21 @@ export default function BottomNav() {
           <Link href="/today" className="flex flex-col items-center gap-1 -mt-5">
             {/* Raised icon button */}
             <div
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform active:scale-95 ${
-                todayActive
-                  ? 'ring-2 ring-[#00d4ff] ring-offset-2 ring-offset-[#13131a]'
-                  : ''
+              className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform active:scale-95 ${
+                todayActive ? 'ring-2 ring-[#00d4ff] ring-offset-2 ring-offset-[#13131a]' : ''
               }`}
               style={{
-                background: todayActive
-                  ? 'linear-gradient(135deg, #003d4d 0%, #001a20 100%)'
-                  : 'linear-gradient(135deg, #0d1b2e 0%, #0a0a14 100%)',
                 boxShadow: todayActive
-                  ? '0 0 20px rgba(0,212,255,0.3), 0 4px 16px rgba(0,0,0,0.6)'
-                  : '0 4px 16px rgba(0,0,0,0.6)',
+                  ? '0 0 20px rgba(0,212,255,0.35), 0 4px 16px rgba(0,0,0,0.5)'
+                  : '0 4px 16px rgba(0,0,0,0.5)',
               }}
             >
               <Image
-                src="/icons/icon-192-v2.png"
-                width={40}
-                height={40}
+                src="/icons/apple-touch-icon-v2.png"
+                width={44}
+                height={44}
                 alt="Today"
-                className="rounded-xl"
+                className="rounded-2xl"
               />
             </div>
             <span className={`text-xs font-semibold ${todayActive ? 'text-[#00d4ff]' : 'text-gray-400'}`}>
