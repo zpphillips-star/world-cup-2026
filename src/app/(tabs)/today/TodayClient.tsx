@@ -56,27 +56,27 @@ function FeaturedMatchCard({
       {/* Animated glow ring for live */}
       {isLive && (
         <div
-          className="absolute inset-0 rounded-3xl pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            boxShadow: '0 0 0 1.5px rgba(0,212,255,0.4), 0 0 40px rgba(0,212,255,0.15)',
+            boxShadow: '0 0 0 1.5px rgba(0,212,255,0.5), 0 0 48px rgba(0,212,255,0.22)',
             animation: 'liveCardGlow 2.5s ease-in-out infinite',
-            borderRadius: '1.5rem',
+            borderRadius: '12px',
           }}
         />
       )}
       <div
-        className={`rounded-3xl overflow-hidden relative`}
+        className={`rounded-xl overflow-hidden relative`}
         style={{
           background: isLive
-            ? 'linear-gradient(160deg, #1a1a2e 0%, #16162a 100%)'
+            ? 'linear-gradient(160deg, #1e1e36 0%, #191930 100%)'
             : isFt
             ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
             : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
           border: isLive
-            ? '1.5px solid rgba(0,212,255,0.25)'
+            ? '1.5px solid rgba(0,212,255,0.32)'
             : '1px solid rgba(255,255,255,0.06)',
           boxShadow: isLive
-            ? '0 0 0 1px rgba(0,212,255,0.06), 0 8px 40px rgba(0,212,255,0.1), 0 4px 16px rgba(0,0,0,0.9)'
+            ? '0 0 0 1px rgba(0,212,255,0.08), 0 10px 48px rgba(0,212,255,0.15), 0 4px 16px rgba(0,0,0,0.9)'
             : '0 2px 16px rgba(0,0,0,0.5)',
         }}
       >
