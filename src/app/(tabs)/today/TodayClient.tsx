@@ -337,7 +337,25 @@ export default function TodayClient({
       ) : (
         <div className="px-4 space-y-8">
 
-          {/* LIVE */}
+          {/* FINISHED — top, already happened */}
+          {finishedToday.length > 0 && (
+            <div>
+              <SectionHeader label="Final" color="bg-zinc-500" count={finishedToday.length} />
+              <div className="space-y-4">
+                {finishedToday.map(m => (
+                  <FeaturedMatchCard
+                    key={m.id}
+                    match={m}
+                    liveData={getLiveData(m)}
+                    userTimezone={userTimezone}
+                    onClick={() => setSelectedMatch(m)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* LIVE — middle, most featured */}
           {liveToday.length > 0 && (
             <div>
               <SectionHeader label="Live Now" color="bg-red-500" count={liveToday.length} pulse />
@@ -356,25 +374,7 @@ export default function TodayClient({
             </div>
           )}
 
-          {/* FINISHED */}
-          {finishedToday.length > 0 && (
-            <div>
-              <SectionHeader label="Final" color="bg-zinc-500" count={finishedToday.length} />
-              <div className="space-y-4">
-                {finishedToday.map(m => (
-                  <FeaturedMatchCard
-                    key={m.id}
-                    match={m}
-                    liveData={getLiveData(m)}
-                    userTimezone={userTimezone}
-                    onClick={() => setSelectedMatch(m)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* UPCOMING */}
+          {/* UPCOMING — bottom */}
           {upcomingToday.length > 0 && (
             <div>
               <SectionHeader label="Upcoming" color="bg-[#00d4ff]" count={upcomingToday.length} />
