@@ -5,8 +5,8 @@ import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
-import type { StandingRow } from '@/app/api/standings/route'
-import { teamNamesMatch, normalize } from '@/lib/espnAliases'
+import { normalize } from '@/lib/espnAliases'
+import { mergeStandings } from '@/lib/standingsUtils'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
@@ -220,37 +220,7 @@ export default function ScheduleClient({
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
 
-  // Merge ESPN live standings rows into our Standing[] (preserving Team objects)
-  // Merge ESPN live standings — uses shared espnAliases lib for consistent name resolution
-  function mergeStandings(
-    base: Record<string, Standing[]>,
-    espn: Record<string, StandingRow[]>
-  ): Record<string, Standing[]> {
-    const result: Record<string, Standing[]> = { ...base }
-    for (const [group, rows] of Object.entries(espn)) {
-      const baseGroup = base[group]
-      if (!baseGroup) continue
-
-      // For each base team, find matching ESPN row using shared teamNamesMatch()
-      const merged: Standing[] = baseGroup.map(s => {
-        const row = rows.find(r => teamNamesMatch(r.teamName, s.team.name))
-        if (!row) return s
-        return {
-          team: s.team,
-          played: row.gp, won: row.w, drawn: row.d, lost: row.l,
-          goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
-        }
-      })
-
-      merged.sort((a, b) =>
-        b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor
-      )
-      result[group] = merged
-    }
-    return result
-  }
-
-  const fetchScores = useCallback(async () => {
+  const fetchScores= useCallback(async () => {
     try {
       const res = await fetch('/api/live-scores')
       if (!res.ok) return

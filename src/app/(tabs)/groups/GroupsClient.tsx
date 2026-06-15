@@ -5,7 +5,8 @@ import type { Standing, Group, Team, Match } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
-import { teamNamesMatch, normalize } from '@/lib/espnAliases'
+import { normalize } from '@/lib/espnAliases'
+import { mergeStandings } from '@/lib/standingsUtils'
 
 // Apply live scores to a list of matches
 function applyLiveScoresToMatches(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
@@ -257,37 +258,6 @@ function GroupSheet({
 
 // -- Merge live ESPN standings into base standings --------------------------
 
-interface EspnRow {
-  teamName: string; gp: number; w: number; d: number; l: number
-  gf: number; ga: number; gd: number; pts: number
-}
-
-// Uses shared espnAliases lib — add new ESPN name variants there, not here
-function mergeLiveStandings(
-  base: Record<string, Standing[]>,
-  espn: Record<string, EspnRow[]>
-): Record<string, Standing[]> {
-  const result: Record<string, Standing[]> = { ...base }
-  for (const [group, rows] of Object.entries(espn)) {
-    const baseGroup = base[group]
-    if (!baseGroup) continue
-
-    const merged: Standing[] = baseGroup.map(s => {
-      const row = rows.find(r => teamNamesMatch(r.teamName, s.team.name))
-      if (!row) return s
-      return {
-        team: s.team,
-        played: row.gp, won: row.w, drawn: row.d, lost: row.l,
-        goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
-      }
-    })
-
-    merged.sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor)
-    result[group] = merged
-  }
-  return result
-}
-
 // -- Main export ------------------------------------------------------------
 
 interface GroupsClientProps {
@@ -320,7 +290,7 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
         const res = await fetch('/api/standings')
         if (!res.ok) return
         const data = await res.json()
-        setStandings(mergeLiveStandings(baseStandings, data.standings ?? {}))
+        setStandings(mergeStandings(baseStandings, data.standings ?? {}))
       } catch { /* fail silently */ }
     }
     fetchStandings()

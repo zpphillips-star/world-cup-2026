@@ -3,10 +3,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
-import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
-import { normalize, teamNamesMatch } from '@/lib/espnAliases'
+import { normalize } from '@/lib/espnAliases'
+import { mergeStandings } from '@/lib/standingsUtils'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
 // Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
@@ -142,40 +142,6 @@ function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>):
   })
 }
 
-function mergeStandings(
-  base: Record<string, Standing[]>,
-  espn: Record<string, StandingRow[]>
-): Record<string, Standing[]> {
-  const result: Record<string, Standing[]> = { ...base }
-  for (const [group, rows] of Object.entries(espn)) {
-    const baseGroup = base[group]
-    if (!baseGroup) continue
-    const seen = new Set<string>()
-    const merged = rows
-      .filter(row => {
-        const key = row.teamName.toLowerCase()
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
-      .map(row => {
-        const existing = baseGroup.find(s =>
-          s.team.name.toLowerCase().includes(row.teamName.toLowerCase()) ||
-          row.teamName.toLowerCase().includes(s.team.name.toLowerCase())
-        )
-        if (!existing) return null
-        return {
-          team: existing.team,
-          played: row.gp, won: row.w, drawn: row.d, lost: row.l,
-          goalsFor: row.gf, goalsAgainst: row.ga, goalDiff: row.gd, points: row.pts,
-        }
-      })
-      .filter((s): s is Standing => s !== null)
-      .sort((a, b) => b.points - a.points || b.goalDiff - a.goalDiff || b.goalsFor - a.goalsFor)
-    if (merged.length > 0) result[group] = merged
-  }
-  return result
-}
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
