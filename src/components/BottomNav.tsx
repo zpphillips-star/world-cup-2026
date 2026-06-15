@@ -63,15 +63,6 @@ const tabs = [
       </svg>
     ),
   },
-  {
-    href: '/assistant',
-    label: 'Assistant',
-    icon: (active: boolean) => (
-      <svg className={`w-6 h-6 ${active ? 'text-[#00d4ff]' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeWidth={2} />
-      </svg>
-    ),
-  },
 ]
 
 export default function BottomNav() {

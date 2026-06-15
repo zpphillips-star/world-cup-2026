@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import type { Standing, Group, Team, Match } from '@/lib/types'
+import type { Standing, Group, Team, Match, TeamStats } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
+import MatchCard from '@/components/MatchCard'
 import { normalize } from '@/lib/espnAliases'
 import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
 
@@ -135,12 +136,14 @@ function GroupSheet({
   group,
   onClose,
   onTeamOpen,
+  onMatchOpen,
 }: {
   groupId: string
   standings: Standing[]
   group: Group
   onClose: () => void
   onTeamOpen: (team: Team) => void
+  onMatchOpen: (match: Match) => void
 }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
   useEffect(() => {
@@ -202,7 +205,11 @@ function GroupSheet({
               <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wider mb-2">Results</p>
               <div className="space-y-2">
                 {completedMatches.map(m => (
-                  <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
+                  <button
+                    key={m.id}
+                    className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
+                    onClick={() => onMatchOpen(m)}
+                  >
                     <span className="flex items-center gap-1.5 flex-1">
                       <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5" />
                       <span className="text-gray-200 font-medium">{m.homeTeam.name}</span>
@@ -214,7 +221,7 @@ function GroupSheet({
                       <span className="text-gray-200 font-medium text-right">{m.awayTeam.name}</span>
                       <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5" />
                     </span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -231,7 +238,11 @@ function GroupSheet({
                     timeZone: userTimezone,
                   })
                   return (
-                    <div key={m.id} className="flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60">
+                    <button
+                      key={m.id}
+                      className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
+                      onClick={() => onMatchOpen(m)}
+                    >
                       <span className="flex items-center gap-1.5 flex-1">
                         <FlagImg teamId={m.homeTeam.id} fallback={m.homeTeam.flag} className="h-5" />
                         <span className="text-gray-300">{m.homeTeam.name}</span>
@@ -244,7 +255,7 @@ function GroupSheet({
                         <span className="text-gray-300 text-right">{m.awayTeam.name}</span>
                         <FlagImg teamId={m.awayTeam.id} fallback={m.awayTeam.flag} className="h-5" />
                       </span>
-                    </div>
+                    </button>
                   )
                 })}
               </div>
@@ -256,18 +267,18 @@ function GroupSheet({
   )
 }
 
-// -- Merge live ESPN standings into base standings --------------------------
-
 // -- Main export ------------------------------------------------------------
 
 interface GroupsClientProps {
   standings: Record<string, Standing[]>
   groups: Group[]
+  statsMap?: Record<string, TeamStats | null>
 }
 
-export default function GroupsClient({ standings: baseStandings, groups }: GroupsClientProps) {
+export default function GroupsClient({ standings: baseStandings, groups, statsMap = {} }: GroupsClientProps) {
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [standings, setStandings] = useState<Record<string, Standing[]>>(baseStandings)
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const liveScoresRef = useRef(liveScores)
@@ -346,14 +357,28 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
         ))}
       </div>
 
-      {/* Group sheet — hidden while team sheet is open */}
-      {activeGroup && activeStandings && activeGroupWithLiveScores && !teamSheet && (
+      {/* Group sheet — hidden while team or match sheet is open */}
+      {activeGroup && activeStandings && activeGroupWithLiveScores && !teamSheet && !selectedMatch && (
         <GroupSheet
           groupId={activeGroup}
           standings={activeStandings}
           group={activeGroupWithLiveScores}
           onClose={() => setActiveGroup(null)}
           onTeamOpen={(team) => setTeamSheet(team)}
+          onMatchOpen={(match) => setSelectedMatch(match)}
+        />
+      )}
+
+      {/* Match detail popup — opened from a match row tap */}
+      {selectedMatch && (
+        <MatchCard
+          match={selectedMatch}
+          homeStats={statsMap[selectedMatch.homeTeam.id]}
+          awayStats={statsMap[selectedMatch.awayTeam.id]}
+          groupStandings={selectedMatch.group ? effectiveStandings[selectedMatch.group] : undefined}
+          groupMatches={selectedMatch.group ? allGroupMatches.filter(m => m.group === selectedMatch.group) : undefined}
+          defaultOpen
+          onCloseExternal={() => setSelectedMatch(null)}
         />
       )}
 
