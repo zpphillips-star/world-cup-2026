@@ -29,11 +29,13 @@ function FeaturedMatchCard({
   liveData,
   onClick,
   userTimezone,
+  featured = false,
 }: {
   match: Match
   liveData?: ScoreUpdate
   onClick: () => void
   userTimezone: string
+  featured?: boolean
 }) {
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
@@ -107,8 +109,8 @@ function FeaturedMatchCard({
         <div className="flex items-center justify-between px-5 py-3 gap-2">
           {/* Home team */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-12 rounded shadow-lg" />
-            <span className="text-[13px] font-bold text-white text-center leading-tight max-w-[90px]">
+            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className={`${featured ? 'h-16' : 'h-10'} rounded shadow-lg`} />
+            <span className={`${featured ? 'text-[14px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
               {match.homeTeam.name}
             </span>
           </div>
@@ -117,7 +119,7 @@ function FeaturedMatchCard({
           <div className="flex flex-col items-center gap-1 px-2 min-w-[80px]">
             {hasScore ? (
               <>
-                <span className={`text-[38px] font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
+                <span className={`${featured ? 'text-[44px]' : 'text-[32px]'} font-black tabular-nums leading-none ${isLive ? 'text-red-400' : 'text-white'}`}>
                   {match.homeScore}–{match.awayScore}
                 </span>
                 {isFt && (
@@ -138,8 +140,8 @@ function FeaturedMatchCard({
 
           {/* Away team */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-12 rounded shadow-lg" />
-            <span className="text-[13px] font-bold text-white text-center leading-tight max-w-[90px]">
+            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className={`${featured ? 'h-16' : 'h-10'} rounded shadow-lg`} />
+            <span className={`${featured ? 'text-[14px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
               {match.awayTeam.name}
             </span>
           </div>
@@ -312,17 +314,16 @@ export default function TodayClient({
   }
 
   const todayLabel = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', timeZone: userTimezone,
+    weekday: 'long', month: 'short', day: 'numeric', timeZone: userTimezone,
   })
 
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
 
-      {/* Header */}
-      <div className="px-5 pt-6 pb-5">
-        <p className="text-[12px] font-semibold text-zinc-500 uppercase tracking-widest mb-1">FIFA World Cup 2026</p>
-        <h1 className="text-[32px] font-black text-white tracking-tight leading-none">{todayLabel.split(',')[0]}</h1>
-        <p className="text-[14px] text-zinc-400 mt-1">{todayLabel.split(',').slice(1).join(',').trim()}</p>
+      {/* Header — matches Schedule/Groups/Calendar style */}
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="text-[22px] font-bold text-white tracking-tight">Today</h1>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · {todayLabel}</p>
       </div>
 
       {todayMatches.length === 0 ? (
@@ -347,6 +348,7 @@ export default function TodayClient({
                     match={m}
                     liveData={getLiveData(m)}
                     userTimezone={userTimezone}
+                    featured={true}
                     onClick={() => setSelectedMatch(m)}
                   />
                 ))}

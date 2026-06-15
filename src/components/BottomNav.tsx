@@ -102,7 +102,7 @@ export default function BottomNav() {
               }}
             >
               <Image
-                src="/icons/apple-touch-icon-v2.png"
+                src="/icons/apple-touch-icon.png"
                 width={44}
                 height={44}
                 alt="Today"
