@@ -6,7 +6,7 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 import { normalize } from '@/lib/espnAliases'
-import { mergeStandings } from '@/lib/standingsUtils'
+import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
 
 // Apply live scores to a list of matches
 function applyLiveScoresToMatches(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
@@ -308,7 +308,18 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const activeStandings = activeGroup ? standings[activeGroup] : null
+  // Compute standings from our match data — instant, no ESPN lag
+  // For each group, pull all matches from groups data and apply live scores
+  const allGroupMatches = groups.flatMap(g => applyLiveScoresToMatches(g.matches, liveScores))
+  const computedStandings = computeStandingsFromMatches(allGroupMatches, baseStandings)
+  const effectiveStandings: Record<string, Standing[]> = { ...computedStandings }
+  for (const [group, espnRows] of Object.entries(standings)) {
+    const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
+    const computedPlayed = computedStandings[group]?.reduce((s, r) => s + r.played, 0) ?? 0
+    if (espnPlayed > computedPlayed) effectiveStandings[group] = espnRows
+  }
+
+  const activeStandings = activeGroup ? effectiveStandings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
   // Apply live scores to the active group's matches so completed games show results
   const activeGroupWithLiveScores = activeGroupData
@@ -325,7 +336,7 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
         className="grid grid-cols-2 gap-4 px-4"
         style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
       >
-        {Object.entries(standings).map(([groupId, groupStandings]) => (
+        {Object.entries(effectiveStandings).map(([groupId, groupStandings]) => (
           <GroupCard
             key={groupId}
             groupId={groupId}

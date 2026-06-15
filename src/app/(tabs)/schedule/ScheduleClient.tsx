@@ -6,7 +6,7 @@ import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
 import { normalize } from '@/lib/espnAliases'
-import { mergeStandings } from '@/lib/standingsUtils'
+import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
@@ -283,6 +283,24 @@ export default function ScheduleClient({
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
 
+  // Recompute standings from our own match data — instant, no API lag
+  // ESPN standings are merged on top but our computed data wins for groups ESPN hasn't updated yet
+  const computedStandingsMap = useMemo(
+    () => computeStandingsFromMatches(liveMatches, standingsMap),
+    [liveMatches, standingsMap]
+  )
+  const effectiveStandingsMap = useMemo(() => {
+    const result = { ...computedStandingsMap }
+    // For each group, prefer ESPN data only if it shows MORE games played than our computed data
+    for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
+      const computed = computedStandingsMap[group]
+      const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
+      const computedPlayed = computed?.reduce((s, r) => s + r.played, 0) ?? 0
+      if (espnPlayed > computedPlayed) result[group] = espnRows
+    }
+    return result
+  }, [computedStandingsMap, liveStandingsMap, standingsMap])
+
   const sortedMatches = useMemo(
     () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),
     [liveMatches]
@@ -363,7 +381,7 @@ export default function ScheduleClient({
                     userTimezone={userTimezone}
                     homeStats={statsMap[match.homeTeam.id]}
                     awayStats={statsMap[match.awayTeam.id]}
-                    groupStandings={match.group ? liveStandingsMap[match.group] : undefined}
+                    groupStandings={match.group ? effectiveStandingsMap[match.group] : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
                   />
@@ -387,7 +405,7 @@ export default function ScheduleClient({
           liveScores={liveScores}
           liveAliases={liveAliases}
           statsMap={statsMap}
-          standingsMap={liveStandingsMap}
+          standingsMap={effectiveStandingsMap}
           onClose={() => setLiveSheetOpen(false)}
           userTimezone={userTimezone}
         />

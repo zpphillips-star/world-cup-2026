@@ -6,7 +6,7 @@ import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import { normalize } from '@/lib/espnAliases'
-import { mergeStandings } from '@/lib/standingsUtils'
+import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
 // Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
@@ -212,6 +212,15 @@ export default function CalendarClient({
 
   const liveMatches = applyLiveScores(matches, liveScores)
 
+  // Compute standings from our match data — instant, no ESPN lag
+  const computedStandingsMap = computeStandingsFromMatches(liveMatches, standingsMap)
+  const effectiveStandingsMap: Record<string, Standing[]> = { ...computedStandingsMap }
+  for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
+    const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
+    const computedPlayed = computedStandingsMap[group]?.reduce((s, r) => s + r.played, 0) ?? 0
+    if (espnPlayed > computedPlayed) effectiveStandingsMap[group] = espnRows
+  }
+
   // Build match days index using LOCAL date so calendar day cells always match
   const matchDays: Record<string, Match[]> = {}
   for (const m of liveMatches) {
@@ -383,7 +392,7 @@ export default function CalendarClient({
                     userTimezone={userTimezone}
                     homeStats={statsMap[m.homeTeam.id]}
                     awayStats={statsMap[m.awayTeam.id]}
-                    groupStandings={m.group ? liveStandingsMap[m.group] : undefined}
+                    groupStandings={m.group ? effectiveStandingsMap[m.group] : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
                     onOpen={() => setSelectedMatch(m)}
@@ -405,7 +414,7 @@ export default function CalendarClient({
             userTimezone={userTimezone}
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
-            groupStandings={selectedMatch.group ? liveStandingsMap[selectedMatch.group] : undefined}
+            groupStandings={selectedMatch.group ? effectiveStandingsMap[selectedMatch.group] : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
             defaultOpen={true}
@@ -416,4 +425,5 @@ export default function CalendarClient({
     </>
   )
 }
+
 
