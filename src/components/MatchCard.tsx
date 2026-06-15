@@ -139,6 +139,7 @@ export default function MatchCard({
   homeStats,
   awayStats,
   groupStandings,
+  groupMatches,
   clock,
   scorers,
   defaultOpen = false,
@@ -149,11 +150,12 @@ export default function MatchCard({
   homeStats?: TeamStats | null
   awayStats?: TeamStats | null
   groupStandings?: Standing[]
+  groupMatches?: Match[]
   clock?: string
   scorers?: ScoringEvent[]
   defaultOpen?: boolean
   onCloseExternal?: () => void
-}) {
+}){
   const [open, setOpen] = useState(defaultOpen)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
   const isLive = match.status === 'live'
@@ -363,7 +365,7 @@ export default function MatchCard({
 
       {/* Team sheet — opens when a flag is tapped */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} />
+        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} standings={groupStandings} groupMatches={groupMatches} />
       )}
     </>
   )

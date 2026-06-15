@@ -187,6 +187,7 @@ function LiveNowSheet({
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
             groupStandings={selectedMatch.group ? standingsMap[selectedMatch.group] : undefined}
+            groupMatches={selectedMatch.group ? liveMatches.filter(m => m.group === selectedMatch.group) : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
             defaultOpen
@@ -382,6 +383,7 @@ export default function ScheduleClient({
                     homeStats={statsMap[match.homeTeam.id]}
                     awayStats={statsMap[match.awayTeam.id]}
                     groupStandings={match.group ? effectiveStandingsMap[match.group] : undefined}
+                    groupMatches={match.group ? liveMatches.filter(m => m.group === match.group) : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
                   />

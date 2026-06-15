@@ -415,6 +415,7 @@ export default function CalendarClient({
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
             groupStandings={selectedMatch.group ? effectiveStandingsMap[selectedMatch.group] : undefined}
+            groupMatches={selectedMatch.group ? liveMatches.filter(m => m.group === selectedMatch.group) : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
             defaultOpen={true}

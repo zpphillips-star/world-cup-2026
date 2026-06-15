@@ -4,11 +4,15 @@ import { useEffect } from 'react'
 import { mockProvider } from '@/lib/mockProvider'
 import { FlagImg } from '@/components/FlagImg'
 import { getTeamColor } from '@/lib/teamColors'
-import type { Team } from '@/lib/types'
+import type { Team, Standing, Match } from '@/lib/types'
 
 interface Props {
   team: Team
   onClose: () => void
+  /** Live standings for this team's group — if provided, overrides mockProvider */
+  standings?: Standing[]
+  /** Live group matches with scores applied — if provided, overrides mockProvider */
+  groupMatches?: Match[]
 }
 
 function formatKickoff(iso: string, tz: string) {
@@ -22,12 +26,13 @@ function formatKickoff(iso: string, tz: string) {
   } catch { return '—' }
 }
 
-export function TeamSheet({ team, onClose }: Props) {
-  const allMatches = mockProvider.getMatches()
-  const teamMatches = allMatches.filter(m =>
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp }: Props) {
+  // Use live data when provided, fall back to static mock data
+  const allMockMatches = mockProvider.getMatches()
+  const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
     m.group && (m.homeTeam.id === team.id || m.awayTeam.id === team.id)
   )
-  const standings = team.group ? mockProvider.getStandings()[team.group] ?? [] : []
+  const standings = standingsProp ?? (team.group ? mockProvider.getStandings()[team.group] ?? [] : [])
   const myStanding = standings.find(s => s.team.id === team.id)
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)

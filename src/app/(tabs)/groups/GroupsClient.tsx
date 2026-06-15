@@ -359,7 +359,12 @@ export default function GroupsClient({ standings: baseStandings, groups }: Group
 
       {/* Team sheet — closes back to group sheet */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} />
+        <TeamSheet
+          team={teamSheet}
+          onClose={() => setTeamSheet(null)}
+          standings={teamSheet.group ? effectiveStandings[teamSheet.group] : undefined}
+          groupMatches={teamSheet.group ? allGroupMatches.filter(m => m.group === teamSheet.group) : undefined}
+        />
       )}
     </div>
   )
