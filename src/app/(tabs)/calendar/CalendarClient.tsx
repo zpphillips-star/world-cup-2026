@@ -241,9 +241,10 @@ export default function CalendarClient({
     sheetTouchStartX.current = null
     if (Math.abs(delta) < 50) return
     const idx = sortedMatchDayKeys.indexOf(selectedDay)
-    if (delta > 0 && idx < sortedMatchDayKeys.length - 1) {
+    // Swipe left (delta < 0) = go forward; swipe right (delta > 0) = go back
+    if (delta < 0 && idx < sortedMatchDayKeys.length - 1) {
       setSelectedDay(sortedMatchDayKeys[idx + 1])
-    } else if (delta < 0 && idx > 0) {
+    } else if (delta > 0 && idx > 0) {
       setSelectedDay(sortedMatchDayKeys[idx - 1])
     }
   }
