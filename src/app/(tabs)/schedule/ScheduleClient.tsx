@@ -92,6 +92,8 @@ function LiveNowSheet({
             const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
             const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
             const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
+            const homeRedCards = liveData?.redCards?.filter(c => c.teamSide === 'home') ?? []
+            const awayRedCards = liveData?.redCards?.filter(c => c.teamSide === 'away') ?? []
 
             return (
               <button
@@ -160,6 +162,32 @@ function LiveNowSheet({
                             <span className="text-[11px] text-zinc-300">{s.playerName}</span>
                             <span className="text-[10px] text-zinc-500">{s.minute}</span>
                             {s.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Red cards */}
+                {(homeRedCards.length > 0 || awayRedCards.length > 0) && (
+                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3">
+                    <div className="flex gap-4">
+                      <div className="flex-1 space-y-1">
+                        {homeRedCards.map((c, i) => (
+                          <div key={i} className="flex items-center gap-1.5">
+                            <span className="text-sm leading-none">🟥</span>
+                            <span className="text-[11px] text-zinc-300">{c.playerName}</span>
+                            <span className="text-[10px] text-zinc-500">{c.minute}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex-1 space-y-1 items-end flex flex-col">
+                        {awayRedCards.map((c, i) => (
+                          <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
+                            <span className="text-sm leading-none">🟥</span>
+                            <span className="text-[11px] text-zinc-300">{c.playerName}</span>
+                            <span className="text-[10px] text-zinc-500">{c.minute}</span>
                           </div>
                         ))}
                       </div>

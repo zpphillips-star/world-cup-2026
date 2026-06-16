@@ -18,6 +18,7 @@ function DayMatchCard({
   groupStandings,
   clock,
   scorers,
+  redCards,
   onOpen,
 }: {
   match: Match
@@ -27,6 +28,7 @@ function DayMatchCard({
   groupStandings?: Standing[]
   clock?: string
   scorers?: ScoringEvent[]
+  redCards?: import('@/app/api/live-scores/route').CardEvent[]
   onOpen: () => void
 }) {
   // no local open state — parent controls MatchCard
@@ -104,6 +106,16 @@ function DayMatchCard({
                   {scorers.map((s, i) => (
                     <span key={i} className={`text-[10px] text-zinc-400 ${s.teamSide === 'home' ? 'self-start' : 'self-end'}`}>
                       ⚽ {s.playerName} {s.minute}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {/* Red cards */}
+              {redCards && redCards.length > 0 && (
+                <div className="flex flex-col items-center gap-0.5 mt-1">
+                  {redCards.map((c, i) => (
+                    <span key={i} className={`text-[10px] text-zinc-400 ${c.teamSide === 'home' ? 'self-start' : 'self-end'}`}>
+                      🟥 {c.playerName} {c.minute}
                     </span>
                   ))}
                 </div>
@@ -400,6 +412,7 @@ export default function CalendarClient({
                     groupStandings={m.group ? effectiveStandingsMap[m.group] : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
+                    redCards={liveData?.redCards}
                     onOpen={() => setSelectedMatch(m)}
                   />
                 )
