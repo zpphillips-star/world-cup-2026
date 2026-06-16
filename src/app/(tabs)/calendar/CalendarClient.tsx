@@ -132,11 +132,11 @@ function DayMatchCard({
   )
 }
 
-function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
+function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>, aliases: Record<string, string> = {}): Match[] {
   if (Object.keys(scores).length === 0) return matches
   return matches.map(m => {
     const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key]
+    const update = scores[key] ?? scores[aliases[key]]
     if (!update) return m
     return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
   })
@@ -169,6 +169,7 @@ export default function CalendarClient({
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [userTimezone, setUserTimezone] = useState('UTC')
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
@@ -183,6 +184,7 @@ export default function CalendarClient({
       if (!res.ok) return
       const data = await res.json()
       setLiveScores(data.scores ?? {})
+      setLiveAliases(data.aliases ?? {})
     } catch { /* fail silently */ }
   }, [])
 
@@ -210,7 +212,7 @@ export default function CalendarClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = applyLiveScores(matches, liveScores)
+  const liveMatches = applyLiveScores(matches, liveScores, liveAliases)
 
   // Compute standings from our match data — instant, no ESPN lag
   const computedStandingsMap = computeStandingsFromMatches(liveMatches, standingsMap)
@@ -386,7 +388,7 @@ export default function CalendarClient({
             <div className="overflow-y-auto px-4 pt-3" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
               {sheetMatches.map(m => {
                 const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-                const liveData = liveScores[key]
+                const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
                 return (
                   <DayMatchCard
                     key={m.id}
@@ -409,7 +411,7 @@ export default function CalendarClient({
       {/* MatchCard popup — rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}
       {selectedMatch && (() => {
         const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
-        const liveData = liveScores[key]
+        const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
         return (
           <MatchCard
             match={selectedMatch}
@@ -422,6 +424,10 @@ export default function CalendarClient({
             scorers={liveData?.scorers}
             defaultOpen={true}
             onCloseExternal={() => setSelectedMatch(null)}
+            allMatches={liveMatches}
+            allStatsMap={statsMap}
+            allStandingsMap={effectiveStandingsMap}
+            allLiveData={liveScores}
           />
         )
       })()}

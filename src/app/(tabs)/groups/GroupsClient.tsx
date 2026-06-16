@@ -10,11 +10,15 @@ import { normalize } from '@/lib/espnAliases'
 import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
 
 // Apply live scores to a list of matches
-function applyLiveScoresToMatches(matches: Match[], scores: Record<string, ScoreUpdate>): Match[] {
+function applyLiveScoresToMatches(
+  matches: Match[],
+  scores: Record<string, ScoreUpdate>,
+  aliases: Record<string, string> = {}
+): Match[] {
   if (Object.keys(scores).length === 0) return matches
   return matches.map(m => {
     const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key]
+    const update = scores[key] ?? scores[aliases[key]]
     if (!update) return m
     return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
   })
@@ -137,6 +141,8 @@ function GroupSheet({
   onClose,
   onTeamOpen,
   onMatchOpen,
+  allGroupIds,
+  onNavigate,
 }: {
   groupId: string
   standings: Standing[]
@@ -144,11 +150,31 @@ function GroupSheet({
   onClose: () => void
   onTeamOpen: (team: Team) => void
   onMatchOpen: (match: Match) => void
+  allGroupIds?: string[]
+  onNavigate?: (groupId: string) => void
 }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
+
+  // ── Swipe between groups ──────────────────────────────────────────────────
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+  const currentGroupIdx = allGroupIds?.indexOf(groupId) ?? -1
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!allGroupIds || !onNavigate || currentGroupIdx === -1) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    const dy = e.changedTouches[0].clientY - touchStartY.current
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return
+    if (dx < 0 && currentGroupIdx < allGroupIds.length - 1) onNavigate(allGroupIds[currentGroupIdx + 1])
+    else if (dx > 0 && currentGroupIdx > 0) onNavigate(allGroupIds[currentGroupIdx - 1])
+  }
 
   const completedMatches = group.matches.filter(m => m.status === 'ft')
   const upcomingMatches = group.matches.filter(m => m.status === 'upcoming' || m.status === 'live')
@@ -157,7 +183,11 @@ function GroupSheet({
     <>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
 
-      <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up">
+      <div
+        className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Header */}
         <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-[#13131a] border-b border-white/10">
           <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
@@ -168,7 +198,16 @@ function GroupSheet({
             ✕
           </button>
 
-          <h2 className="text-xl font-bold text-white">Group {groupId}</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-bold text-white">Group {groupId}</h2>
+            {allGroupIds && allGroupIds.length > 1 && (
+              <span className="text-[10px] text-zinc-600 flex items-center gap-1">
+                <span className={currentGroupIdx > 0 ? 'text-zinc-400' : 'text-zinc-700'}>‹</span>
+                <span>{currentGroupIdx + 1} / {allGroupIds.length}</span>
+                <span className={currentGroupIdx < allGroupIds.length - 1 ? 'text-zinc-400' : 'text-zinc-700'}>›</span>
+              </span>
+            )}
+          </div>
 
           {/* Large flags — tappable */}
           <div className="flex gap-4 mt-3">
@@ -281,6 +320,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [standings, setStandings] = useState<Record<string, Standing[]>>(baseStandings)
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
 
@@ -290,6 +330,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
       if (!res.ok) return
       const data = await res.json()
       setLiveScores(data.scores ?? {})
+      setLiveAliases(data.aliases ?? {})
     } catch { /* fail silently */ }
   }, [])
 
@@ -321,7 +362,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
 
   // Compute standings from our match data — instant, no ESPN lag
   // For each group, pull all matches from groups data and apply live scores
-  const allGroupMatches = groups.flatMap(g => applyLiveScoresToMatches(g.matches, liveScores))
+  const allGroupMatches = groups.flatMap(g => applyLiveScoresToMatches(g.matches, liveScores, liveAliases))
   const computedStandings = computeStandingsFromMatches(allGroupMatches, baseStandings)
   const effectiveStandings: Record<string, Standing[]> = { ...computedStandings }
   for (const [group, espnRows] of Object.entries(standings)) {
@@ -334,7 +375,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
   // Apply live scores to the active group's matches so completed games show results
   const activeGroupWithLiveScores = activeGroupData
-    ? { ...activeGroupData, matches: applyLiveScoresToMatches(activeGroupData.matches, liveScores) }
+    ? { ...activeGroupData, matches: applyLiveScoresToMatches(activeGroupData.matches, liveScores, liveAliases) }
     : null
 
   return (
@@ -366,6 +407,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           onClose={() => setActiveGroup(null)}
           onTeamOpen={(team) => setTeamSheet(team)}
           onMatchOpen={(match) => setSelectedMatch(match)}
+          allGroupIds={Object.keys(effectiveStandings).sort()}
+          onNavigate={(gId) => setActiveGroup(gId)}
         />
       )}
 
