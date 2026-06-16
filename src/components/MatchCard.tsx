@@ -1,11 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import type { Match, TeamStats, Standing, Team } from '@/lib/types'
 import { TeamSheet } from '@/components/TeamSheet'
 import { getTeamColor } from '@/lib/teamColors'
-import { normalize } from '@/lib/espnAliases'
-import type { ScoreUpdate } from '@/app/api/live-scores/route'
 
 function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
   try {
@@ -111,9 +109,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
                 <span className={`truncate font-medium ${isHighlighted ? 'text-white' : isTop2 ? 'text-zinc-200' : 'text-zinc-400'}`}>
                   {s.team.name}
                 </span>
-                {isTop2 && !isHighlighted && (
-                  <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1 py-0.5 rounded flex-shrink-0">ADV</span>
-                )}
+
               </div>
               <span className="text-center text-zinc-400 tabular-nums">{s.played}</span>
               <span className="text-center text-zinc-300 tabular-nums">{s.won}</span>
@@ -128,12 +124,12 @@ function GroupTable({ groupId, standings, highlightIds }: {
           )
         })}
       </div>
-      <p className="text-[10px] text-zinc-600 mt-2 text-center">Top 2 advance · ADV = advancing position</p>
+      <p className="text-[10px] text-zinc-600 mt-2 text-center">Top 2 advance from each group</p>
     </div>
   )
 }
 
-import type { ScoringEvent, CardEvent } from '@/app/api/live-scores/route'
+import type { ScoringEvent } from '@/app/api/live-scores/route'
 
 export default function MatchCard({
   match,
@@ -141,81 +137,27 @@ export default function MatchCard({
   homeStats,
   awayStats,
   groupStandings,
-  groupMatches,
   clock,
   scorers,
   defaultOpen = false,
   onCloseExternal,
-  // swipe navigation
-  allMatches,
-  allStatsMap,
-  allStandingsMap,
-  allLiveData,
-  allLiveAliases,
 }: {
   match: Match
   userTimezone?: string
   homeStats?: TeamStats | null
   awayStats?: TeamStats | null
   groupStandings?: Standing[]
-  groupMatches?: Match[]
   clock?: string
   scorers?: ScoringEvent[]
   defaultOpen?: boolean
   onCloseExternal?: () => void
-  allMatches?: Match[]
-  allStatsMap?: Record<string, TeamStats | null>
-  allStandingsMap?: Record<string, Standing[]>
-  allLiveData?: Record<string, ScoreUpdate>
-  allLiveAliases?: Record<string, string>
-}){
+}) {
   const [open, setOpen] = useState(defaultOpen)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
-
-  // ── Swipe navigation ───────────────────────────────────────────────────────
-  const [currentIdx, setCurrentIdx] = useState<number>(() => {
-    if (!allMatches) return 0
-    const i = allMatches.findIndex(m => m.id === match.id)
-    return i >= 0 ? i : 0
-  })
-  const touchStartX = useRef(0)
-  const touchStartY = useRef(0)
-
-  // Reset team sheet when navigating to a new match
-  useEffect(() => { setTeamSheet(null) }, [currentIdx])
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-  }
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const dx = e.changedTouches[0].clientX - touchStartX.current
-    const dy = e.changedTouches[0].clientY - touchStartY.current
-    if (!allMatches || Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return
-    if (dx < 0 && currentIdx < allMatches.length - 1) setCurrentIdx(i => i + 1)
-    else if (dx > 0 && currentIdx > 0) setCurrentIdx(i => i - 1)
-  }
-
-  // ── Current match data (navigated or original) ─────────────────────────────
-  const currentMatch = allMatches?.[currentIdx] ?? match
-  const liveKey = `${normalize(currentMatch.homeTeam.name)}|${normalize(currentMatch.awayTeam.name)}`
-  const currentLiveData = allLiveData?.[liveKey] ?? (allLiveAliases ? allLiveData?.[allLiveAliases[liveKey]] : undefined)
-  const currentScorers = currentLiveData?.scorers ?? (currentMatch.id === match.id ? scorers : undefined)
-  const currentRedCards = currentLiveData?.redCards ?? []
-  const currentClock   = currentLiveData?.clock   ?? (currentMatch.id === match.id ? clock : undefined)
-  const currentHomeStats    = allStatsMap?.[currentMatch.homeTeam.id] ?? (currentMatch.id === match.id ? homeStats : null)
-  const currentAwayStats    = allStatsMap?.[currentMatch.awayTeam.id] ?? (currentMatch.id === match.id ? awayStats : null)
-  const currentGroupMatches = currentMatch.group
-    ? (allMatches?.filter(m => m.group === currentMatch.group) ?? (currentMatch.id === match.id ? groupMatches : undefined))
-    : undefined
-  const currentGroupStandings = currentMatch.group
-    ? (allStandingsMap?.[currentMatch.group] ?? (currentMatch.id === match.id ? groupStandings : undefined))
-    : undefined
-
-  const isLive = currentMatch.status === 'live'
-  const isFt = currentMatch.status === 'ft'
+  const isLive = match.status === 'live'
+  const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
-  const { time, tzAbbr } = formatTime(currentMatch.kickoff, userTimezone)
+  const { time, tzAbbr } = formatTime(match.kickoff, userTimezone)
 
   return (
     <>
@@ -295,8 +237,6 @@ export default function MatchCard({
           <div
             className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
           >
             {/* Gradient header */}
             <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0">
@@ -307,23 +247,15 @@ export default function MatchCard({
               >✕</button>
 
               <div className="flex items-center gap-2 mb-2">
-                {currentMatch.group && (
+                {match.group && (
                   <span className="text-[11px] font-bold text-zinc-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    Group {currentMatch.group}
+                    Group {match.group}
                   </span>
                 )}
                 {isLive && <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">● LIVE</span>}
                 {isFt && <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">FINAL</span>}
-                {currentMatch.status === 'upcoming' && (
+                {match.status === 'upcoming' && (
                   <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{time} {tzAbbr}</span>
-                )}
-                {/* Navigation indicator */}
-                {allMatches && allMatches.length > 1 && (
-                  <span className="text-[10px] text-zinc-600 ml-auto mr-8 flex items-center gap-1">
-                    <span className={currentIdx > 0 ? 'text-zinc-400' : 'text-zinc-700'}>‹</span>
-                    <span>{currentIdx + 1} / {allMatches.length}</span>
-                    <span className={currentIdx < allMatches.length - 1 ? 'text-zinc-400' : 'text-zinc-700'}>›</span>
-                  </span>
                 )}
               </div>
 
@@ -331,23 +263,23 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { setOpen(false); setTeamSheet(currentMatch.homeTeam) }}
-                    title={`View ${currentMatch.homeTeam.name}`}
+                    onClick={() => { setOpen(false); setTeamSheet(match.homeTeam) }}
+                    title={`View ${match.homeTeam.name}`}
                   >
-                    <FlagImg teamId={currentMatch.homeTeam.id} fallback={currentMatch.homeTeam.flag} className="h-10" />
+                    <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10" />
                   </button>
-                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{currentMatch.homeTeam.name}</span>
+                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.homeTeam.name}</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 min-w-[80px]">
                   {hasScore ? (
                     <>
                       <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
-                        {currentMatch.homeScore} – {currentMatch.awayScore}
+                        {match.homeScore} – {match.awayScore}
                       </span>
-                      {isLive && currentClock && (
+                      {isLive && clock && (
                         <div className="flex items-center gap-1 mt-0.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                          <span className="text-[13px] font-bold text-red-400">{currentClock}</span>
+                          <span className="text-[13px] font-bold text-red-400">{clock}</span>
                         </div>
                       )}
                     </>
@@ -361,93 +293,44 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { setOpen(false); setTeamSheet(currentMatch.awayTeam) }}
-                    title={`View ${currentMatch.awayTeam.name}`}
+                    onClick={() => { setOpen(false); setTeamSheet(match.awayTeam) }}
+                    title={`View ${match.awayTeam.name}`}
                   >
-                    <FlagImg teamId={currentMatch.awayTeam.id} fallback={currentMatch.awayTeam.flag} className="h-10" />
+                    <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10" />
                   </button>
-                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{currentMatch.awayTeam.name}</span>
+                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{match.awayTeam.name}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 <span className="text-sm">📍</span>
-                <span className="text-[12px] text-zinc-400">{currentMatch.venue.name}, {currentMatch.venue.city}</span>
+                <span className="text-[12px] text-zinc-400">{match.venue.name}, {match.venue.city}</span>
               </div>
-              {/* Swipe hint — shown only when navigation is available */}
-              {allMatches && allMatches.length > 1 && (
-                <p className="text-[10px] text-zinc-700 text-center mt-2">Swipe left or right to browse matches</p>
-              )}
             </div>
 
             {/* Scrollable body */}
-            <div key={currentIdx} className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
+            <div className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
 
-              {/* Goal scorers — two-column layout: home left (⚽ on left), away right (⚽ on right) */}
-              {currentScorers && currentScorers.length > 0 && (
+              {/* Goal timeline — only when there are scorers */}
+              {scorers && scorers.length > 0 && (
                 <div className="mb-5">
                   <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Goals</p>
-                  <div className="flex gap-3">
-                    {/* Home scorers — ball on the LEFT */}
-                    <div className="flex-1 space-y-1.5">
-                      {currentScorers.filter(s => s.teamSide !== 'away').map((s, i) => (
-                        <div key={i} className="flex items-center gap-1.5">
-                          <span className="text-sm leading-none">⚽</span>
-                          <span className="text-[12px] font-semibold text-white">{s.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{s.minute}</span>
-                          {s.type !== 'goal' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    {/* Away scorers — ball on the RIGHT */}
-                    <div className="flex-1 space-y-1.5 flex flex-col items-end">
-                      {currentScorers.filter(s => s.teamSide === 'away').map((s, i) => (
-                        <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                          <span className="text-sm leading-none">⚽</span>
-                          <span className="text-[12px] font-semibold text-white">{s.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{s.minute}</span>
-                          {s.type !== 'goal' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-3 h-px bg-zinc-800" />
-                </div>
-              )}
-
-              {/* Red cards — two-column: home left 🟥, away right 🟥 */}
-              {currentRedCards.length > 0 && (
-                <div className="mb-5">
-                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Red Cards</p>
-                  <div className="flex gap-3">
-                    <div className="flex-1 space-y-1.5">
-                      {currentRedCards.filter(c => c.teamSide === 'home').map((c, i) => (
-                        <div key={i} className="flex items-center gap-1.5">
-                          <span className="text-sm leading-none">🟥</span>
-                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
-                          {c.cardType === 'yellow-red' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex-1 space-y-1.5 flex flex-col items-end">
-                      {currentRedCards.filter(c => c.teamSide === 'away').map((c, i) => (
-                        <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                          <span className="text-sm leading-none">🟥</span>
-                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
-                          {c.cardType === 'yellow-red' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="space-y-1.5">
+                    {scorers.map((s, i) => (
+                      <div
+                        key={i}
+                        className={`flex items-center gap-2 ${s.teamSide === 'away' ? 'flex-row-reverse' : ''}`}
+                      >
+                        <span className="text-base leading-none">⚽</span>
+                        <span className="text-[13px] font-semibold text-white">{s.playerName}</span>
+                        <span className="text-[11px] text-zinc-500">{s.minute}</span>
+                        {s.type !== 'goal' && (
+                          <span className="text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded">
+                            {s.type === 'og' ? 'OG' : 'pen'}
+                          </span>
+                        )}
+                      </div>
+                    ))}
                   </div>
                   <div className="mt-3 h-px bg-zinc-800" />
                 </div>
@@ -455,17 +338,17 @@ export default function MatchCard({
               {/* Team stats */}
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">Team Stats</p>
               <div className="flex gap-4 items-start">
-                <TeamPanel team={currentMatch.homeTeam} stats={currentHomeStats ?? null} side="home" />
+                <TeamPanel team={match.homeTeam} stats={homeStats ?? null} side="home" />
                 <div className="w-px bg-zinc-800 self-stretch" />
-                <TeamPanel team={currentMatch.awayTeam} stats={currentAwayStats ?? null} side="away" />
+                <TeamPanel team={match.awayTeam} stats={awayStats ?? null} side="away" />
               </div>
 
               {/* Group standings */}
-              {currentMatch.group && currentGroupStandings && currentGroupStandings.length > 0 && (
+              {match.group && groupStandings && groupStandings.length > 0 && (
                 <GroupTable
-                  groupId={currentMatch.group}
-                  standings={currentGroupStandings}
-                  highlightIds={[currentMatch.homeTeam.id, currentMatch.awayTeam.id]}
+                  groupId={match.group}
+                  standings={groupStandings}
+                  highlightIds={[match.homeTeam.id, match.awayTeam.id]}
                 />
               )}
             </div>
@@ -478,7 +361,7 @@ export default function MatchCard({
 
       {/* Team sheet — opens when a flag is tapped */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
+        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} />
       )}
     </>
   )
