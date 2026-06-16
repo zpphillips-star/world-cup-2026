@@ -139,20 +139,20 @@ function LiveNowSheet({
                   </div>
                 </div>
 
-                {/* Goal scorers + red cards — centered rows, ball left of name for home, right for away */}
+                {/* Goal scorers + red cards — name always centered, ball left for home / right for away */}
                 {((liveData?.scorers?.length ?? 0) > 0 || (liveData?.redCards?.length ?? 0) > 0) && (
-                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3 flex flex-col items-center gap-1">
+                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3 flex flex-col gap-1">
                     {[...(liveData?.scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
                       ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
                       .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                       .map((e, i) => (
-                        <div key={i} className="flex items-center gap-1.5">
-                          {e.teamSide === 'home' && <span className="text-sm leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
-                          <span className="text-[11px] text-zinc-300">
+                        <div key={i} className="grid w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                          <span className="flex justify-end pr-1">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                          <span className="text-[11px] text-zinc-300 text-center">
                             {e.playerName} {e.minute}
                             {e.kind === 'goal' && e.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded ml-1">{e.type === 'og' ? 'OG' : 'pen'}</span>}
                           </span>
-                          {e.teamSide === 'away' && <span className="text-sm leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
+                          <span className="flex justify-start pl-1">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                         </div>
                       ))
                     }

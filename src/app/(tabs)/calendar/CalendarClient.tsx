@@ -111,17 +111,17 @@ function DayMatchCard({
             </div>
           </div>
 
-          {/* Goals + red cards — centered rows, ball left of name for home, right for away */}
+          {/* Goals + red cards — name always centered, ball left for home / right for away */}
           {((scorers && scorers.length > 0) || (redCards && redCards.length > 0)) && (
-            <div className="flex flex-col items-center gap-0.5 px-4 pb-2">
+            <div className="flex flex-col gap-0.5 px-4 pb-2">
               {[...(scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
                 ...(redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
                 .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                 .map((e, i) => (
-                  <div key={i} className="flex items-center gap-1">
-                    {e.teamSide === 'home' && <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
-                    <span className="text-[10px] text-zinc-400">{e.playerName} {e.minute}</span>
-                    {e.teamSide === 'away' && <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
+                  <div key={i} className="grid w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                    <span className="flex justify-end pr-1 text-[10px]">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                    <span className="text-[10px] text-zinc-400 text-center">{e.playerName} {e.minute}</span>
+                    <span className="flex justify-start pl-1 text-[10px]">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                   </div>
                 ))
               }

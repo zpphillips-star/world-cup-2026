@@ -143,22 +143,22 @@ function FeaturedMatchCard({
           </div>
         </div>
 
-        {/* Goal scorers + red cards — centered rows, ball left of name for home, right for away */}
+        {/* Goal scorers + red cards — name always centered, ball left for home / right for away */}
         {((liveData?.scorers?.length ?? 0) > 0 || (liveData?.redCards?.length ?? 0) > 0) && (
-          <div className="flex flex-col items-center gap-1 px-4 pb-3 border-t border-white/[0.04] pt-2">
+          <div className="flex flex-col gap-1 px-4 pb-3 border-t border-white/[0.04] pt-2">
             {[...(liveData?.scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
               ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
               .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
               .map((e, i) => (
-                <div key={i} className="flex items-center gap-1.5">
-                  {e.teamSide === 'home' && <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
-                  <span className="text-[11px] text-zinc-300 font-medium">
+                <div key={i} className="grid w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                  <span className="flex justify-end pr-1">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                  <span className="text-[11px] text-zinc-300 font-medium text-center">
                     {surname(e.playerName)} {e.minute}
                     {e.kind === 'goal' && e.type === 'og' && <span className="text-[9px] text-zinc-600 ml-1">(og)</span>}
                     {e.kind === 'goal' && e.type === 'pen' && <span className="text-[9px] text-zinc-600 ml-1">(p)</span>}
                     {e.kind === 'card' && e.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600 ml-1">(2Y)</span>}
                   </span>
-                  {e.teamSide === 'away' && <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>}
+                  <span className="flex justify-start pl-1">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                 </div>
               ))
             }
