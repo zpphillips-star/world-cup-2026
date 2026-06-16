@@ -151,6 +151,7 @@ export default function MatchCard({
   allStatsMap,
   allStandingsMap,
   allLiveData,
+  allLiveAliases,
 }: {
   match: Match
   userTimezone?: string
@@ -166,6 +167,7 @@ export default function MatchCard({
   allStatsMap?: Record<string, TeamStats | null>
   allStandingsMap?: Record<string, Standing[]>
   allLiveData?: Record<string, ScoreUpdate>
+  allLiveAliases?: Record<string, string>
 }){
   const [open, setOpen] = useState(defaultOpen)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
@@ -197,7 +199,7 @@ export default function MatchCard({
   // ── Current match data (navigated or original) ─────────────────────────────
   const currentMatch = allMatches?.[currentIdx] ?? match
   const liveKey = `${normalize(currentMatch.homeTeam.name)}|${normalize(currentMatch.awayTeam.name)}`
-  const currentLiveData = allLiveData?.[liveKey]
+  const currentLiveData = allLiveData?.[liveKey] ?? (allLiveAliases ? allLiveData?.[allLiveAliases[liveKey]] : undefined)
   const currentScorers = currentLiveData?.scorers ?? (currentMatch.id === match.id ? scorers : undefined)
   const currentRedCards = currentLiveData?.redCards ?? []
   const currentClock   = currentLiveData?.clock   ?? (currentMatch.id === match.id ? clock : undefined)

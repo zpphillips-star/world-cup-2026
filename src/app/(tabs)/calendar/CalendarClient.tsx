@@ -442,6 +442,7 @@ export default function CalendarClient({
             allStatsMap={statsMap}
             allStandingsMap={effectiveStandingsMap}
             allLiveData={liveScores}
+            allLiveAliases={liveAliases}
           />
         )
       })()}

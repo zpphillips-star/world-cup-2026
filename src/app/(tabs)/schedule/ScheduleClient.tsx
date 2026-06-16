@@ -226,6 +226,7 @@ function LiveNowSheet({
             allStatsMap={statsMap}
             allStandingsMap={standingsMap}
             allLiveData={liveScores}
+            allLiveAliases={liveAliases}
           />
         )
       })()}
@@ -432,6 +433,7 @@ export default function ScheduleClient({
                     allStatsMap={statsMap}
                     allStandingsMap={effectiveStandingsMap}
                     allLiveData={liveScores}
+                    allLiveAliases={liveAliases}
                   />
                 )
               })}

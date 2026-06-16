@@ -418,6 +418,7 @@ export default function TodayClient({
           allStatsMap={statsMap}
           allStandingsMap={effectiveStandingsMap}
           allLiveData={liveScores}
+          allLiveAliases={liveAliases}
         />
       )}
     </div>
