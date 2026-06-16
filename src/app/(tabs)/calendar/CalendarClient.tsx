@@ -111,39 +111,26 @@ function DayMatchCard({
             </div>
           </div>
 
-          {/* Goal scorers + red cards — two-column: home left (icon·name), away right (name·icon) */}
+          {/* Goals + red cards — chronological center list; icon left for home, right for away */}
           {((scorers && scorers.length > 0) || (redCards && redCards.length > 0)) && (
-            <div className="grid grid-cols-2 gap-x-2 px-4 pb-2">
-              {/* Home column */}
-              <div className="flex flex-col gap-0.5">
-                {(scorers ?? []).filter(s => s.teamSide === 'home').map((s, i) => (
-                  <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                    <span className="text-[10px] leading-none flex-shrink-0">⚽</span>
-                    <span className="truncate">{s.playerName} {s.minute}</span>
-                  </span>
-                ))}
-                {(redCards ?? []).filter(c => c.teamSide === 'home').map((c, i) => (
-                  <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                    <span className="text-[10px] leading-none flex-shrink-0">🟥</span>
-                    <span className="truncate">{c.playerName} {c.minute}</span>
-                  </span>
-                ))}
-              </div>
-              {/* Away column */}
-              <div className="flex flex-col gap-0.5 items-end">
-                {(scorers ?? []).filter(s => s.teamSide === 'away').map((s, i) => (
-                  <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                    <span className="truncate text-right">{s.playerName} {s.minute}</span>
-                    <span className="text-[10px] leading-none flex-shrink-0">⚽</span>
-                  </span>
-                ))}
-                {(redCards ?? []).filter(c => c.teamSide === 'away').map((c, i) => (
-                  <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                    <span className="truncate text-right">{c.playerName} {c.minute}</span>
-                    <span className="text-[10px] leading-none flex-shrink-0">🟥</span>
-                  </span>
-                ))}
-              </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 pb-2">
+              {[...(scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
+                ...(redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
+                .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
+                .map((e, i) => (
+                  e.teamSide === 'home' ? (
+                    <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
+                      <span className="leading-none flex-shrink-0">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
+                      <span>{e.playerName} {e.minute}</span>
+                    </span>
+                  ) : (
+                    <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
+                      <span>{e.playerName} {e.minute}</span>
+                      <span className="leading-none flex-shrink-0">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
+                    </span>
+                  )
+                ))
+              }
             </div>
           )}
 
