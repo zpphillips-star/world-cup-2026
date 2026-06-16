@@ -139,59 +139,30 @@ function LiveNowSheet({
                   </div>
                 </div>
 
-                {/* Goal scorers */}
-                {(homeScorers.length > 0 || awayScorers.length > 0) && (
-                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3">
-                    <div className="flex gap-4">
-                      {/* Home scorers */}
-                      <div className="flex-1 space-y-1">
-                        {homeScorers.map((s, i) => (
+                {/* Goal scorers + red cards — chronological center list; icon left for home, right for away */}
+                {((liveData?.scorers?.length ?? 0) > 0 || (liveData?.redCards?.length ?? 0) > 0) && (
+                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3 flex flex-col items-center gap-1">
+                    {[...(liveData?.scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
+                      ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
+                      .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
+                      .map((e, i) => (
+                        e.teamSide === 'home' ? (
                           <div key={i} className="flex items-center gap-1.5">
-                            <span className="text-sm leading-none">⚽</span>
-                            <span className="text-[11px] text-zinc-300">{s.playerName}</span>
-                            <span className="text-[10px] text-zinc-500">{s.minute}</span>
-                            {s.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>}
+                            <span className="text-sm leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
+                            <span className="text-[11px] text-zinc-300">{e.playerName}</span>
+                            <span className="text-[10px] text-zinc-500">{e.minute}</span>
+                            {e.kind === 'goal' && e.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded">{e.type === 'og' ? 'OG' : 'pen'}</span>}
                           </div>
-                        ))}
-                      </div>
-                      {/* Away scorers */}
-                      <div className="flex-1 space-y-1 items-end flex flex-col">
-                        {awayScorers.map((s, i) => (
-                          <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                            <span className="text-sm leading-none">⚽</span>
-                            <span className="text-[11px] text-zinc-300">{s.playerName}</span>
-                            <span className="text-[10px] text-zinc-500">{s.minute}</span>
-                            {s.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Red cards */}
-                {(homeRedCards.length > 0 || awayRedCards.length > 0) && (
-                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3">
-                    <div className="flex gap-4">
-                      <div className="flex-1 space-y-1">
-                        {homeRedCards.map((c, i) => (
+                        ) : (
                           <div key={i} className="flex items-center gap-1.5">
-                            <span className="text-sm leading-none">🟥</span>
-                            <span className="text-[11px] text-zinc-300">{c.playerName}</span>
-                            <span className="text-[10px] text-zinc-500">{c.minute}</span>
+                            <span className="text-[10px] text-zinc-500">{e.minute}</span>
+                            <span className="text-[11px] text-zinc-300">{e.playerName}</span>
+                            {e.kind === 'goal' && e.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded">{e.type === 'og' ? 'OG' : 'pen'}</span>}
+                            <span className="text-sm leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
                           </div>
-                        ))}
-                      </div>
-                      <div className="flex-1 space-y-1 items-end flex flex-col">
-                        {awayRedCards.map((c, i) => (
-                          <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                            <span className="text-sm leading-none">🟥</span>
-                            <span className="text-[11px] text-zinc-300">{c.playerName}</span>
-                            <span className="text-[10px] text-zinc-500">{c.minute}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                        )
+                      ))
+                    }
                   </div>
                 )}
 
