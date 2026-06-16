@@ -192,6 +192,10 @@ function LiveNowSheet({
             scorers={liveData?.scorers}
             defaultOpen
             onCloseExternal={() => setSelectedMatch(null)}
+            allMatches={liveMatches}
+            allStatsMap={statsMap}
+            allStandingsMap={standingsMap}
+            allLiveData={liveScores}
           />
         )
       })()}
@@ -394,6 +398,10 @@ export default function ScheduleClient({
                     groupMatches={match.group ? liveMatches.filter(m => m.group === match.group) : undefined}
                     clock={liveData?.clock}
                     scorers={liveData?.scorers}
+                    allMatches={liveMatches}
+                    allStatsMap={statsMap}
+                    allStandingsMap={effectiveStandingsMap}
+                    allLiveData={liveScores}
                   />
                 )
               })}

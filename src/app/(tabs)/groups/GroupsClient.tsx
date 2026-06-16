@@ -379,6 +379,10 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           groupMatches={selectedMatch.group ? allGroupMatches.filter(m => m.group === selectedMatch.group) : undefined}
           defaultOpen
           onCloseExternal={() => setSelectedMatch(null)}
+          allMatches={allGroupMatches}
+          allStatsMap={statsMap}
+          allStandingsMap={effectiveStandings}
+          allLiveData={liveScores}
         />
       )}
 
