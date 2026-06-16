@@ -116,13 +116,13 @@ function DayMatchCard({
             <div className="grid grid-cols-2 gap-x-2 px-4 pb-2">
               {/* Home column */}
               <div className="flex flex-col gap-0.5">
-                {scorers?.filter(s => s.teamSide === 'home').map((s, i) => (
+                {(scorers ?? []).filter(s => s.teamSide === 'home').map((s, i) => (
                   <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
                     <span className="text-[10px] leading-none flex-shrink-0">⚽</span>
                     <span className="truncate">{s.playerName} {s.minute}</span>
                   </span>
                 ))}
-                {redCards?.filter(c => c.teamSide === 'home').map((c, i) => (
+                {(redCards ?? []).filter(c => c.teamSide === 'home').map((c, i) => (
                   <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
                     <span className="text-[10px] leading-none flex-shrink-0">🟥</span>
                     <span className="truncate">{c.playerName} {c.minute}</span>
@@ -131,13 +131,13 @@ function DayMatchCard({
               </div>
               {/* Away column */}
               <div className="flex flex-col gap-0.5 items-end">
-                {scorers?.filter(s => s.teamSide === 'away').map((s, i) => (
+                {(scorers ?? []).filter(s => s.teamSide === 'away').map((s, i) => (
                   <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
                     <span className="truncate text-right">{s.playerName} {s.minute}</span>
                     <span className="text-[10px] leading-none flex-shrink-0">⚽</span>
                   </span>
                 ))}
-                {redCards?.filter(c => c.teamSide === 'away').map((c, i) => (
+                {(redCards ?? []).filter(c => c.teamSide === 'away').map((c, i) => (
                   <span key={i} className="flex items-center gap-1 text-[10px] text-zinc-400">
                     <span className="truncate text-right">{c.playerName} {c.minute}</span>
                     <span className="text-[10px] leading-none flex-shrink-0">🟥</span>
