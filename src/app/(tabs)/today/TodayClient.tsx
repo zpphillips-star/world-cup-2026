@@ -48,168 +48,131 @@ function FeaturedMatchCard({
   const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
   const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
 
+  // Scorer surname only (pro apps never show full name)
+  const surname = (name: string) => name.split(' ').slice(-1)[0]
+
   return (
     <button
       onClick={onClick}
-      className="w-full text-left active:scale-[0.97] transition-transform relative"
+      className="w-full text-left active:scale-[0.98] transition-transform"
     >
-      {/* Animated glow ring for live */}
-      {isLive && (
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            boxShadow: '0 0 0 1.5px rgba(0,212,255,0.5), 0 0 48px rgba(0,212,255,0.22)',
-            animation: 'liveCardGlow 2.5s ease-in-out infinite',
-            borderRadius: '12px',
-          }}
-        />
-      )}
       <div
-        className={`rounded-xl overflow-hidden relative`}
+        className="rounded-xl overflow-hidden"
         style={{
-          background: isLive
-            ? 'linear-gradient(160deg, #1e1e36 0%, #191930 100%)'
-            : isFt
-            ? 'linear-gradient(160deg, #111118 0%, #0d0d14 100%)'
-            : 'linear-gradient(160deg, #0d1420 0%, #0a0d14 100%)',
-          border: isLive
-            ? '1.5px solid rgba(0,212,255,0.32)'
-            : '1px solid rgba(255,255,255,0.06)',
-          boxShadow: isLive
-            ? '0 0 0 1px rgba(0,212,255,0.08), 0 10px 48px rgba(0,212,255,0.15), 0 4px 16px rgba(0,0,0,0.9)'
-            : '0 2px 16px rgba(0,0,0,0.5)',
+          background: isFt ? '#141418' : isLive ? '#1a1a24' : '#141820',
+          borderTop: '1px solid rgba(255,255,255,0.07)',
+          borderRight: '1px solid rgba(255,255,255,0.07)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          borderLeft: isLive ? '3px solid #e8003d' : '1px solid rgba(255,255,255,0.07)',
+          opacity: isFt ? 0.82 : 1,
         }}
       >
-        {/* Live: thin cyan top accent bar */}
-        {isLive && (
-          <div className="h-[2px] bg-gradient-to-r from-transparent via-[#00d4ff]/40 to-transparent" />
-        )}
-
-        {/* Top row: group badge + status */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-2">
-          <div className="flex items-center gap-2">
+        {/* Header row: venue left, status right */}
+        <div className="flex items-center justify-between px-4 pt-3 pb-1">
+          <div className="flex items-center gap-2 min-w-0">
             {match.group && (
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${isLive ? 'bg-[#00d4ff]/10 text-[#00d4ff]' : 'bg-white/5 text-zinc-500'}`}>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex-shrink-0">
                 Group {match.group}
               </span>
             )}
-            <span className="text-[10px] text-zinc-600 truncate max-w-[160px]">
-              {match.venue.name}, {match.venue.city}
+            <span className="text-[10px] text-zinc-600 truncate">
+              · {match.venue.name}, {match.venue.city}
             </span>
           </div>
+
           {isLive && (
-            <div className="flex items-center gap-1.5 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="text-[12px] font-black text-red-400 uppercase tracking-wider">Live</span>
+            <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#e8003d]" style={{ animation: 'liveDotPulse 1.8s ease-in-out infinite' }} />
+              <span className="text-[11px] font-black text-[#e8003d] uppercase tracking-wider">Live</span>
               {liveData?.clock && (
-                <span className="text-[12px] font-bold text-red-300 tabular-nums">{liveData.clock}</span>
+                <span className="text-[11px] font-bold text-zinc-400 tabular-nums">{liveData.clock}</span>
               )}
             </div>
           )}
           {isFt && (
-            <span className="text-[11px] font-bold text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-              Final
-            </span>
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex-shrink-0 ml-2">FT</span>
           )}
           {!hasScore && (
-            <span className="text-[11px] font-semibold text-[#00d4ff]">{kickoffTime}</span>
+            <span className="text-[11px] font-semibold text-[#00d4ff] flex-shrink-0 ml-2">{kickoffTime}</span>
           )}
         </div>
 
-        {/* Main score/matchup row */}
-        <div className="flex items-center justify-between px-5 py-3 gap-2">
-          {/* Home team */}
+        {/* Main match row: flag · name | score | name · flag */}
+        <div className="flex items-center px-4 py-4 gap-3">
+          {/* Home */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className={`${featured ? 'h-20' : 'h-10'} rounded shadow-lg`} />
-            <span className={`${featured ? 'text-[15px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
+            <FlagImg
+              teamId={match.homeTeam.id}
+              fallback={match.homeTeam.flag}
+              className={`${featured ? 'h-16 w-24' : 'h-10 w-16'} object-cover rounded-md shadow`}
+            />
+            <span className={`${featured ? 'text-[13px]' : 'text-[12px]'} font-bold text-white text-center leading-tight`}>
               {match.homeTeam.name}
             </span>
           </div>
 
           {/* Score / VS */}
-          <div className="flex flex-col items-center gap-1 px-2 min-w-[80px]">
+          <div className="flex flex-col items-center gap-0.5 min-w-[72px]">
             {hasScore ? (
               <>
-                <span className={`${featured ? 'text-[52px]' : 'text-[32px]'} font-black tabular-nums leading-none text-white`}>
+                <span
+                  className={`${featured ? 'text-[40px]' : 'text-[28px]'} font-extrabold tabular-nums leading-none text-white`}
+                  style={{ fontVariantNumeric: 'tabular-nums' }}
+                >
                   {match.homeScore}–{match.awayScore}
                 </span>
-                {isFt && (
-                  <span className="text-[10px] text-zinc-600 uppercase tracking-widest">Full Time</span>
-                )}
+                {isFt && <span className="text-[9px] text-zinc-600 uppercase tracking-widest mt-0.5">Full Time</span>}
               </>
             ) : (
-              <>
-                <span className="text-[22px] font-black text-zinc-500">vs</span>
-                <span className="text-[10px] text-zinc-600 text-center leading-tight">
-                  {new Date(match.kickoff).toLocaleDateString('en-US', {
-                    month: 'short', day: 'numeric', timeZone: userTimezone,
-                  })}
-                </span>
-              </>
+              <span className="text-[18px] font-black text-zinc-500">vs</span>
             )}
           </div>
 
-          {/* Away team */}
+          {/* Away */}
           <div className="flex-1 flex flex-col items-center gap-2">
-            <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className={`${featured ? 'h-20' : 'h-10'} rounded shadow-lg`} />
-            <span className={`${featured ? 'text-[15px]' : 'text-[12px]'} font-bold text-white text-center leading-tight max-w-[90px]`}>
+            <FlagImg
+              teamId={match.awayTeam.id}
+              fallback={match.awayTeam.flag}
+              className={`${featured ? 'h-16 w-24' : 'h-10 w-16'} object-cover rounded-md shadow`}
+            />
+            <span className={`${featured ? 'text-[13px]' : 'text-[12px]'} font-bold text-white text-center leading-tight`}>
               {match.awayTeam.name}
             </span>
           </div>
         </div>
 
-        {/* Goal scorers — visible on the card, no tap needed */}
+        {/* Goal scorers row — surname + minute, pro format */}
         {(homeScorers.length > 0 || awayScorers.length > 0) && (
-          <div className="mx-5 mb-4 pt-3 border-t border-white/5">
-            <div className="flex gap-3">
-              {/* Home scorers */}
-              <div className="flex-1 space-y-1">
-                {homeScorers.map((s, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <span className="text-sm leading-none">⚽</span>
-                    <span className="text-[11px] font-medium text-zinc-300 truncate">{s.playerName}</span>
-                    <span className="text-[10px] text-zinc-500 flex-shrink-0">{s.minute}</span>
-                    {s.type !== 'goal' && (
-                      <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded flex-shrink-0">
-                        {s.type === 'og' ? 'OG' : 'pen'}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* Away scorers */}
-              <div className="flex-1 space-y-1 flex flex-col items-end">
-                {awayScorers.map((s, i) => (
-                  <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                    <span className="text-sm leading-none">⚽</span>
-                    <span className="text-[11px] font-medium text-zinc-300 truncate">{s.playerName}</span>
-                    <span className="text-[10px] text-zinc-500 flex-shrink-0">{s.minute}</span>
-                    {s.type !== 'goal' && (
-                      <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded flex-shrink-0">
-                        {s.type === 'og' ? 'OG' : 'pen'}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+          <div className="flex items-start px-4 pb-3 gap-2 border-t border-white/[0.04] pt-2">
+            <div className="flex-1 space-y-0.5">
+              {homeScorers.map((s, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <span className="text-[10px] leading-none">⚽</span>
+                  <span className="text-[11px] text-zinc-300 font-medium">{surname(s.playerName)} {s.minute}</span>
+                  {s.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
+                  {s.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 space-y-0.5 flex flex-col items-end">
+              {awayScorers.map((s, i) => (
+                <div key={i} className="flex items-center gap-1 flex-row-reverse">
+                  <span className="text-[10px] leading-none">⚽</span>
+                  <span className="text-[11px] text-zinc-300 font-medium">{surname(s.playerName)} {s.minute}</span>
+                  {s.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
+                  {s.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Upcoming — countdown feel */}
+        {/* Upcoming: stadium only — time already in header */}
         {!hasScore && (
-          <div className="px-5 pb-4 flex items-center justify-center gap-2">
-            <span className="text-[11px] text-zinc-500">Kickoff at</span>
-            <span className="text-[13px] font-bold text-[#00d4ff]">{kickoffTime}</span>
-            <span className="text-[11px] text-zinc-600">·</span>
-            <span className="text-[11px] text-zinc-500">{match.venue.city}</span>
+          <div className="px-4 pb-3 text-center">
+            <span className="text-[11px] text-zinc-600">{match.venue.city}</span>
           </div>
         )}
-
-        {/* Tap hint */}
-        <div className="px-5 pb-3 flex justify-end">
-          <span className="text-[10px] text-zinc-700">Tap for details ›</span>
-        </div>
       </div>
     </button>
   )
