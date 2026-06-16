@@ -7,12 +7,20 @@ export interface ScoringEvent {
   type: 'goal' | 'og' | 'pen'
 }
 
+export interface CardEvent {
+  playerName: string
+  minute: string
+  teamSide: 'home' | 'away'
+  cardType: 'red' | 'yellow-red'
+}
+
 export interface ScoreUpdate {
   homeScore: number
   awayScore: number
   status: 'upcoming' | 'live' | 'ft'
   clock?: string
   scorers: ScoringEvent[]
+  redCards: CardEvent[]
 }
 
 import { normalize, resolveEspnName, ESPN_TO_SCHEDULE } from '@/lib/espnAliases'
@@ -96,17 +104,23 @@ export async function GET() {
 
           // Parse scoring events from details
           const scorers: ScoringEvent[] = []
+          const redCards: CardEvent[] = []
           for (const detail of comp.details ?? []) {
-            if (!detail.scoringPlay) continue
+            const typeText: string = (detail.type?.text ?? '').toLowerCase()
             const playerName: string = detail.athletesInvolved?.[0]?.displayName ?? 'Unknown'
             const minute = parseClock(detail.clock?.displayValue) ?? '?'
             const teamSide: 'home' | 'away' = detail.team?.id === home.team.id ? 'home' : 'away'
-            const typeText: string = (detail.type?.text ?? '').toLowerCase()
-            const type: 'goal' | 'og' | 'pen' =
-              typeText.includes('own') ? 'og' :
-              typeText.includes('penalty') || typeText.includes('pen') ? 'pen' :
-              'goal'
-            scorers.push({ playerName, minute, teamSide, type })
+
+            if (detail.scoringPlay) {
+              const type: 'goal' | 'og' | 'pen' =
+                typeText.includes('own') ? 'og' :
+                typeText.includes('penalty') || typeText.includes('pen') ? 'pen' :
+                'goal'
+              scorers.push({ playerName, minute, teamSide, type })
+            } else if (typeText.includes('red card') || typeText === 'red' || typeText.includes('second yellow')) {
+              const cardType: 'red' | 'yellow-red' = typeText.includes('second yellow') || typeText.includes('yellow-red') ? 'yellow-red' : 'red'
+              redCards.push({ playerName, minute, teamSide, cardType })
+            }
           }
 
           // Fallback: if there are scoring events and status is still "upcoming", treat as live
@@ -125,6 +139,7 @@ export async function GET() {
             status,
             clock: status === 'live' ? parseClock(comp.status?.displayClock) : undefined,
             scorers,
+            redCards,
           }
 
           // Register alias keys so clients using different name variants still resolve to canonical

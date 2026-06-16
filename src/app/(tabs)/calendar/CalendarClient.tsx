@@ -213,6 +213,7 @@ export default function CalendarClient({
   }, [fetchScores, fetchStandings])
 
   const liveMatches = applyLiveScores(matches, liveScores, liveAliases)
+  const sortedLiveMatches = [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
 
   // Compute standings from our match data — instant, no ESPN lag
   const computedStandingsMap = computeStandingsFromMatches(liveMatches, standingsMap)
@@ -424,7 +425,7 @@ export default function CalendarClient({
             scorers={liveData?.scorers}
             defaultOpen={true}
             onCloseExternal={() => setSelectedMatch(null)}
-            allMatches={liveMatches}
+            allMatches={sortedLiveMatches}
             allStatsMap={statsMap}
             allStandingsMap={effectiveStandingsMap}
             allLiveData={liveScores}

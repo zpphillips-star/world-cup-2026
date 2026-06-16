@@ -133,7 +133,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
   )
 }
 
-import type { ScoringEvent } from '@/app/api/live-scores/route'
+import type { ScoringEvent, CardEvent } from '@/app/api/live-scores/route'
 
 export default function MatchCard({
   match,
@@ -199,6 +199,7 @@ export default function MatchCard({
   const liveKey = `${normalize(currentMatch.homeTeam.name)}|${normalize(currentMatch.awayTeam.name)}`
   const currentLiveData = allLiveData?.[liveKey]
   const currentScorers = currentLiveData?.scorers ?? (currentMatch.id === match.id ? scorers : undefined)
+  const currentRedCards = currentLiveData?.redCards ?? []
   const currentClock   = currentLiveData?.clock   ?? (currentMatch.id === match.id ? clock : undefined)
   const currentHomeStats    = allStatsMap?.[currentMatch.homeTeam.id] ?? (currentMatch.id === match.id ? homeStats : null)
   const currentAwayStats    = allStatsMap?.[currentMatch.awayTeam.id] ?? (currentMatch.id === match.id ? awayStats : null)
@@ -407,6 +408,40 @@ export default function MatchCard({
                           <span className="text-[11px] text-zinc-500">{s.minute}</span>
                           {s.type !== 'goal' && (
                             <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mt-3 h-px bg-zinc-800" />
+                </div>
+              )}
+
+              {/* Red cards — two-column: home left 🟥, away right 🟥 */}
+              {currentRedCards.length > 0 && (
+                <div className="mb-5">
+                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Red Cards</p>
+                  <div className="flex gap-3">
+                    <div className="flex-1 space-y-1.5">
+                      {currentRedCards.filter(c => c.teamSide === 'home').map((c, i) => (
+                        <div key={i} className="flex items-center gap-1.5">
+                          <span className="text-sm leading-none">🟥</span>
+                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
+                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
+                          {c.cardType === 'yellow-red' && (
+                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex-1 space-y-1.5 flex flex-col items-end">
+                      {currentRedCards.filter(c => c.teamSide === 'away').map((c, i) => (
+                        <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
+                          <span className="text-sm leading-none">🟥</span>
+                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
+                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
+                          {c.cardType === 'yellow-red' && (
+                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
                           )}
                         </div>
                       ))}

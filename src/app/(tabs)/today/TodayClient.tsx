@@ -47,6 +47,8 @@ function FeaturedMatchCard({
 
   const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
   const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
+  const homeRedCards = liveData?.redCards?.filter(c => c.teamSide === 'home') ?? []
+  const awayRedCards = liveData?.redCards?.filter(c => c.teamSide === 'away') ?? []
 
   // Scorer surname only (pro apps never show full name)
   const surname = (name: string) => name.split(' ').slice(-1)[0]
@@ -161,6 +163,30 @@ function FeaturedMatchCard({
                   <span className="text-[11px] text-zinc-300 font-medium">{surname(s.playerName)} {s.minute}</span>
                   {s.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
                   {s.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Red cards row — home left 🟥, away right 🟥 */}
+        {(homeRedCards.length > 0 || awayRedCards.length > 0) && (
+          <div className="flex items-start px-4 pb-3 gap-2 border-t border-white/[0.04] pt-2">
+            <div className="flex-1 space-y-0.5">
+              {homeRedCards.map((c, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <span className="text-[10px] leading-none">🟥</span>
+                  <span className="text-[11px] text-zinc-300 font-medium">{surname(c.playerName)} {c.minute}</span>
+                  {c.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 space-y-0.5 flex flex-col items-end">
+              {awayRedCards.map((c, i) => (
+                <div key={i} className="flex items-center gap-1 flex-row-reverse">
+                  <span className="text-[10px] leading-none">🟥</span>
+                  <span className="text-[11px] text-zinc-300 font-medium">{surname(c.playerName)} {c.minute}</span>
+                  {c.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
                 </div>
               ))}
             </div>
