@@ -111,9 +111,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
                 <span className={`truncate font-medium ${isHighlighted ? 'text-white' : isTop2 ? 'text-zinc-200' : 'text-zinc-400'}`}>
                   {s.team.name}
                 </span>
-                {isTop2 && !isHighlighted && (
-                  <span className="text-[9px] text-emerald-500 bg-emerald-500/10 px-1 py-0.5 rounded flex-shrink-0">ADV</span>
-                )}
+
               </div>
               <span className="text-center text-zinc-400 tabular-nums">{s.played}</span>
               <span className="text-center text-zinc-300 tabular-nums">{s.won}</span>
@@ -128,7 +126,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
           )
         })}
       </div>
-      <p className="text-[10px] text-zinc-600 mt-2 text-center">Top 2 advance · ADV = advancing position</p>
+      <p className="text-[10px] text-zinc-600 mt-2 text-center">Top 2 advance from each group</p>
     </div>
   )
 }
