@@ -80,7 +80,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
       <div className="rounded-2xl overflow-hidden border border-zinc-800">
         {/* Header */}
         <div className="grid bg-zinc-800/60 px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-widest"
-          style={{ gridTemplateColumns: '1fr 28px 28px 28px 28px 28px 28px 32px' }}>
+          style={{ gridTemplateColumns: '1fr 20px 20px 20px 20px 24px 24px 28px' }}>
           <span>Team</span>
           <span className="text-center">P</span>
           <span className="text-center">W</span>
@@ -96,14 +96,14 @@ function GroupTable({ groupId, standings, highlightIds }: {
           return (
             <div
               key={s.team.id}
-              className={`grid items-center px-3 py-2.5 border-t border-zinc-800/60 text-[13px] transition-colors
+              className={`grid items-center px-3 py-2.5 border-t border-zinc-800/60 text-[11px] transition-colors
                 ${isHighlighted
                   ? 'bg-[#00d4ff]/8 border-l-2 border-l-[#00d4ff]'
                   : isTop2
                     ? 'bg-zinc-800/20'
                     : 'bg-[#0f0f18]'
                 }`}
-              style={{ gridTemplateColumns: '1fr 28px 28px 28px 28px 28px 28px 32px' }}
+              style={{ gridTemplateColumns: '1fr 20px 20px 20px 20px 24px 24px 28px' }}
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-[11px] text-zinc-600 w-3 flex-shrink-0">{i + 1}</span>
