@@ -216,10 +216,18 @@ export default function ScheduleClient({
   const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const [lastUpdated, setLastUpdated] = useState<number | null>(null)
   const [liveSheetOpen, setLiveSheetOpen] = useState(false)
+  const todayRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
   }, [])
+
+  // Snap to today instantly on mount (after timezone resolves)
+  useEffect(() => {
+    if (todayRef.current) {
+      todayRef.current.scrollIntoView({ behavior: 'instant', block: 'start' })
+    }
+  }, [userTimezone])
 
   const fetchScores= useCallback(async () => {
     try {
@@ -354,7 +362,7 @@ export default function ScheduleClient({
       {byDate.map(([isoDate, dayMatches], idx) => {
         const isToday = isoDate === today
         return (
-          <div key={isoDate}>
+          <div key={isoDate} ref={isToday ? todayRef : undefined}>
             {/* Day separator — spacer between days */}
             {idx > 0 && <div className="h-5" />}
 
