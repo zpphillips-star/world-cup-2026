@@ -143,53 +143,32 @@ function FeaturedMatchCard({
           </div>
         </div>
 
-        {/* Goal scorers row — surname + minute, pro format */}
-        {(homeScorers.length > 0 || awayScorers.length > 0) && (
-          <div className="flex items-start px-4 pb-3 gap-2 border-t border-white/[0.04] pt-2">
-            <div className="flex-1 space-y-0.5">
-              {homeScorers.map((s, i) => (
-                <div key={i} className="flex items-center gap-1">
-                  <span className="text-[10px] leading-none">⚽</span>
-                  <span className="text-[11px] text-zinc-300 font-medium">{surname(s.playerName)} {s.minute}</span>
-                  {s.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
-                  {s.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
-                </div>
-              ))}
-            </div>
-            <div className="flex-1 space-y-0.5 flex flex-col items-end">
-              {awayScorers.map((s, i) => (
-                <div key={i} className="flex items-center gap-1 flex-row-reverse">
-                  <span className="text-[10px] leading-none">⚽</span>
-                  <span className="text-[11px] text-zinc-300 font-medium">{surname(s.playerName)} {s.minute}</span>
-                  {s.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
-                  {s.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Red cards row — home left 🟥, away right 🟥 */}
-        {(homeRedCards.length > 0 || awayRedCards.length > 0) && (
-          <div className="flex items-start px-4 pb-3 gap-2 border-t border-white/[0.04] pt-2">
-            <div className="flex-1 space-y-0.5">
-              {homeRedCards.map((c, i) => (
-                <div key={i} className="flex items-center gap-1">
-                  <span className="text-[10px] leading-none">🟥</span>
-                  <span className="text-[11px] text-zinc-300 font-medium">{surname(c.playerName)} {c.minute}</span>
-                  {c.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
-                </div>
-              ))}
-            </div>
-            <div className="flex-1 space-y-0.5 flex flex-col items-end">
-              {awayRedCards.map((c, i) => (
-                <div key={i} className="flex items-center gap-1 flex-row-reverse">
-                  <span className="text-[10px] leading-none">🟥</span>
-                  <span className="text-[11px] text-zinc-300 font-medium">{surname(c.playerName)} {c.minute}</span>
-                  {c.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
-                </div>
-              ))}
-            </div>
+        {/* Goal scorers + red cards — chronological center list; icon left for home, right for away */}
+        {((liveData?.scorers?.length ?? 0) > 0 || (liveData?.redCards?.length ?? 0) > 0) && (
+          <div className="flex flex-col items-center gap-1 px-4 pb-3 border-t border-white/[0.04] pt-2">
+            {[...(liveData?.scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
+              ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
+              .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
+              .map((e, i) => (
+                e.teamSide === 'home' ? (
+                  <div key={i} className="flex items-center gap-1">
+                    <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
+                    <span className="text-[11px] text-zinc-300 font-medium">{surname(e.playerName)} {e.minute}</span>
+                    {e.kind === 'goal' && e.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
+                    {e.kind === 'goal' && e.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
+                    {e.kind === 'card' && e.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
+                  </div>
+                ) : (
+                  <div key={i} className="flex items-center gap-1">
+                    {e.kind === 'goal' && e.type === 'og' && <span className="text-[9px] text-zinc-600">(og)</span>}
+                    {e.kind === 'goal' && e.type === 'pen' && <span className="text-[9px] text-zinc-600">(p)</span>}
+                    {e.kind === 'card' && e.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600">(2Y)</span>}
+                    <span className="text-[11px] text-zinc-300 font-medium">{surname(e.playerName)} {e.minute}</span>
+                    <span className="text-[10px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
+                  </div>
+                )
+              ))
+            }
           </div>
         )}
 
