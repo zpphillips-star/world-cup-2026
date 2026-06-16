@@ -44,6 +44,7 @@ function LiveNowSheet({
   standingsMap,
   onClose,
   userTimezone,
+  allMatchesSorted,
 }: {
   liveMatches: Match[]
   liveScores: Record<string, ScoreUpdate>
@@ -52,7 +53,8 @@ function LiveNowSheet({
   standingsMap: Record<string, Standing[]>
   onClose: () => void
   userTimezone: string
-}) {
+  allMatchesSorted: Match[]
+}){
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
 
   return (
@@ -192,7 +194,7 @@ function LiveNowSheet({
             scorers={liveData?.scorers}
             defaultOpen
             onCloseExternal={() => setSelectedMatch(null)}
-            allMatches={sortedMatches}
+            allMatches={allMatchesSorted}
             allStatsMap={statsMap}
             allStandingsMap={standingsMap}
             allLiveData={liveScores}
@@ -426,6 +428,7 @@ export default function ScheduleClient({
           standingsMap={effectiveStandingsMap}
           onClose={() => setLiveSheetOpen(false)}
           userTimezone={userTimezone}
+          allMatchesSorted={sortedMatches}
         />
       )}
     </div>
