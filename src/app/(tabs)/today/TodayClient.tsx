@@ -150,12 +150,12 @@ function FeaturedMatchCard({
               ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
               .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
               .map((e, i) => (
-                <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                  <span className="text-[11px] text-zinc-300 font-medium text-right pr-5 leading-none">
+                <div key={i} className="grid items-center w-full gap-x-4" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                  <span className="text-[11px] text-zinc-300 font-medium text-right leading-none">
                     {e.teamSide === 'home' && <span>{surname(e.playerName)}</span>}
                   </span>
                   <span className="text-[11px] text-zinc-500 font-medium leading-none">{e.minute}</span>
-                  <span className="text-[11px] text-zinc-300 font-medium pl-5 leading-none">
+                  <span className="text-[11px] text-zinc-300 font-medium leading-none">
                     {e.teamSide === 'away' && <span>{surname(e.playerName)}</span>}
                   </span>
                 </div>
@@ -395,5 +395,6 @@ export default function TodayClient({
     </div>
   )
 }
+
 
 
