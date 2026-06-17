@@ -41,8 +41,8 @@ function normalizeTeamName(name: string): string[] {
 
 function parseClock(raw?: string): string | undefined {
   if (!raw) return undefined
-  // "67:00" -> "67'", "90:30" -> "90+'"
-  const match = raw.match(/^(\d+)/)
+  // "67:00" -> "67'", "45+3:00" -> "45+3'", "45+3" -> "45+3'"
+  const match = raw.match(/^(\d+(?:\+\d+)?)/)
   return match ? `${match[1]}'` : raw
 }
 

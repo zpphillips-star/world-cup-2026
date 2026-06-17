@@ -137,7 +137,7 @@ function DayMatchCard({
           {/* Red cards — separated */}
           {(redCards && redCards.length > 0) && (
             <div className="flex flex-col gap-1 px-4 pb-2">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-2">
                 <div className="flex-1 h-px bg-red-500/20" />
                 <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest text-center">Red Cards</span>
                 <div className="flex-1 h-px bg-red-500/20" />
