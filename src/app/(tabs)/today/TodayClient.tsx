@@ -64,9 +64,7 @@ function FeaturedMatchCard({
                 Group {match.group}
               </span>
             )}
-            <span className="text-[10px] text-zinc-600 truncate">
-              · {match.venue.name}, {match.venue.city}
-            </span>
+
           </div>
 
           {isLive && (
@@ -171,7 +169,7 @@ function FeaturedMatchCard({
         {/* Upcoming: stadium only — time already in header */}
         {!hasScore && (
           <div className="px-4 pb-3 text-center">
-            <span className="text-[11px] text-zinc-600">{match.venue.city}</span>
+            <span className="text-[11px] text-zinc-600">{match.venue.name}, {match.venue.city}</span>
           </div>
         )}
       </div>
