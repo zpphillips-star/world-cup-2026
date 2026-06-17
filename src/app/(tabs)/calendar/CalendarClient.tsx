@@ -133,7 +133,8 @@ function DayMatchCard({
           {(redCards && redCards.length > 0) && (
             <div className="flex flex-col gap-1 px-4 pb-2">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
+                <div className="flex-1 h-px bg-red-500/20" />
+                <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest text-center">Red Cards</span>
                 <div className="flex-1 h-px bg-red-500/20" />
               </div>
               {redCards.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (

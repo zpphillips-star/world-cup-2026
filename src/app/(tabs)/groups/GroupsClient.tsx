@@ -186,13 +186,6 @@ function GroupSheet({
 
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-bold text-white">Group {groupId}</h2>
-            {allGroupIds && allGroupIds.length > 1 && (
-              <span className="text-[10px] text-zinc-600 flex items-center gap-1">
-                <span className={currentGroupIdx > 0 ? 'text-zinc-400' : 'text-zinc-700'}>‹</span>
-                <span>{currentGroupIdx + 1} / {allGroupIds.length}</span>
-                <span className={currentGroupIdx < allGroupIds.length - 1 ? 'text-zinc-400' : 'text-zinc-700'}>›</span>
-              </span>
-            )}
           </div>
 
           {/* Large flags — tappable */}
