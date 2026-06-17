@@ -5,8 +5,9 @@ import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
-import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
@@ -294,16 +295,8 @@ export default function ScheduleClient({
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
 
-  // Recompute standings from our own match data — instant, no API lag
-  // ESPN standings are merged on top but our computed data wins for groups ESPN hasn't updated yet
-  const computedStandingsMap = useMemo(
-    () => computeStandingsFromMatches(liveMatches, standingsMap),
-    [liveMatches, standingsMap]
-  )
-  const effectiveStandingsMap = useMemo(
-    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
-    [computedStandingsMap, liveStandingsMap, standingsMap]
-  )
+  // Recompute standings via shared hook — instant, no API lag; ESPN overlay when it has more data
+  const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   const sortedMatches = useMemo(
     () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),

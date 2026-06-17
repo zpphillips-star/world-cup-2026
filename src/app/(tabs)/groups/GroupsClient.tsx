@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import type { Standing, Group, Team, Match, TeamStats } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 import MatchCard from '@/components/MatchCard'
-import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // -- Standings table --------------------------------------------------------
 
@@ -353,9 +354,11 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
 
   // Compute standings from our match data — instant, no ESPN lag
   // For each group, pull all matches from groups data and apply live scores
-  const allGroupMatches = groups.flatMap(g => applyLiveScores(g.matches, liveScores, liveAliases))
-  const computedStandings = computeStandingsFromMatches(allGroupMatches, baseStandings)
-  const effectiveStandings = computeEffectiveStandingsMap(computedStandings, standings)
+  const allGroupMatches = useMemo(
+    () => groups.flatMap(g => applyLiveScores(g.matches, liveScores, liveAliases)),
+    [groups, liveScores, liveAliases]
+  )
+  const { effectiveStandingsMap: effectiveStandings } = useEffectiveStandings(allGroupMatches, baseStandings, standings)
 
   const activeStandings = activeGroup ? effectiveStandings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null

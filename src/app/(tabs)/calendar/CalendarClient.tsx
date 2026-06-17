@@ -5,8 +5,9 @@ import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
-import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
 // Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
@@ -241,15 +242,8 @@ export default function CalendarClient({
     [liveMatches]
   )
 
-  // Compute standings from our match data — instant, no ESPN lag
-  const computedStandingsMap = useMemo(
-    () => computeStandingsFromMatches(liveMatches, standingsMap),
-    [liveMatches, standingsMap]
-  )
-  const effectiveStandingsMap = useMemo(
-    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
-    [computedStandingsMap, liveStandingsMap, standingsMap]
-  )
+  // Compute standings via shared hook — instant, no ESPN lag; ESPN overlay when it has more data
+  const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   // Build match days index using LOCAL date so calendar day cells always match
   const matchDays: Record<string, Match[]> = {}

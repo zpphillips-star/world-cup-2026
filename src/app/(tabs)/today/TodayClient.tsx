@@ -6,8 +6,9 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
-import { computeStandingsFromMatches, mergeStandings, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // ── Featured match card ───────────────────────────────────────────────────────
 function FeaturedMatchCard({
@@ -274,14 +275,8 @@ export default function TodayClient({
     [matches, liveScores, liveAliases]
   )
 
-  const computedStandingsMap = useMemo(
-    () => computeStandingsFromMatches(liveMatches, standingsMap),
-    [liveMatches, standingsMap]
-  )
-  const effectiveStandingsMap = useMemo(
-    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
-    [computedStandingsMap, liveStandingsMap, standingsMap]
-  )
+  // Recompute standings via shared hook — instant, no API lag; ESPN overlay when it has more data
+  const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   const todayMatches = useMemo(() => {
     const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone })
