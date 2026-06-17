@@ -166,12 +166,10 @@ function FeaturedMatchCard({
           </div>
         )}
 
-        {/* Upcoming: stadium only — time already in header */}
-        {!hasScore && (
-          <div className="px-4 pb-3 text-center">
-            <span className="text-[11px] text-zinc-600">{match.venue.name}, {match.venue.city}</span>
-          </div>
-        )}
+        {/* Stadium / city — always shown */}
+        <div className="px-4 pb-3 text-center">
+          <span className="text-[11px] text-zinc-500">{match.venue.name}, {match.venue.city}</span>
+        </div>
       </div>
     </button>
   )
