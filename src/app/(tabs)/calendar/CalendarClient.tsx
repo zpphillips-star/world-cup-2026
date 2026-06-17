@@ -393,19 +393,7 @@ export default function CalendarClient({
                   })
                 })()}
               </h2>
-              {sortedMatchDayKeys.length > 1 && (
-                <div className="flex gap-1.5 mt-2">
-                  {sortedMatchDayKeys.map((k, i) => (
-                    <span
-                      key={k}
-                      className={[
-                        'w-1.5 h-1.5 rounded-full transition-all',
-                        i === sheetDayIdx ? 'bg-[#00d4ff]' : 'bg-gray-700',
-                      ].join(' ')}
-                    />
-                  ))}
-                </div>
-              )}
+
             </div>
             <div className="overflow-y-auto px-4 pt-3" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
               {sheetMatches.map(m => {

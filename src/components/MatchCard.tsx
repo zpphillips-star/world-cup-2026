@@ -315,14 +315,7 @@ export default function MatchCard({
                 {currentMatch.status === 'upcoming' && (
                   <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{time} {tzAbbr}</span>
                 )}
-                {/* Navigation indicator */}
-                {allMatches && allMatches.length > 1 && (
-                  <span className="text-[10px] text-zinc-600 ml-auto mr-8 flex items-center gap-1">
-                    <span className={currentIdx > 0 ? 'text-zinc-400' : 'text-zinc-700'}>‹</span>
-                    <span>{currentIdx + 1} / {allMatches.length}</span>
-                    <span className={currentIdx < allMatches.length - 1 ? 'text-zinc-400' : 'text-zinc-700'}>›</span>
-                  </span>
-                )}
+
               </div>
 
               <div className="flex items-center justify-between mt-3 gap-4">
