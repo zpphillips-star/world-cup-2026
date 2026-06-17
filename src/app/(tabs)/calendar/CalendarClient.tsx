@@ -119,13 +119,9 @@ function DayMatchCard({
                 .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                 .map((e, i) => (
                   <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                    <span className="text-[11px] text-zinc-300 text-right pr-2 leading-none">
-                      {e.teamSide === 'home' ? `${e.playerName} ${e.minute}` : ''}
-                    </span>
-                    <span className="text-[11px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
-                    <span className="text-[11px] text-zinc-300 text-left pl-2 leading-none">
-                      {e.teamSide === 'away' ? `${e.playerName} ${e.minute}` : ''}
-                    </span>
+                    <span className="flex items-center justify-end pr-8 text-[11px] leading-none">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                    <span className="text-[11px] text-zinc-300 text-center leading-none">{e.playerName} {e.minute}</span>
+                    <span className="flex items-center justify-start pl-8 text-[11px] leading-none">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                   </div>
                 ))
               }

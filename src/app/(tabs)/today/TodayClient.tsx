@@ -151,13 +151,14 @@ function FeaturedMatchCard({
               .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
               .map((e, i) => (
                 <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                  <span className="text-[11px] text-zinc-300 font-medium text-right pr-2 leading-none">
-                    {e.teamSide === 'home' ? `${surname(e.playerName)} ${e.minute}` : ''}
+                  <span className="flex items-center justify-end pr-8 text-[11px] leading-none">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                  <span className="text-[11px] text-zinc-300 font-medium text-center leading-none">
+                    {surname(e.playerName)} {e.minute}
+                    {e.kind === 'goal' && e.type === 'og' && <span className="text-[9px] text-zinc-600 ml-1">(og)</span>}
+                    {e.kind === 'goal' && e.type === 'pen' && <span className="text-[9px] text-zinc-600 ml-1">(p)</span>}
+                    {e.kind === 'card' && e.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600 ml-1">(2Y)</span>}
                   </span>
-                  <span className="text-[11px] leading-none">{e.kind === 'goal' ? '⚽' : '🟥'}</span>
-                  <span className="text-[11px] text-zinc-300 font-medium text-left pl-2 leading-none">
-                    {e.teamSide === 'away' ? `${surname(e.playerName)} ${e.minute}` : ''}
-                  </span>
+                  <span className="flex items-center justify-start pl-8 text-[11px] leading-none">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                 </div>
               ))
             }
