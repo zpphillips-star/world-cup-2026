@@ -140,23 +140,39 @@ function LiveNowSheet({
                 </div>
 
                 {/* Goal scorers + red cards — name always centered, ball left for home / right for away */}
-                {((liveData?.scorers?.length ?? 0) > 0 || (liveData?.redCards?.length ?? 0) > 0) && (
-                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-3 flex flex-col gap-1">
-                    {[...(liveData?.scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
-                      ...(liveData?.redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
-                      .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
-                      .map((e, i) => (
-                        <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
-                          <span className="text-[11px] text-zinc-300 text-right leading-none">
-                            {e.teamSide === 'home' && <span>{e.playerName}</span>}
-                          </span>
-                          <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
-                          <span className="text-[11px] text-zinc-300 text-left leading-none">
-                            {e.teamSide === 'away' && <span>{e.playerName}</span>}
-                          </span>
-                        </div>
-                      ))
-                    }
+                {(liveData?.scorers?.length ?? 0) > 0 && (
+                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-2 flex flex-col gap-1">
+                    {(liveData?.scorers ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((e, i) => (
+                      <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                        <span className="text-[11px] text-zinc-300 text-right leading-none">
+                          {e.teamSide === 'home' && <span>{e.playerName}</span>}
+                        </span>
+                        <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
+                        <span className="text-[11px] text-zinc-300 text-left leading-none">
+                          {e.teamSide === 'away' && <span>{e.playerName}</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(liveData?.redCards?.length ?? 0) > 0 && (
+                  <div className="border-t border-zinc-800 mx-4 pt-2 pb-3 flex flex-col gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
+                      <div className="flex-1 h-px bg-red-500/20" />
+                    </div>
+                    {(liveData?.redCards ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
+                      <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                        <span className="text-[11px] text-zinc-300 text-right leading-none">
+                          {c.teamSide === 'home' && <span>🟥 {c.playerName}</span>}
+                        </span>
+                        <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
+                        <span className="text-[11px] text-zinc-300 text-left leading-none">
+                          {c.teamSide === 'away' && <span>{c.playerName} 🟥</span>}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 )}
 

@@ -111,24 +111,41 @@ function DayMatchCard({
             </div>
           </div>
 
-          {/* Goals + red cards — name always centered, ball left for home / right for away */}
-          {((scorers && scorers.length > 0) || (redCards && redCards.length > 0)) && (
+          {/* Goal scorers */}
+          {(scorers && scorers.length > 0) && (
             <div className="flex flex-col gap-1 px-4 pb-2">
-              {[...(scorers ?? []).map(s => ({ ...s, kind: 'goal' as const })),
-                ...(redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
-                .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
-                .map((e, i) => (
-                  <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
-                    <span className="text-[11px] text-zinc-300 text-right leading-none">
-                      {e.teamSide === 'home' && <span>{e.playerName}</span>}
-                    </span>
-                    <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
-                    <span className="text-[11px] text-zinc-300 text-left leading-none">
-                      {e.teamSide === 'away' && <span>{e.playerName}</span>}
-                    </span>
-                  </div>
-                ))
-              }
+              {scorers.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((e, i) => (
+                <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                  <span className="text-[11px] text-zinc-300 text-right leading-none">
+                    {e.teamSide === 'home' && <span>{e.playerName}</span>}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
+                  <span className="text-[11px] text-zinc-300 text-left leading-none">
+                    {e.teamSide === 'away' && <span>{e.playerName}</span>}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Red cards — separated */}
+          {(redCards && redCards.length > 0) && (
+            <div className="flex flex-col gap-1 px-4 pb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
+                <div className="flex-1 h-px bg-red-500/20" />
+              </div>
+              {redCards.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
+                <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                  <span className="text-[11px] text-zinc-300 text-right leading-none">
+                    {c.teamSide === 'home' && <span>🟥 {c.playerName}</span>}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
+                  <span className="text-[11px] text-zinc-300 text-left leading-none">
+                    {c.teamSide === 'away' && <span>{c.playerName} 🟥</span>}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
 
