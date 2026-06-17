@@ -137,7 +137,9 @@ export async function GET() {
             homeScore: parseInt(home.score ?? '0', 10),
             awayScore: parseInt(away.score ?? '0', 10),
             status,
-            clock: status === 'live' ? parseClock(comp.status?.displayClock) : undefined,
+            clock: status === 'live'
+              ? (statusName === 'STATUS_HALFTIME' ? 'HT' : parseClock(comp.status?.displayClock))
+              : undefined,
             scorers,
             redCards,
           }
