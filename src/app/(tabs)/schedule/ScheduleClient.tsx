@@ -147,12 +147,12 @@ function LiveNowSheet({
                       .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                       .map((e, i) => (
                         <div key={i} className="grid w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                          <span className="flex justify-end pr-3">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                          <span className="flex justify-end pr-8">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                           <span className="text-[11px] text-zinc-300 text-center">
                             {e.playerName} {e.minute}
                             {e.kind === 'goal' && e.type !== 'goal' && <span className="text-[9px] text-zinc-600 bg-zinc-800 px-1 rounded ml-1">{e.type === 'og' ? 'OG' : 'pen'}</span>}
                           </span>
-                          <span className="flex justify-start pl-3">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                          <span className="flex justify-start pl-8">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                         </div>
                       ))
                     }

@@ -151,14 +151,14 @@ function FeaturedMatchCard({
               .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
               .map((e, i) => (
                 <div key={i} className="grid w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                  <span className="flex justify-end pr-3">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                  <span className="flex justify-end pr-8">{e.teamSide === 'home' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                   <span className="text-[11px] text-zinc-300 font-medium text-center">
                     {surname(e.playerName)} {e.minute}
                     {e.kind === 'goal' && e.type === 'og' && <span className="text-[9px] text-zinc-600 ml-1">(og)</span>}
                     {e.kind === 'goal' && e.type === 'pen' && <span className="text-[9px] text-zinc-600 ml-1">(p)</span>}
                     {e.kind === 'card' && e.cardType === 'yellow-red' && <span className="text-[9px] text-zinc-600 ml-1">(2Y)</span>}
                   </span>
-                  <span className="flex justify-start pl-3">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
+                  <span className="flex justify-start pl-8">{e.teamSide === 'away' ? (e.kind === 'goal' ? '⚽' : '🟥') : ''}</span>
                 </div>
               ))
             }
