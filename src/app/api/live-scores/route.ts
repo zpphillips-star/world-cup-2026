@@ -41,7 +41,10 @@ function normalizeTeamName(name: string): string[] {
 
 function parseClock(raw?: string): string | undefined {
   if (!raw) return undefined
-  // "67:00" -> "67'", "45+3:00" -> "45+3'", "45+3" -> "45+3'"
+  // ESPN returns stoppage time as "90'+12'" or "45'+5'" — handle this first
+  const stoppageMatch = raw.match(/^(\d+)'\+(\d+)'?/)
+  if (stoppageMatch) return `${stoppageMatch[1]}+${stoppageMatch[2]}'`
+  // Also handle legacy formats: "67:00" -> "67'", "45+3:00" -> "45+3'", "45+3" -> "45+3'", "90'" -> "90'"
   const match = raw.match(/^(\d+(?:\+\d+)?)/)
   return match ? `${match[1]}'` : raw
 }
