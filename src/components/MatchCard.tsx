@@ -361,10 +361,12 @@ export default function MatchCard({
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-1.5 mt-4">
-                <span className="text-sm">📍</span>
-                <span className="text-[12px] text-zinc-400">{currentMatch.venue.name}, {currentMatch.venue.city}</span>
-              </div>
+              {currentMatch.venue?.name && (
+                <div className="flex items-center justify-center gap-1.5 mt-4">
+                  <span className="text-sm">📍</span>
+                  <span className="text-[11px] text-zinc-500 text-center">{currentMatch.venue.name}, {currentMatch.venue.city}</span>
+                </div>
+              )}
               {/* Swipe hint — shown only when navigation is available */}
               {allMatches && allMatches.length > 1 && (
                 <p className="text-[10px] text-zinc-700 text-center mt-2">Swipe left or right to browse matches</p>
