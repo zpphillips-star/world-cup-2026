@@ -147,11 +147,11 @@ function LiveNowSheet({
                       .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                       .map((e, i) => (
                         <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                          <span className="text-[11px] text-zinc-300 text-right pr-3 leading-none">
+                          <span className="text-[11px] text-zinc-300 text-right pr-5 leading-none">
                             {e.teamSide === 'home' && <span>{e.playerName}</span>}
                           </span>
                           <span className="text-[11px] text-zinc-500 font-medium leading-none">{e.minute}</span>
-                          <span className="text-[11px] text-zinc-300 pl-3 leading-none">
+                          <span className="text-[11px] text-zinc-300 pl-5 leading-none">
                             {e.teamSide === 'away' && <span>{e.playerName}</span>}
                           </span>
                         </div>
@@ -429,4 +429,5 @@ export default function ScheduleClient({
     </div>
   )
 }
+
 
