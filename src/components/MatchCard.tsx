@@ -23,7 +23,7 @@ import { FlagImg } from '@/components/FlagImg'
 
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex flex-col items-center gap-1 bg-[#0d0d15] rounded-xl px-3 py-2.5 min-w-[44px]">
+    <div className="flex flex-col items-center gap-1 bg-[#0d0d15] rounded-xl px-2 py-2.5 min-w-0">
       <span className="text-[18px] font-bold text-white tabular-nums leading-none">{value}</span>
       <span className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none">{label}</span>
     </div>
@@ -50,7 +50,7 @@ function TeamPanel({ team, stats, side }: {
               {stats.worldCupAppearances} WC apps
             </span>
           </div>
-          <div className={`flex gap-1.5 flex-wrap ${side === 'away' ? 'justify-end' : ''}`}>
+          <div className={`grid grid-cols-5 gap-1.5 w-full`}>
             <StatBox label="W" value={stats.wcWins} />
             <StatBox label="D" value={stats.wcDraws} />
             <StatBox label="L" value={stats.wcLosses} />

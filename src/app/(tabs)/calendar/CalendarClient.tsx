@@ -63,22 +63,22 @@ function DayMatchCard({
           {/* Top bar — group + status */}
           <div className="flex items-center gap-2 px-4 pt-3 pb-1">
             {match.group && (
-              <span className="text-[10px] font-bold text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-zinc-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                 Group {match.group}
               </span>
             )}
             {isLive && (
-              <span className="text-[10px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full animate-pulse">
+              <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">
                 ● LIVE {clock && `· ${clock}`}
               </span>
             )}
             {isFt && (
-              <span className="text-[10px] font-semibold text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">
                 FINAL
               </span>
             )}
             {match.status === 'upcoming' && (
-              <span className="text-[10px] text-zinc-400">{timeStr}</span>
+              <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{timeStr}</span>
             )}
           </div>
 
@@ -87,7 +87,7 @@ function DayMatchCard({
             {/* Home team */}
             <div className="flex-1 flex flex-col items-center gap-1.5">
               <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-10 rounded-sm shadow-md" />
-              <span className="text-[12px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
+              <span className="text-[13px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
                 {match.homeTeam.name}
               </span>
             </div>
@@ -95,18 +95,18 @@ function DayMatchCard({
             {/* Score / VS */}
             <div className="flex flex-col items-center gap-0.5 px-2">
               {hasScore ? (
-                <span className={`text-3xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
+                <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
                   {match.homeScore} – {match.awayScore}
                 </span>
               ) : (
-                <span className="text-xl font-bold text-zinc-400">VS</span>
+                <span className="text-2xl font-bold text-zinc-500">VS</span>
               )}
             </div>
 
             {/* Away team */}
             <div className="flex-1 flex flex-col items-center gap-1.5">
               <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-10 rounded-sm shadow-md" />
-              <span className="text-[12px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
+              <span className="text-[13px] font-semibold text-white text-center leading-tight max-w-[80px] line-clamp-2">
                 {match.awayTeam.name}
               </span>
             </div>
@@ -115,13 +115,18 @@ function DayMatchCard({
           {/* Goal scorers */}
           {(scorers && scorers.length > 0) && (
             <div className="flex flex-col gap-1 px-4 pb-2">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex-1 h-px bg-zinc-800" />
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-center">Goals</span>
+                <div className="flex-1 h-px bg-zinc-800" />
+              </div>
               {scorers.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((e, i) => (
                 <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
-                  <span className="text-[11px] text-zinc-300 text-right leading-none">
+                  <span className="text-[12px] text-white font-semibold text-right leading-none">
                     {e.teamSide === 'home' && <span>{e.playerName}</span>}
                   </span>
                   <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
-                  <span className="text-[11px] text-zinc-300 text-left leading-none">
+                  <span className="text-[12px] text-white font-semibold text-left leading-none">
                     {e.teamSide === 'away' && <span>{e.playerName}</span>}
                   </span>
                 </div>
@@ -134,16 +139,16 @@ function DayMatchCard({
             <div className="flex flex-col gap-1 px-4 pb-2">
               <div className="flex items-center gap-2 mb-1">
                 <div className="flex-1 h-px bg-red-500/20" />
-                <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest text-center">Red Cards</span>
+                <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest text-center">Red Cards</span>
                 <div className="flex-1 h-px bg-red-500/20" />
               </div>
               {redCards.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
                 <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
-                  <span className="text-[11px] text-zinc-300 text-right leading-none">
+                  <span className="text-[12px] text-white font-semibold text-right leading-none">
                     {c.teamSide === 'home' && <span>🟥 {c.playerName}</span>}
                   </span>
                   <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
-                  <span className="text-[11px] text-zinc-300 text-left leading-none">
+                  <span className="text-[12px] text-white font-semibold text-left leading-none">
                     {c.teamSide === 'away' && <span>{c.playerName} 🟥</span>}
                   </span>
                 </div>
