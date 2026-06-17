@@ -4,7 +4,7 @@ self.addEventListener('message', (event) => {
   }
 });
 
-const CACHE_NAME = 'wc2026-v16';
+const CACHE_NAME = 'wc2026-v17';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192-v4.png',
