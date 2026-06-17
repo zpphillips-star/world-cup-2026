@@ -394,7 +394,7 @@ export default function TodayClient({
           scorers={getLiveData(selectedMatch)?.scorers}
           defaultOpen
           onCloseExternal={() => setSelectedMatch(null)}
-          allMatches={todayMatches}
+          allMatches={liveMatches}
           allStatsMap={statsMap}
           allStandingsMap={effectiveStandingsMap}
           allLiveData={liveScores}
