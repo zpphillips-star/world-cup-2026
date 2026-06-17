@@ -6,22 +6,8 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import type { StandingRow } from '@/app/api/standings/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
-import { normalize } from '@/lib/espnAliases'
-import { computeStandingsFromMatches, mergeStandings } from '@/lib/standingsUtils'
-
-function applyLiveScores(
-  matches: Match[],
-  scores: Record<string, ScoreUpdate>,
-  aliases: Record<string, string>
-): Match[] {
-  if (Object.keys(scores).length === 0) return matches
-  return matches.map(m => {
-    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key] ?? scores[aliases[key]]
-    if (!update) return m
-    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
-  })
-}
+import { computeStandingsFromMatches, mergeStandings, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 
 // ── Featured match card ───────────────────────────────────────────────────────
 function FeaturedMatchCard({
@@ -230,6 +216,9 @@ export default function TodayClient({
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+  // Keep a ref to matches so the adaptive poller can check kickoff times without stale closure
+  const matchesRef = useRef(matches)
+  useEffect(() => { matchesRef.current = matches }, [matches])
 
   useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
 
@@ -259,9 +248,23 @@ export default function TodayClient({
     let interval = setInterval(fetchScores, 30_000)
     const standingsInterval = setInterval(fetchStandings, 60_000)
     const adaptivePoller = setInterval(() => {
+      const now = Date.now()
+
+      // Fast polling if ESPN reports a live game
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
+
+      // ALSO fast poll if any match kicks off within the next 10 min (or started up to 120min ago and isn't marked ft)
+      // This means we go fast BEFORE ESPN even notices, purely from our own schedule data
+      const kickoffActive = matchesRef.current.some(m => {
+        const kick = new Date(m.kickoff).getTime()
+        const msSinceKick = now - kick
+        return kick <= now + 10 * 60_000     // within 10 min of kickoff
+            && msSinceKick < 120 * 60_000    // game can't be more than 120 min old
+            && m.status !== 'ft'             // not already marked final in our data
+      })
+
       clearInterval(interval)
-      interval = setInterval(fetchScores, hasLive ? 2_000 : 30_000)
+      interval = setInterval(fetchScores, (hasLive || kickoffActive) ? 2_000 : 30_000)
     }, 5_000)
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
@@ -275,20 +278,16 @@ export default function TodayClient({
     () => computeStandingsFromMatches(liveMatches, standingsMap),
     [liveMatches, standingsMap]
   )
-  const effectiveStandingsMap = useMemo(() => {
-    const result = { ...computedStandingsMap }
-    for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
-      const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
-      const computedPlayed = computedStandingsMap[group]?.reduce((s, r) => s + r.played, 0) ?? 0
-      if (espnPlayed > computedPlayed) result[group] = espnRows
-    }
-    return result
-  }, [computedStandingsMap, liveStandingsMap])
+  const effectiveStandingsMap = useMemo(
+    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
+    [computedStandingsMap, liveStandingsMap, standingsMap]
+  )
 
   const todayMatches = useMemo(() => {
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date())
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone })
+    const today = fmt.format(new Date())
     return liveMatches
-      .filter(m => new Intl.DateTimeFormat('en-CA', { timeZone: userTimezone }).format(new Date(m.kickoff)) === today)
+      .filter(m => fmt.format(new Date(m.kickoff)) === today)
       .sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
   }, [liveMatches, userTimezone])
 
@@ -297,7 +296,7 @@ export default function TodayClient({
   const upcomingToday = todayMatches.filter(m => m.status === 'upcoming')
 
   const getLiveData = (m: Match) => {
-    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+    const key = getMatchScoreKey(m)
     return liveScores[key] ?? liveScores[liveAliases[key]]
   }
 

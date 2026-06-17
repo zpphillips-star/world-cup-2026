@@ -36,7 +36,7 @@ export function computeStandingsFromMatches(
       }
     }
 
-    const groupMatches = matches.filter(m => m.group === group && m.status === "ft")
+    const groupMatches = matches.filter(m => m.group === group && (m.status === "ft" || m.status === "live"))
     for (const m of groupMatches) {
       const h = map[m.homeTeam.id]
       const a = map[m.awayTeam.id]
@@ -60,6 +60,24 @@ export function computeStandingsFromMatches(
     )
   }
 
+  return result
+}
+
+/**
+ * Merges computed standings (from match data) with live ESPN standings.
+ * Prefers ESPN data only when it shows MORE games played than our computed data.
+ * Used by all 4 client tabs to avoid duplicating this blending logic.
+ */
+export function computeEffectiveStandingsMap(
+  computedStandingsMap: Record<string, Standing[]>,
+  liveStandingsMap: Record<string, Standing[]>
+): Record<string, Standing[]> {
+  const result: Record<string, Standing[]> = { ...computedStandingsMap }
+  for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
+    const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
+    const computedPlayed = computedStandingsMap[group]?.reduce((s, r) => s + r.played, 0) ?? 0
+    if (espnPlayed > computedPlayed) result[group] = espnRows
+  }
   return result
 }
 

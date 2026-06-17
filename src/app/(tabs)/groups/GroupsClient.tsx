@@ -6,23 +6,8 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 import MatchCard from '@/components/MatchCard'
-import { normalize } from '@/lib/espnAliases'
-import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
-
-// Apply live scores to a list of matches
-function applyLiveScoresToMatches(
-  matches: Match[],
-  scores: Record<string, ScoreUpdate>,
-  aliases: Record<string, string> = {}
-): Match[] {
-  if (Object.keys(scores).length === 0) return matches
-  return matches.map(m => {
-    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key] ?? scores[aliases[key]]
-    if (!update) return m
-    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
-  })
-}
+import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 
 // -- Standings table --------------------------------------------------------
 
@@ -323,6 +308,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+  // Track scores interval via ref so cleanup always captures the latest ID (fix interval leak)
+  const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchScores = useCallback(async () => {
     try {
@@ -348,34 +335,33 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
     fetchStandings()
     fetchScores()
     const standingsInterval = setInterval(fetchStandings, 60_000)
-    let scoresInterval = setInterval(fetchScores, 30_000)
+    scoresIntervalRef.current = setInterval(fetchScores, 30_000)
     // Adaptive polling: 2s when live, 30s otherwise
     const adaptivePoller = setInterval(() => {
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
       const rate = hasLive ? 2_000 : 30_000
-      clearInterval(scoresInterval)
-      scoresInterval = setInterval(fetchScores, rate)
+      if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      scoresIntervalRef.current = setInterval(fetchScores, rate)
     }, 5_000)
-    return () => { clearInterval(standingsInterval); clearInterval(scoresInterval); clearInterval(adaptivePoller) }
+    return () => {
+      clearInterval(standingsInterval)
+      if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      clearInterval(adaptivePoller)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Compute standings from our match data — instant, no ESPN lag
   // For each group, pull all matches from groups data and apply live scores
-  const allGroupMatches = groups.flatMap(g => applyLiveScoresToMatches(g.matches, liveScores, liveAliases))
+  const allGroupMatches = groups.flatMap(g => applyLiveScores(g.matches, liveScores, liveAliases))
   const computedStandings = computeStandingsFromMatches(allGroupMatches, baseStandings)
-  const effectiveStandings: Record<string, Standing[]> = { ...computedStandings }
-  for (const [group, espnRows] of Object.entries(standings)) {
-    const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
-    const computedPlayed = computedStandings[group]?.reduce((s, r) => s + r.played, 0) ?? 0
-    if (espnPlayed > computedPlayed) effectiveStandings[group] = espnRows
-  }
+  const effectiveStandings = computeEffectiveStandingsMap(computedStandings, standings)
 
   const activeStandings = activeGroup ? effectiveStandings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
   // Apply live scores to the active group's matches so completed games show results
   const activeGroupWithLiveScores = activeGroupData
-    ? { ...activeGroupData, matches: applyLiveScoresToMatches(activeGroupData.matches, liveScores, liveAliases) }
+    ? { ...activeGroupData, matches: applyLiveScores(activeGroupData.matches, liveScores, liveAliases) }
     : null
 
   return (
@@ -426,6 +412,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           allStatsMap={statsMap}
           allStandingsMap={effectiveStandings}
           allLiveData={liveScores}
+          allLiveAliases={liveAliases}
         />
       )}
 

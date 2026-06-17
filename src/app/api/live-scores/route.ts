@@ -157,7 +157,8 @@ export async function GET() {
       { scores, aliases, fetchedAt: Date.now() },
       { headers: { 'Cache-Control': 's-maxage=2, stale-while-revalidate=3' } }
     )
-  } catch {
+  } catch (err) {
+    console.error('[live-scores] ESPN fetch failed:', err)
     return Response.json({ scores: {}, aliases: {}, fetchedAt: Date.now() })
   }
 }

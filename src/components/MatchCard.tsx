@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import type { Match, TeamStats, Standing, Team } from '@/lib/types'
 import { TeamSheet } from '@/components/TeamSheet'
 import { getTeamColor } from '@/lib/teamColors'
-import { normalize } from '@/lib/espnAliases'
+import { getMatchScoreKey } from '@/lib/liveScores'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 
 function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
@@ -196,7 +196,7 @@ export default function MatchCard({
 
   // ── Current match data (navigated or original) ─────────────────────────────
   const currentMatch = allMatches?.[currentIdx] ?? match
-  const liveKey = `${normalize(currentMatch.homeTeam.name)}|${normalize(currentMatch.awayTeam.name)}`
+  const liveKey = getMatchScoreKey(currentMatch)
   const currentLiveData = allLiveData?.[liveKey] ?? (allLiveAliases ? allLiveData?.[allLiveAliases[liveKey]] : undefined)
   const currentScorers = currentLiveData?.scorers ?? (currentMatch.id === match.id ? scorers : undefined)
   const currentRedCards = currentLiveData?.redCards ?? []

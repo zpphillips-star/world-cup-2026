@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import type { Match, TeamStats, Standing } from '@/lib/types'
-import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
+import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
-import { normalize } from '@/lib/espnAliases'
-import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
+import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
 // Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
@@ -27,7 +27,7 @@ function DayMatchCard({
   awayStats?: TeamStats | null
   groupStandings?: Standing[]
   clock?: string
-  scorers?: ScoringEvent[]
+  scorers?: ScoreUpdate['scorers']
   redCards?: import('@/app/api/live-scores/route').CardEvent[]
   onOpen: () => void
 }) {
@@ -162,17 +162,6 @@ function DayMatchCard({
   )
 }
 
-function applyLiveScores(matches: Match[], scores: Record<string, ScoreUpdate>, aliases: Record<string, string> = {}): Match[] {
-  if (Object.keys(scores).length === 0) return matches
-  return matches.map(m => {
-    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key] ?? scores[aliases[key]]
-    if (!update) return m
-    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
-  })
-}
-
-
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
 }
@@ -242,17 +231,25 @@ export default function CalendarClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = applyLiveScores(matches, liveScores, liveAliases)
-  const sortedLiveMatches = [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
+  // Fix #8: wrap in useMemo so these don't recompute on every render
+  const liveMatches = useMemo(
+    () => applyLiveScores(matches, liveScores, liveAliases),
+    [matches, liveScores, liveAliases]
+  )
+  const sortedLiveMatches = useMemo(
+    () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),
+    [liveMatches]
+  )
 
   // Compute standings from our match data — instant, no ESPN lag
-  const computedStandingsMap = computeStandingsFromMatches(liveMatches, standingsMap)
-  const effectiveStandingsMap: Record<string, Standing[]> = { ...computedStandingsMap }
-  for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
-    const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
-    const computedPlayed = computedStandingsMap[group]?.reduce((s, r) => s + r.played, 0) ?? 0
-    if (espnPlayed > computedPlayed) effectiveStandingsMap[group] = espnRows
-  }
+  const computedStandingsMap = useMemo(
+    () => computeStandingsFromMatches(liveMatches, standingsMap),
+    [liveMatches, standingsMap]
+  )
+  const effectiveStandingsMap = useMemo(
+    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
+    [computedStandingsMap, liveStandingsMap, standingsMap]
+  )
 
   // Build match days index using LOCAL date so calendar day cells always match
   const matchDays: Record<string, Match[]> = {}
@@ -418,7 +415,7 @@ export default function CalendarClient({
             </div>
             <div className="overflow-y-auto px-4 pt-3" style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
               {sheetMatches.map(m => {
-                const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+                const key = getMatchScoreKey(m)
                 const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
                 return (
                   <DayMatchCard
@@ -442,7 +439,7 @@ export default function CalendarClient({
 
       {/* MatchCard popup — rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}
       {selectedMatch && (() => {
-        const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
+        const key = getMatchScoreKey(selectedMatch)
         const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
         return (
           <MatchCard

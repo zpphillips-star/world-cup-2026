@@ -4,9 +4,9 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import type { Match, TeamStats, Standing } from '@/lib/types'
-import type { ScoreUpdate, ScoringEvent } from '@/app/api/live-scores/route'
-import { normalize } from '@/lib/espnAliases'
-import { mergeStandings, computeStandingsFromMatches } from '@/lib/standingsUtils'
+import type { ScoreUpdate } from '@/app/api/live-scores/route'
+import { mergeStandings, computeStandingsFromMatches, computeEffectiveStandingsMap } from '@/lib/standingsUtils'
+import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(kickoff))
@@ -18,20 +18,6 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   const weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
   const mon = d.toLocaleDateString('en-US', { month: 'short', timeZone: timezone })
   return `${weekday} · ${mon} ${day}`
-}
-
-function applyLiveScores(
-  matches: Match[],
-  scores: Record<string, ScoreUpdate>,
-  aliases: Record<string, string>
-): Match[] {
-  if (Object.keys(scores).length === 0) return matches
-  return matches.map(m => {
-    const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
-    const update = scores[key] ?? scores[aliases[key]]
-    if (!update) return m
-    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
-  })
 }
 
 // ── Live Now sheet ──────────────────────────────────────────────────────────
@@ -88,7 +74,7 @@ function LiveNowSheet({
           style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))' }}
         >
           {liveMatches.map(m => {
-            const key = `${normalize(m.homeTeam.name)}|${normalize(m.awayTeam.name)}`
+            const key = getMatchScoreKey(m)
             const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
             const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
             const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
@@ -189,7 +175,7 @@ function LiveNowSheet({
 
       {/* Full match detail — opened from a card tap */}
       {selectedMatch && (() => {
-        const key = `${normalize(selectedMatch.homeTeam.name)}|${normalize(selectedMatch.awayTeam.name)}`
+        const key = getMatchScoreKey(selectedMatch)
         const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
         return (
           <MatchCard
@@ -314,17 +300,10 @@ export default function ScheduleClient({
     () => computeStandingsFromMatches(liveMatches, standingsMap),
     [liveMatches, standingsMap]
   )
-  const effectiveStandingsMap = useMemo(() => {
-    const result = { ...computedStandingsMap }
-    // For each group, prefer ESPN data only if it shows MORE games played than our computed data
-    for (const [group, espnRows] of Object.entries(liveStandingsMap)) {
-      const computed = computedStandingsMap[group]
-      const espnPlayed = espnRows.reduce((s, r) => s + r.played, 0)
-      const computedPlayed = computed?.reduce((s, r) => s + r.played, 0) ?? 0
-      if (espnPlayed > computedPlayed) result[group] = espnRows
-    }
-    return result
-  }, [computedStandingsMap, liveStandingsMap, standingsMap])
+  const effectiveStandingsMap = useMemo(
+    () => computeEffectiveStandingsMap(computedStandingsMap, liveStandingsMap),
+    [computedStandingsMap, liveStandingsMap, standingsMap]
+  )
 
   const sortedMatches = useMemo(
     () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),
@@ -397,7 +376,7 @@ export default function ScheduleClient({
             </div>
             <div>
               {dayMatches.map((match) => {
-                const key = `${normalize(match.homeTeam.name)}|${normalize(match.awayTeam.name)}`
+                const key = getMatchScoreKey(match)
                 const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
                 return (
                   <MatchCard
