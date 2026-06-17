@@ -118,7 +118,7 @@ function DayMatchCard({
                 ...(redCards ?? []).map(c => ({ ...c, kind: 'card' as const }))]
                 .sort((a, b) => parseInt(a.minute) - parseInt(b.minute))
                 .map((e, i) => (
-                  <div key={i} className="grid items-center w-full gap-x-4" style={{ gridTemplateColumns: '1fr 36px 1fr' }}>
+                  <div key={i} className="grid items-center w-full gap-x-2" style={{ gridTemplateColumns: '1fr 36px 1fr' }}>
                     <span className="text-[11px] text-zinc-300 text-right leading-none">
                       {e.teamSide === 'home' && <span>{e.playerName}</span>}
                     </span>
@@ -450,6 +450,7 @@ export default function CalendarClient({
     </>
   )
 }
+
 
 
 
