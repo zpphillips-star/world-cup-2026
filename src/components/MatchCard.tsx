@@ -381,73 +381,51 @@ export default function MatchCard({
             {/* Scrollable body */}
             <div key={currentIdx} className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
 
-              {/* Goal scorers — two-column layout: home left (⚽ on left), away right (⚽ on right) */}
+              {/* Goal scorers */}
               {currentScorers && currentScorers.length > 0 && (
-                <div className="mb-5">
-                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Goals</p>
-                  <div className="flex gap-3">
-                    {/* Home scorers — ball on the LEFT */}
-                    <div className="flex-1 space-y-1.5">
-                      {currentScorers.filter(s => s.teamSide !== 'away').map((s, i) => (
-                        <div key={i} className="flex items-center gap-1.5">
-                          <span className="text-sm leading-none">⚽</span>
-                          <span className="text-[12px] font-semibold text-white">{s.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{s.minute}</span>
-                          {s.type !== 'goal' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    {/* Away scorers — ball on the RIGHT */}
-                    <div className="flex-1 space-y-1.5 flex flex-col items-end">
-                      {currentScorers.filter(s => s.teamSide === 'away').map((s, i) => (
-                        <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                          <span className="text-sm leading-none">⚽</span>
-                          <span className="text-[12px] font-semibold text-white">{s.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{s.minute}</span>
-                          {s.type !== 'goal' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">{s.type === 'og' ? 'OG' : 'pen'}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex-1 h-px bg-zinc-800" />
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Goals</span>
+                    <div className="flex-1 h-px bg-zinc-800" />
                   </div>
-                  <div className="mt-3 h-px bg-zinc-800" />
+                  <div className="flex flex-col gap-1.5">
+                    {[...currentScorers].sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((s, i) => (
+                      <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                        <span className="text-[12px] text-white font-semibold text-right leading-none">
+                          {s.teamSide === 'home' && <span>{s.playerName}{s.type !== 'goal' ? ` (${s.type === 'og' ? 'OG' : 'P'})` : ''}</span>}
+                        </span>
+                        <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{s.minute}</span>
+                        <span className="text-[12px] text-white font-semibold text-left leading-none">
+                          {s.teamSide === 'away' && <span>{s.playerName}{s.type !== 'goal' ? ` (${s.type === 'og' ? 'OG' : 'P'})` : ''}</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {/* Red cards — two-column: home left 🟥, away right 🟥 */}
+              {/* Red cards */}
               {currentRedCards.length > 0 && (
-                <div className="mb-5">
-                  <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">Red Cards</p>
-                  <div className="flex gap-3">
-                    <div className="flex-1 space-y-1.5">
-                      {currentRedCards.filter(c => c.teamSide === 'home').map((c, i) => (
-                        <div key={i} className="flex items-center gap-1.5">
-                          <span className="text-sm leading-none">🟥</span>
-                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
-                          {c.cardType === 'yellow-red' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex-1 space-y-1.5 flex flex-col items-end">
-                      {currentRedCards.filter(c => c.teamSide === 'away').map((c, i) => (
-                        <div key={i} className="flex items-center gap-1.5 flex-row-reverse">
-                          <span className="text-sm leading-none">🟥</span>
-                          <span className="text-[12px] font-semibold text-white">{c.playerName}</span>
-                          <span className="text-[11px] text-zinc-500">{c.minute}</span>
-                          {c.cardType === 'yellow-red' && (
-                            <span className="text-[9px] text-zinc-500 bg-zinc-800 px-1 rounded">2Y</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex-1 h-px bg-red-500/20" />
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
+                    <div className="flex-1 h-px bg-red-500/20" />
                   </div>
-                  <div className="mt-3 h-px bg-zinc-800" />
+                  <div className="flex flex-col gap-1.5">
+                    {[...currentRedCards].sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
+                      <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
+                        <span className="text-[12px] text-white font-semibold text-right leading-none">
+                          {c.teamSide === 'home' && <span>🟥 {c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''}</span>}
+                        </span>
+                        <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
+                        <span className="text-[12px] text-white font-semibold text-left leading-none">
+                          {c.teamSide === 'away' && <span>{c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''} 🟥</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               {/* Team stats */}
