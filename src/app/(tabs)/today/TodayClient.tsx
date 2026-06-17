@@ -155,8 +155,7 @@ function FeaturedMatchCard({
                     {e.teamSide === 'home' && <span>{surname(e.playerName)}</span>}
                   </span>
                   <span className="text-[11px] text-zinc-500 font-medium leading-none">{e.minute}</span>
-                  <span className="text-[11px] text-zinc-300 font-medium leading-none">
-                    {e.teamSide === 'away' && <span>{surname(e.playerName)}</span>}
+                  <span className="text-[11px] text-zinc-300 font-medium text-left leading-none">{e.teamSide === 'away' && <span>{surname(e.playerName)}</span>}
                   </span>
                 </div>
               ))
@@ -395,6 +394,7 @@ export default function TodayClient({
     </div>
   )
 }
+
 
 
 
