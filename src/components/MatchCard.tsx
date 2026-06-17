@@ -383,7 +383,7 @@ export default function MatchCard({
 
               {/* Goal scorers */}
               {currentScorers && currentScorers.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex-1 h-px bg-zinc-800" />
                     <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Goals</span>
@@ -407,7 +407,7 @@ export default function MatchCard({
 
               {/* Red cards */}
               {currentRedCards.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex-1 h-px bg-red-500/20" />
                     <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
@@ -429,7 +429,7 @@ export default function MatchCard({
                 </div>
               )}
               {/* Team stats */}
-              <div className="mt-4 mb-4">
+              <div className="mt-6 mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex-1 h-px bg-zinc-800" />
                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Team Stats</span>
