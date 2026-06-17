@@ -285,13 +285,13 @@ export default function MatchCard({
       {/* Slide-up sheet */}
       {open && (
         <>
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={() => { setOpen(false); onCloseExternal?.() }} />
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[65]" onClick={() => { setOpen(false); onCloseExternal?.() }} />
 
           {/* Jersey ad banner — full-width prominent, anchored just above the sheet */}
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
 
           <div
-            className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
+            className="fixed bottom-0 left-0 right-0 z-[70] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
