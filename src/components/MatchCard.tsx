@@ -429,11 +429,17 @@ export default function MatchCard({
                 </div>
               )}
               {/* Team stats */}
-              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-4 text-center">Team Stats</p>
-              <div className="flex gap-4 items-start">
-                <TeamPanel team={currentMatch.homeTeam} stats={currentHomeStats ?? null} side="home" />
-                <div className="w-px bg-zinc-800 self-stretch" />
-                <TeamPanel team={currentMatch.awayTeam} stats={currentAwayStats ?? null} side="away" />
+              <div className="mt-4 mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex-1 h-px bg-zinc-800" />
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Team Stats</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
+                <div className="flex gap-4 items-start">
+                  <TeamPanel team={currentMatch.homeTeam} stats={currentHomeStats ?? null} side="home" />
+                  <div className="w-px bg-zinc-800 self-stretch" />
+                  <TeamPanel team={currentMatch.awayTeam} stats={currentAwayStats ?? null} side="away" />
+                </div>
               </div>
 
               {/* Group standings */}
