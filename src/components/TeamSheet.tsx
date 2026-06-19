@@ -84,6 +84,34 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
         className={`fixed top-0 left-0 right-0 ${stripZ} flex items-center justify-center gap-2 px-4 bg-gradient-to-r from-cyan-950/80 via-[#0d0d16] to-cyan-950/80 border-b border-cyan-500/20 active:opacity-75 transition-opacity`}
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.5rem)', paddingBottom: '0.5rem' }}
       >
+        {/* Jersey SVG silhouette in team's primary color */}
+        {(() => {
+          const tc = getTeamColor(team.id)
+          const gid = `ts-jersey-${team.id}`
+          return (
+            <div
+              className="flex-shrink-0"
+              style={{
+                transform: 'rotate(-10deg)',
+                filter: `drop-shadow(0 0 5px ${tc}88)`,
+              }}
+            >
+              <svg width="18" height="21" viewBox="0 0 100 116" fill="none">
+                <defs>
+                  <linearGradient id={gid} x1="30%" y1="0%" x2="75%" y2="100%">
+                    <stop offset="0%" stopColor={tc} />
+                    <stop offset="100%" stopColor={tc} stopOpacity="0.7" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M30,8 C22,8 4,16 4,28 L15,40 L26,33 L23,100 L77,100 L74,33 L85,40 L96,28 C96,16 78,8 70,8 L62,17 Q50,23 38,17 Z"
+                  fill={`url(#${gid})`}
+                />
+                <path d="M38,17 Q50,23 62,17" fill="none" stroke="white" strokeWidth="2" strokeOpacity="0.4" />
+              </svg>
+            </div>
+          )
+        })()}
         <FlagImg teamId={team.id} fallback={team.flag} className="h-4 w-auto" />
         <span className="text-[12px] font-semibold text-cyan-300">Get {team.name}&apos;s 2026 jersey</span>
         <span className="text-cyan-400 text-[11px]">→</span>
