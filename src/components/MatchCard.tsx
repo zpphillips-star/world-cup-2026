@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Match, TeamStats, Standing, Team } from '@/lib/types'
 import { TeamSheet } from '@/components/TeamSheet'
+import { Backdrop } from '@/components/Backdrop'
 import { getTeamColor } from '@/lib/teamColors'
 import { getMatchScoreKey } from '@/lib/liveScores'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
@@ -168,7 +169,23 @@ export default function MatchCard({
   allLiveAliases?: Record<string, string>
 }){
   const [open, setOpen] = useState(defaultOpen)
+  const [closing, setClosing] = useState(false)
   const [teamSheet, setTeamSheet] = useState<Team | null>(null)
+  const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleClose = () => {
+    if (closing) return
+    setClosing(true)
+    closingTimerRef.current = setTimeout(() => {
+      setOpen(false)
+      setClosing(false)
+      onCloseExternal?.()
+    }, 260)
+  }
+
+  useEffect(() => {
+    return () => { if (closingTimerRef.current) clearTimeout(closingTimerRef.current) }
+  }, [])
 
   // ── Swipe navigation ───────────────────────────────────────────────────────
   const [currentIdx, setCurrentIdx] = useState<number>(() => {
@@ -285,13 +302,13 @@ export default function MatchCard({
       {/* Slide-up sheet */}
       {open && (
         <>
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[65]" onClick={() => { setOpen(false); onCloseExternal?.() }} />
+          <Backdrop onDismiss={handleClose} zIndex="z-[65]" bg="bg-black/70" />
 
           {/* Jersey ad banner — full-width prominent, anchored just above the sheet */}
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
 
           <div
-            className="fixed bottom-0 left-0 right-0 z-[70] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up"
+            className={`fixed bottom-0 left-0 right-0 z-[70] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -300,7 +317,7 @@ export default function MatchCard({
             <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0">
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
               <button
-                onClick={() => { setOpen(false); onCloseExternal?.() }}
+                onClick={handleClose}
                 className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
               >✕</button>
 
@@ -322,7 +339,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { setOpen(false); setTeamSheet(currentMatch.homeTeam) }}
+                    onClick={() => { handleClose(); setTeamSheet(currentMatch.homeTeam) }}
                     title={`View ${currentMatch.homeTeam.name}`}
                   >
                     <FlagImg teamId={currentMatch.homeTeam.id} fallback={currentMatch.homeTeam.flag} className="h-10" />
@@ -352,7 +369,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { setOpen(false); setTeamSheet(currentMatch.awayTeam) }}
+                    onClick={() => { handleClose(); setTeamSheet(currentMatch.awayTeam) }}
                     title={`View ${currentMatch.awayTeam.name}`}
                   >
                     <FlagImg teamId={currentMatch.awayTeam.id} fallback={currentMatch.awayTeam.flag} className="h-10" />

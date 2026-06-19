@@ -52,6 +52,15 @@ body {
   animation: slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
+@keyframes slide-down {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.26s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
 @keyframes blink {
   0%, 80%, 100% { opacity: 0; }
   40%           { opacity: 1; }

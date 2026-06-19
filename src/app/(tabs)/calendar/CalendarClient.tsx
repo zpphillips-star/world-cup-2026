@@ -5,6 +5,7 @@ import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
+import { Backdrop } from '@/components/Backdrop'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
@@ -192,6 +193,8 @@ export default function CalendarClient({
 }) {
   const now = new Date()
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [daySheetClosing, setDaySheetClosing] = useState(false)
+  const daySheetClosingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [userTimezone, setUserTimezone] = useState('UTC')
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
@@ -293,6 +296,20 @@ export default function CalendarClient({
     : []
   const sheetDayIdx = selectedDay ? sortedMatchDayKeys.indexOf(selectedDay) : -1
 
+  const handleCloseDaySheet = () => {
+    if (daySheetClosing) return
+    setDaySheetClosing(true)
+    daySheetClosingTimerRef.current = setTimeout(() => {
+      setSelectedDay(null)
+      setDaySheetClosing(false)
+    }, 260)
+  }
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => { if (daySheetClosingTimerRef.current) clearTimeout(daySheetClosingTimerRef.current) }
+  }, [])
+
   return (
     <>
       {/* Both months stacked on one scrollable page */}
@@ -376,13 +393,10 @@ export default function CalendarClient({
 
       {/* Day sheet */}
       {selectedDay && (
-        <div className="fixed inset-0 z-[55]">
+        <>
+          <Backdrop onDismiss={handleCloseDaySheet} zIndex="z-[55]" bg="bg-black/60" />
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
-            onClick={() => setSelectedDay(null)}
-          />
-          <div
-            className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up bg-[#0f0f18]"
+            className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-3xl overflow-hidden ${daySheetClosing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
             onTouchStart={handleSheetTouchStart}
             onTouchEnd={handleSheetTouchEnd}
           >
@@ -422,7 +436,7 @@ export default function CalendarClient({
               })}
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* MatchCard popup — rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}

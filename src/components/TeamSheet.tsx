@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { mockProvider } from '@/lib/mockProvider'
 import { FlagImg } from '@/components/FlagImg'
 import { getTeamColor } from '@/lib/teamColors'
 import type { Team, Standing, Match } from '@/lib/types'
+import { Backdrop } from '@/components/Backdrop'
 
 interface Props {
   team: Team
@@ -37,20 +38,30 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
 
+  const [closing, setClosing] = useState(false)
+  const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleClose = () => {
+    if (closing) return
+    setClosing(true)
+    closingTimerRef.current = setTimeout(onClose, 260)
+  }
+
   // Close on Escape
   useEffect(() => {
-    const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
     window.addEventListener('keydown', fn)
-    return () => window.removeEventListener('keydown', fn)
-  }, [onClose])
+    return () => {
+      window.removeEventListener('keydown', fn)
+      if (closingTimerRef.current) clearTimeout(closingTimerRef.current)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
+      <Backdrop onDismiss={handleClose} zIndex="z-[50]" bg="bg-black/70" />
 
       {/* Shop strip — fixed to very top of screen, only visible when flag is open */}
       <a
@@ -67,14 +78,14 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
 
       {/* Sheet */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up bg-[#0f0f18]"
+        className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         {/* Header */}
         <div className="relative bg-gradient-to-b from-[#0a1628] to-[#0f0f18] px-5 pt-4 pb-5 flex-shrink-0">
           <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm"
           >✕</button>
 

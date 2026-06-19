@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
+import { Backdrop } from '@/components/Backdrop'
 import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { mergeStandings } from '@/lib/standingsUtils'
@@ -43,17 +44,29 @@ function LiveNowSheet({
   allMatchesSorted: Match[]
 }){
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
+  const [closing, setClosing] = useState(false)
+  const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleClose = () => {
+    if (closing) return
+    setClosing(true)
+    closingTimerRef.current = setTimeout(onClose, 260)
+  }
+
+  useEffect(() => {
+    return () => { if (closingTimerRef.current) clearTimeout(closingTimerRef.current) }
+  }, [])
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" onClick={onClose} />
+      <Backdrop onDismiss={handleClose} zIndex="z-40" bg="bg-black/70" />
 
-      <div className="fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden animate-slide-up">
+      <div className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}>
         {/* Header */}
         <div className="relative bg-gradient-to-b from-[#1a0505] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0 border-b border-red-500/20">
           <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
           >✕</button>
 

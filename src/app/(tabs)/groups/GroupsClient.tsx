@@ -6,6 +6,7 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { FlagImg } from '@/components/FlagImg'
 import { TeamSheet } from '@/components/TeamSheet'
 import MatchCard from '@/components/MatchCard'
+import { Backdrop } from '@/components/Backdrop'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
@@ -140,9 +141,17 @@ function GroupSheet({
   onNavigate?: (groupId: string) => void
 }) {
   const [userTimezone, setUserTimezone] = useState('UTC')
+  const [closing, setClosing] = useState(false)
+  const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+    return () => { if (closingTimerRef.current) clearTimeout(closingTimerRef.current) }
   }, [])
+
+  const handleClose = () => {
+    setClosing(true)
+    closingTimerRef.current = setTimeout(onClose, 260)
+  }
 
   // ── Swipe between groups ──────────────────────────────────────────────────
   const touchStartX = useRef(0)
@@ -167,10 +176,10 @@ function GroupSheet({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
+      <Backdrop onDismiss={handleClose} zIndex="z-40" bg="bg-black/60" />
 
       <div
-        className="fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden animate-slide-up"
+        className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -178,7 +187,7 @@ function GroupSheet({
         <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-[#13131a] border-b border-white/10">
           <div className="w-9 h-1 rounded-full bg-white/20 mx-auto mb-3" />
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
           >
             ✕
