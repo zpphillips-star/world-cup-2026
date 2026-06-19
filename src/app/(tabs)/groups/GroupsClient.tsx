@@ -176,12 +176,13 @@ function GroupSheet({
 
   return (
     <>
-      <Backdrop onDismiss={handleClose} zIndex="z-40" bg="bg-black/60" />
+      <Backdrop onDismiss={handleClose} zIndex="z-[30]" bg="bg-black/60" />
 
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        className={`fixed bottom-0 left-0 right-0 z-[45] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="relative px-5 pt-4 pb-4 flex-shrink-0 bg-[#13131a] border-b border-white/10">
@@ -389,8 +390,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
         ))}
       </div>
 
-      {/* Group sheet — hidden while team or match sheet is open */}
-      {activeGroup && activeStandings && activeGroupWithLiveScores && !teamSheet && !selectedMatch && (
+      {/* Group sheet — stays visible as L1 backdrop when team/match sheet is open */}
+      {activeGroup && activeStandings && activeGroupWithLiveScores && (
         <GroupSheet
           groupId={activeGroup}
           standings={activeStandings}

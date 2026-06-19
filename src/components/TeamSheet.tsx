@@ -14,6 +14,13 @@ interface Props {
   standings?: Standing[]
   /** Live group matches with scores applied — if provided, overrides mockProvider */
   groupMatches?: Match[]
+  /**
+   * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
+   * (e.g. opened from inside MatchCard). Higher layer = higher z-indexes so the
+   * sheet sits above everything below it with its own dim overlay.
+   * @default 2
+   */
+  layer?: 2 | 3
 }
 
 function formatKickoff(iso: string, tz: string) {
@@ -27,7 +34,13 @@ function formatKickoff(iso: string, tz: string) {
   } catch { return '—' }
 }
 
-export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp }: Props) {
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, layer = 2 }: Props) {
+  // z-index values depend on which layer this sheet occupies
+  // L2 (e.g. from GroupSheet): backdrop z-50 | panel z-60 | strip z-70
+  // L3 (e.g. from MatchCard):  backdrop z-75 | panel z-80 | strip z-85
+  const backdropZ = layer === 3 ? 'z-[75]' : 'z-[50]'
+  const panelZ    = layer === 3 ? 'z-[80]' : 'z-[60]'
+  const stripZ    = layer === 3 ? 'z-[85]' : 'z-[70]'
   // Use live data when provided, fall back to static mock data
   const allMockMatches = mockProvider.getMatches()
   const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
@@ -61,14 +74,14 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   return (
     <>
       {/* Backdrop */}
-      <Backdrop onDismiss={handleClose} zIndex="z-[50]" bg="bg-black/70" />
+      <Backdrop onDismiss={handleClose} zIndex={backdropZ} bg="bg-black/70" />
 
       {/* Shop strip — fixed to very top of screen, only visible when flag is open */}
       <a
         href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}&tag=zpphillips-20`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-center gap-2 px-4 bg-gradient-to-r from-cyan-950/80 via-[#0d0d16] to-cyan-950/80 border-b border-cyan-500/20 active:opacity-75 transition-opacity"
+        className={`fixed top-0 left-0 right-0 ${stripZ} flex items-center justify-center gap-2 px-4 bg-gradient-to-r from-cyan-950/80 via-[#0d0d16] to-cyan-950/80 border-b border-cyan-500/20 active:opacity-75 transition-opacity`}
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.5rem)', paddingBottom: '0.5rem' }}
       >
         <FlagImg teamId={team.id} fallback={team.flag} className="h-4 w-auto" />
@@ -78,8 +91,9 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
 
       {/* Sheet */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
+        className={`fixed bottom-0 left-0 right-0 ${panelZ} max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="relative bg-gradient-to-b from-[#0a1628] to-[#0f0f18] px-5 pt-4 pb-5 flex-shrink-0">

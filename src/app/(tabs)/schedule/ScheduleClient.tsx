@@ -61,7 +61,9 @@ function LiveNowSheet({
     <>
       <Backdrop onDismiss={handleClose} zIndex="z-40" bg="bg-black/70" />
 
-      <div className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}>
+      <div className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="relative bg-gradient-to-b from-[#1a0505] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0 border-b border-red-500/20">
           <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />

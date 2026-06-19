@@ -399,6 +399,7 @@ export default function CalendarClient({
             className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-3xl overflow-hidden ${daySheetClosing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
             onTouchStart={handleSheetTouchStart}
             onTouchEnd={handleSheetTouchEnd}
+            onClick={e => e.stopPropagation()}
           >
             <div className="px-4 pt-4 pb-3 border-b border-gray-800 flex-shrink-0">
               <div className="w-10 h-1 bg-gray-600 rounded-full mx-auto mb-3" />

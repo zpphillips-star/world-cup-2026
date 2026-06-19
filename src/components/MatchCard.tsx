@@ -312,6 +312,7 @@ export default function MatchCard({
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onClick={e => e.stopPropagation()}
           >
             {/* Gradient header */}
             <div className="relative bg-gradient-to-b from-[#0a1628] to-[#13131a] px-5 pt-4 pb-5 flex-shrink-0">
@@ -339,7 +340,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { handleClose(); setTeamSheet(currentMatch.homeTeam) }}
+                    onClick={() => setTeamSheet(currentMatch.homeTeam)}
                     title={`View ${currentMatch.homeTeam.name}`}
                   >
                     <FlagImg teamId={currentMatch.homeTeam.id} fallback={currentMatch.homeTeam.flag} className="h-10" />
@@ -369,7 +370,7 @@ export default function MatchCard({
                 <div className="flex-1 flex flex-col items-center gap-2">
                   <button
                     className="active:scale-90 transition-transform"
-                    onClick={() => { handleClose(); setTeamSheet(currentMatch.awayTeam) }}
+                    onClick={() => setTeamSheet(currentMatch.awayTeam)}
                     title={`View ${currentMatch.awayTeam.name}`}
                   >
                     <FlagImg teamId={currentMatch.awayTeam.id} fallback={currentMatch.awayTeam.flag} className="h-10" />
@@ -470,9 +471,9 @@ export default function MatchCard({
         </>
       )}
 
-      {/* Team sheet — opens when a flag is tapped */}
+      {/* Team sheet — opens as L3 on top of this sheet; closing it reveals MatchCard */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => { setTeamSheet(null); setOpen(true) }} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
       )}
     </>
   )
