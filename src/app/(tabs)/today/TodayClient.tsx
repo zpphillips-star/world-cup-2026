@@ -149,9 +149,9 @@ function FeaturedMatchCard({
         {(liveData?.redCards?.length ?? 0) > 0 && (
           <div className="flex flex-col gap-1 px-4 pb-3 border-t border-white/[0.04] pt-2">
             <div className="flex items-center gap-2 mb-1">
-              <div className="flex-1 h-px bg-zinc-800" />
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Red Cards</span>
-              <div className="flex-1 h-px bg-zinc-800" />
+              <div className="flex-1 h-px bg-red-500/30" />
+              <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Red Cards</span>
+              <div className="flex-1 h-px bg-red-500/30" />
             </div>
             {(liveData?.redCards ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
               <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
