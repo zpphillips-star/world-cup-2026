@@ -404,9 +404,9 @@ export default function MatchCard({
               {currentRedCards.length > 0 && (
                 <div className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="flex-1 h-px bg-red-500/20" />
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest text-center">Red Cards</span>
-                    <div className="flex-1 h-px bg-red-500/20" />
+                    <div className="flex-1 h-px bg-zinc-800" />
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Red Cards</span>
+                    <div className="flex-1 h-px bg-zinc-800" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     {[...currentRedCards].sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
