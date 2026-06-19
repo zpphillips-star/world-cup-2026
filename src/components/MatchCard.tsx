@@ -134,6 +134,111 @@ function GroupTable({ groupId, standings, highlightIds }: {
 
 import type { ScoringEvent, CardEvent } from '@/app/api/live-scores/route'
 
+// ── Jersey ad banner ──────────────────────────────────────────────────────────
+// Shown as a sticky footer inside the match detail sheet.
+// Uses an SVG jersey silhouette in the home team's primary color since official
+// kit images are not available via the ESPN public API.
+function JerseyAdBanner({ match }: { match: Match }) {
+  const teamColor = getTeamColor(match.homeTeam.id)
+  const searchQuery = encodeURIComponent(`world cup 2026 ${match.homeTeam.name} jersey`)
+  const href = `https://www.amazon.com/s?k=${searchQuery}`
+  const gradId = `jg-${match.homeTeam.id}`
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex-shrink-0 block mx-3 mb-3 mt-1 active:scale-[0.98] transition-transform"
+      onClick={e => e.stopPropagation()}
+    >
+      <div
+        className="relative flex items-center rounded-2xl overflow-hidden"
+        style={{
+          background: `linear-gradient(120deg, ${teamColor}22 0%, #1a1a24 45%, #161620 100%)`,
+          border: `1px solid ${teamColor}38`,
+          minHeight: '82px',
+        }}
+      >
+        {/* Left team-color glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse at 15% 55%, ${teamColor}28 0%, transparent 62%)`,
+          }}
+        />
+
+        {/* Jersey visual */}
+        <div className="relative flex items-end justify-center w-[88px] h-[82px] flex-shrink-0 overflow-visible pl-2">
+          <div
+            style={{
+              transform: 'rotate(-12deg) translateY(6px)',
+              filter: `drop-shadow(0 6px 20px ${teamColor}75) drop-shadow(0 0 8px ${teamColor}55)`,
+            }}
+          >
+            <svg width="66" height="78" viewBox="0 0 100 116" fill="none">
+              <defs>
+                <linearGradient id={gradId} x1="30%" y1="0%" x2="75%" y2="100%">
+                  <stop offset="0%" stopColor={teamColor} />
+                  <stop offset="65%" stopColor={teamColor} stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#000000" stopOpacity="0.5" />
+                </linearGradient>
+              </defs>
+              {/* Jersey body — V-neck football shirt silhouette */}
+              <path
+                d="M30,8 C22,8 4,16 4,28 L15,40 L26,33 L23,100 L77,100 L74,33 L85,40 L96,28 C96,16 78,8 70,8 L62,17 Q50,23 38,17 Z"
+                fill={`url(#${gradId})`}
+              />
+              {/* Collar highlight */}
+              <path
+                d="M38,17 Q50,23 62,17"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeOpacity="0.35"
+              />
+              {/* Centre seam (subtle) */}
+              <line x1="50" y1="25" x2="50" y2="100" stroke="white" strokeWidth="0.7" strokeOpacity="0.12" />
+              {/* Shirt number */}
+              <text x="50" y="74" textAnchor="middle" fill="white" fillOpacity="0.28" fontSize="24" fontWeight="bold" fontFamily="Arial,sans-serif">10</text>
+            </svg>
+          </div>
+          {/* Flag — small, anchored bottom-right of jersey area */}
+          <div className="absolute bottom-1.5 right-1">
+            <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-3.5" />
+          </div>
+        </div>
+
+        {/* Team-color separator */}
+        <div
+          className="w-px self-stretch flex-shrink-0"
+          style={{ background: `linear-gradient(to bottom, transparent, ${teamColor}38, transparent)` }}
+        />
+
+        {/* Ad content */}
+        <div className="flex-1 px-3 py-3 min-w-0">
+          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-[#00d4ff] mb-0.5">Official Gear</p>
+          <p className="text-[13px] font-bold text-white leading-snug">
+            {match.homeTeam.name} Jersey
+          </p>
+          <p className="text-[10px] text-zinc-400 mt-0.5">Official kits · Free returns</p>
+          <div className="mt-2">
+            <span
+              className="inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded-full text-[#0a0a0f]"
+              style={{ background: teamColor === '#888888' ? '#aaaaaa' : teamColor }}
+            >
+              Shop Amazon →
+            </span>
+          </div>
+        </div>
+
+        {/* Sponsored label */}
+        <span className="absolute top-2 right-2.5 text-[8px] text-zinc-700 uppercase tracking-widest">Ad</span>
+      </div>
+    </a>
+  )
+}
+
 export default function MatchCard({
   match,
   userTimezone = 'UTC',
@@ -392,7 +497,7 @@ export default function MatchCard({
             </div>
 
             {/* Scrollable body */}
-            <div key={currentIdx} className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}>
+            <div key={currentIdx} className="overflow-y-auto bg-[#0f0f18] px-4 pt-5 flex-1" style={{ paddingBottom: '1.5rem' }}>
 
               {/* Goal scorers */}
               {currentScorers && currentScorers.length > 0 && (
@@ -465,8 +570,8 @@ export default function MatchCard({
               )}
             </div>
 
-            {/* Sticky ad footer — team-colored, whole card is tappable */}
-            {/* TODO: add &tag=YOUR-TRACKING-ID once Amazon Associates approved */}
+            {/* Sticky ad footer — jersey image + promo */}
+            <JerseyAdBanner match={currentMatch} />
           </div>
         </>
       )}
