@@ -36,7 +36,7 @@ export function computeStandingsFromMatches(
       }
     }
 
-    const groupMatches = matches.filter(m => m.group === group && (m.status === "ft" || m.status === "live"))
+    const groupMatches = matches.filter(m => m.group === group && m.status === "ft")
     for (const m of groupMatches) {
       const h = map[m.homeTeam.id]
       const a = map[m.awayTeam.id]
