@@ -92,8 +92,6 @@ function LiveNowSheet({
           {liveMatches.map(m => {
             const key = getMatchScoreKey(m)
             const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
-            const homeScorers = liveData?.scorers?.filter(s => s.teamSide === 'home') ?? []
-            const awayScorers = liveData?.scorers?.filter(s => s.teamSide === 'away') ?? []
             const homeRedCards = liveData?.redCards?.filter(c => c.teamSide === 'home') ?? []
             const awayRedCards = liveData?.redCards?.filter(c => c.teamSide === 'away') ?? []
 
