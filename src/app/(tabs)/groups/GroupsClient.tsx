@@ -76,7 +76,7 @@ function GroupCard({
       className="w-full text-left active:scale-[0.97] transition-transform"
     >
       <div
-        className="rounded-lg overflow-hidden relative"
+        className="rounded-2xl overflow-hidden relative"
         style={{
           background: 'linear-gradient(160deg, #1a1a24 0%, #111118 100%)',
           border: '1px solid rgba(255,255,255,0.06)',
@@ -179,7 +179,7 @@ function GroupSheet({
       <Backdrop onDismiss={handleClose} zIndex="z-[30]" bg="bg-black/60" />
 
       <div
-        className={`fixed bottom-0 left-0 right-0 z-[45] max-h-[86vh] flex flex-col rounded-t-lg overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        className={`fixed bottom-0 left-0 right-0 z-[45] max-h-[86vh] flex flex-col rounded-t-2xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onClick={e => e.stopPropagation()}
@@ -235,7 +235,7 @@ function GroupSheet({
                 {completedMatches.map(m => (
                   <button
                     key={m.id}
-                    className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-md px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
+                    className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
                     onClick={() => onMatchOpen(m)}
                   >
                     <span className="flex items-center gap-1.5 flex-1">
@@ -268,7 +268,7 @@ function GroupSheet({
                   return (
                     <button
                       key={m.id}
-                      className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-md px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
+                      className="w-full flex items-center justify-between text-xs bg-[#0a0a0f] rounded-xl px-3 py-2.5 border border-gray-800/60 active:bg-white/5 transition-colors"
                       onClick={() => onMatchOpen(m)}
                     >
                       <span className="flex items-center gap-1.5 flex-1">

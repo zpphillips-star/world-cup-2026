@@ -46,7 +46,7 @@ function FeaturedMatchCard({
       className="w-full text-left active:scale-[0.98] transition-transform"
     >
       <div
-        className="rounded-md overflow-hidden"
+        className="rounded-xl overflow-hidden"
         style={{
           background: isFt ? '#141418' : isLive ? '#1a1a24' : '#141820',
           borderTop: '1px solid rgba(255,255,255,0.07)',
@@ -307,7 +307,7 @@ export default function TodayClient({
 
       {todayMatches.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
-          <div className="w-20 h-20 rounded-lg bg-zinc-900 flex items-center justify-center mb-5">
+          <div className="w-20 h-20 rounded-3xl bg-zinc-900 flex items-center justify-center mb-5">
             <span className="text-4xl">⚽</span>
           </div>
           <p className="text-white font-bold text-xl">No matches today</p>

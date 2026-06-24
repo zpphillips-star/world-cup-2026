@@ -113,7 +113,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
               <button
                 key={name}
                 onClick={() => toggleRound(name)}
-                className={`flex-1 aspect-[4/3] rounded-md text-sm font-bold transition-all active:scale-95 shadow-lg shadow-black/40 flex items-center justify-center
+                className={`flex-1 aspect-[4/3] rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-black/40 flex items-center justify-center
                   ${on
                     ? name === 'Final'
                       ? 'bg-yellow-400 text-zinc-900'
@@ -219,7 +219,7 @@ export default function BracketClient({ bracket }: { bracket: BracketRound[] }) 
 
       {thirdPlace?.matches[0] && activeRounds.has('Final') && (
         <div className="px-4 pb-8">
-          <div className="bg-[#13131a] rounded-md border border-zinc-800 p-3 max-w-[220px]">
+          <div className="bg-[#13131a] rounded-xl border border-zinc-800 p-3 max-w-[220px]">
             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">\U0001F949 Third Place</p>
             <MatchCard slot={thirdPlace.matches[0]} />
           </div>

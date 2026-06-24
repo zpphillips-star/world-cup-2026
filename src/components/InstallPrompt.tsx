@@ -131,17 +131,17 @@ export default function InstallPrompt() {
     return (
       <div className="fixed inset-0 z-50 flex items-end">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleDismiss} />
-        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-lg px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
+        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
           <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-5" />
           <div className="flex items-center gap-3 mb-4">
-            <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-md flex-shrink-0" />
+            <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
             <div>
               <p className="text-base font-bold text-white">Install World Cup 2026</p>
               <p className="text-xs text-zinc-400">One more step needed</p>
             </div>
             <button onClick={handleDismiss} className="ml-auto text-zinc-500 text-2xl leading-none pb-1">✕</button>
           </div>
-          <div className="bg-zinc-800/60 rounded-lg px-4 py-3.5 mb-5">
+          <div className="bg-zinc-800/60 rounded-2xl px-4 py-3.5 mb-5">
             <p className="text-sm text-white font-semibold mb-1">🧭 Open this page in Safari</p>
             <p className="text-xs text-zinc-400 leading-relaxed">
               iOS only allows installing apps from Safari. Copy the link and paste it into Safari to get the install option.
@@ -149,7 +149,7 @@ export default function InstallPrompt() {
           </div>
           <button
             onClick={() => { navigator.clipboard?.writeText('https://wcscorelive.com'); handleDismiss() }}
-            className="w-full py-3 rounded-md bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform"
+            className="w-full py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform"
           >
             Copy Link → Open in Safari
           </button>
@@ -166,14 +166,14 @@ export default function InstallPrompt() {
     return (
       <div className="fixed inset-0 z-50 flex items-end">
         <div className="absolute inset-0 bg-black/70" onClick={() => setState('hidden')} />
-        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-lg px-5 pt-5 pb-10">
+        <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10">
           <p className="text-xs font-bold text-[#00d4ff] mb-3 uppercase tracking-widest">Install Prompt Debug</p>
           <p className="text-xs text-zinc-300 break-all leading-relaxed font-mono">{debugInfo}</p>
           <div className="flex gap-3 mt-5">
-            <button onClick={() => setState('ios-sheet')} className="flex-1 py-3 rounded-md bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold">
+            <button onClick={() => setState('ios-sheet')} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold">
               Show iOS Sheet
             </button>
-            <button onClick={() => setState('hidden')} className="flex-1 py-3 rounded-md bg-zinc-800 text-zinc-300 text-sm font-semibold">
+            <button onClick={() => setState('hidden')} className="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-semibold">
               Close
             </button>
           </div>
@@ -186,14 +186,14 @@ export default function InstallPrompt() {
   if (state === 'android-banner') {
     return (
       <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-2">
-        <div className="bg-[#16161f] border border-white/10 rounded-lg p-4 shadow-2xl shadow-black/60 flex items-center gap-4">
-          <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-md flex-shrink-0" />
+        <div className="bg-[#16161f] border border-white/10 rounded-2xl p-4 shadow-2xl shadow-black/60 flex items-center gap-4">
+          <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-white">Add to Home Screen</p>
             <p className="text-xs text-zinc-400 mt-0.5">Install for quick access — no app store needed</p>
           </div>
           <div className="flex flex-col gap-2 flex-shrink-0">
-            <button onClick={handleAndroidInstall} className="bg-[#00d4ff] text-[#0a0a0f] text-xs font-bold px-4 py-2 rounded-md active:scale-95 transition-transform">
+            <button onClick={handleAndroidInstall} className="bg-[#00d4ff] text-[#0a0a0f] text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-transform">
               Install
             </button>
             <button onClick={handleDismiss} className="text-zinc-500 text-xs text-center">Not now</button>
@@ -207,10 +207,10 @@ export default function InstallPrompt() {
   return (
     <div className="fixed inset-0 z-50 flex items-end">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleDismiss} />
-      <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-lg px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
+      <div className="relative w-full bg-[#16161f] border-t border-white/10 rounded-t-3xl px-5 pt-5 pb-10 shadow-2xl shadow-black/80">
         <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-5" />
         <div className="flex items-center gap-3 mb-5">
-          <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-md flex-shrink-0" />
+          <img src="/icon-192-v4.png" alt="WC26" className="w-12 h-12 rounded-xl flex-shrink-0" />
           <div>
             <p className="text-base font-bold text-white">Add World Cup 2026</p>
             <p className="text-xs text-zinc-400">to your Home Screen</p>
@@ -233,16 +233,16 @@ export default function InstallPrompt() {
         </div>
         <div className="flex gap-3">
           {iosStep > 0 && (
-            <button onClick={() => setIosStep(s => s - 1)} className="flex-1 py-3 rounded-md bg-zinc-800 text-zinc-300 text-sm font-semibold active:scale-95 transition-transform">
+            <button onClick={() => setIosStep(s => s - 1)} className="flex-1 py-3 rounded-xl bg-zinc-800 text-zinc-300 text-sm font-semibold active:scale-95 transition-transform">
               Back
             </button>
           )}
           {iosStep < IOS_STEPS.length - 1 ? (
-            <button onClick={() => setIosStep(s => s + 1)} className="flex-1 py-3 rounded-md bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
+            <button onClick={() => setIosStep(s => s + 1)} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
               Next →
             </button>
           ) : (
-            <button onClick={handleDismiss} className="flex-1 py-3 rounded-md bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
+            <button onClick={handleDismiss} className="flex-1 py-3 rounded-xl bg-[#00d4ff] text-[#0a0a0f] text-sm font-bold active:scale-95 transition-transform">
               Done ✓
             </button>
           )}

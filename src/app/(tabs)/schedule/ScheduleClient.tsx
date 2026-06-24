@@ -61,7 +61,7 @@ function LiveNowSheet({
     <>
       <Backdrop onDismiss={handleClose} zIndex="z-40" bg="bg-black/70" />
 
-      <div className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-lg overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
+      <div className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -100,7 +100,7 @@ function LiveNowSheet({
             return (
               <button
                 key={m.id}
-                className="w-full text-left bg-[#1a1a24] rounded-lg overflow-hidden border border-red-500/20 active:scale-[0.98] transition-transform"
+                className="w-full text-left bg-[#1a1a24] rounded-2xl overflow-hidden border border-red-500/20 active:scale-[0.98] transition-transform"
                 onClick={() => setSelectedMatch(m)}
               >
                 {/* Live badge + clock */}

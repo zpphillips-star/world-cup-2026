@@ -92,7 +92,7 @@ export default function BottomNav() {
           <Link href="/today" className="flex flex-col items-center gap-1 -mt-5">
             {/* Raised icon button */}
             <div
-              className={`w-14 h-14 rounded-lg flex items-center justify-center transition-transform active:scale-95 ${
+              className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform active:scale-95 ${
                 todayActive ? 'ring-2 ring-[#00d4ff] ring-offset-2 ring-offset-[#13131a]' : ''
               }`}
               style={{
@@ -106,7 +106,7 @@ export default function BottomNav() {
                 width={44}
                 height={44}
                 alt="Today"
-                className="rounded-lg"
+                className="rounded-2xl"
               />
             </div>
             <span className={`text-xs font-semibold ${todayActive ? 'text-[#00d4ff]' : 'text-gray-400'}`}>
