@@ -8,15 +8,16 @@ import { getTeamColor } from '@/lib/teamColors'
 import { getMatchScoreKey } from '@/lib/liveScores'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 
-function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string } {
+function formatTime(kickoff: string, timezone: string): { time: string; tzAbbr: string; date: string } {
   try {
     const date = new Date(kickoff)
     const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: timezone })
     const tzAbbr = new Intl.DateTimeFormat('en-US', { timeZone: timezone, timeZoneName: 'short' })
       .formatToParts(date).find(p => p.type === 'timeZoneName')?.value ?? ''
-    return { time, tzAbbr }
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: timezone })
+    return { time, tzAbbr, date: dateStr }
   } catch {
-    return { time: '--:--', tzAbbr: '' }
+    return { time: '--:--', tzAbbr: '', date: '' }
   }
 }
 
@@ -232,7 +233,7 @@ export default function MatchCard({
   const isLive = currentMatch.status === 'live'
   const isFt = currentMatch.status === 'ft'
   const hasScore = isLive || isFt
-  const { time, tzAbbr } = formatTime(currentMatch.kickoff, userTimezone)
+  const { time, tzAbbr, date } = formatTime(currentMatch.kickoff, userTimezone)
 
   return (
     <>
@@ -315,7 +316,7 @@ export default function MatchCard({
                 {isLive && <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">● LIVE</span>}
                 {isFt && <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">FINAL</span>}
                 {currentMatch.status === 'upcoming' && (
-                  <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{time} {tzAbbr}</span>
+                  <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{date} · {time} {tzAbbr}</span>
                 )}
 
               </div>
