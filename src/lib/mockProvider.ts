@@ -217,49 +217,50 @@ function tbd(label: string): Team { return { id: label.replace(/\s+/g, '-').toLo
 // All TBD — determined by group stage results
 // ─────────────────────────────────────────────────────────────────────────────
 const knockoutMatches: Match[] = [
-  // ── Round of 32 (Jun 28 – Jul 6) ──
-  { id: "r32-m1",  homeTeam: tbd("1st Group A"), awayTeam: tbd("2nd Group B"), kickoff: "2026-06-28T22:00:00Z", venue: venues.metlife,     round: "Round of 32", status: "upcoming" },
-  { id: "r32-m2",  homeTeam: tbd("1st Group C"), awayTeam: tbd("2nd Group D"), kickoff: "2026-06-29T02:00:00Z", venue: venues.att,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-m3",  homeTeam: tbd("1st Group E"), awayTeam: tbd("2nd Group F"), kickoff: "2026-06-29T22:00:00Z", venue: venues.sofi,        round: "Round of 32", status: "upcoming" },
-  { id: "r32-m4",  homeTeam: tbd("1st Group G"), awayTeam: tbd("2nd Group H"), kickoff: "2026-06-30T02:00:00Z", venue: venues.hardrock,    round: "Round of 32", status: "upcoming" },
-  { id: "r32-m5",  homeTeam: tbd("1st Group I"), awayTeam: tbd("2nd Group J"), kickoff: "2026-06-30T22:00:00Z", venue: venues.nrg,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-m6",  homeTeam: tbd("1st Group K"), awayTeam: tbd("2nd Group L"), kickoff: "2026-07-01T02:00:00Z", venue: venues.lumen,       round: "Round of 32", status: "upcoming" },
-  { id: "r32-m7",  homeTeam: tbd("1st Group B"), awayTeam: tbd("2nd Group A"), kickoff: "2026-07-01T22:00:00Z", venue: venues.gillette,    round: "Round of 32", status: "upcoming" },
-  { id: "r32-m8",  homeTeam: tbd("1st Group D"), awayTeam: tbd("2nd Group C"), kickoff: "2026-07-02T02:00:00Z", venue: venues.levis,       round: "Round of 32", status: "upcoming" },
-  { id: "r32-m9",  homeTeam: tbd("1st Group F"), awayTeam: tbd("2nd Group E"), kickoff: "2026-07-02T22:00:00Z", venue: venues.azteca,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-m10", homeTeam: tbd("1st Group H"), awayTeam: tbd("2nd Group G"), kickoff: "2026-07-03T02:00:00Z", venue: venues.bcplace,     round: "Round of 32", status: "upcoming" },
-  { id: "r32-m11", homeTeam: tbd("1st Group J"), awayTeam: tbd("2nd Group I"), kickoff: "2026-07-03T22:00:00Z", venue: venues.arrowhead,   round: "Round of 32", status: "upcoming" },
-  { id: "r32-m12", homeTeam: tbd("1st Group L"), awayTeam: tbd("2nd Group K"), kickoff: "2026-07-04T02:00:00Z", venue: venues.mercedesbenz,round: "Round of 32", status: "upcoming" },
-  { id: "r32-m13", homeTeam: tbd("Best 3rd #1"),  awayTeam: tbd("Best 3rd #2"),  kickoff: "2026-07-04T22:00:00Z", venue: venues.lincoln,   round: "Round of 32", status: "upcoming" },
-  { id: "r32-m14", homeTeam: tbd("Best 3rd #3"),  awayTeam: tbd("Best 3rd #4"),  kickoff: "2026-07-05T02:00:00Z", venue: venues.bmo,       round: "Round of 32", status: "upcoming" },
-  { id: "r32-m15", homeTeam: tbd("Best 3rd #5"),  awayTeam: tbd("Best 3rd #6"),  kickoff: "2026-07-05T22:00:00Z", venue: venues.bbva,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-m16", homeTeam: tbd("Best 3rd #7"),  awayTeam: tbd("Best 3rd #8"),  kickoff: "2026-07-06T02:00:00Z", venue: venues.akron,     round: "Round of 32", status: "upcoming" },
+  // ── Round of 32 (Jun 28 – Jul 6) — FIFA official match numbers 73–88 ──
+  // Seedings per official FIFA WC2026 bracket announcement
+  { id: "r32-1",  homeTeam: tbd("2nd Group A"), awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T22:00:00Z", venue: venues.metlife,      round: "Round of 32", status: "upcoming" },
+  { id: "r32-2",  homeTeam: tbd("W Group E"),   awayTeam: tbd("Best 3rd A/B/C/D/F"), kickoff: "2026-06-29T02:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-3",  homeTeam: tbd("W Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-29T22:00:00Z", venue: venues.sofi,         round: "Round of 32", status: "upcoming" },
+  { id: "r32-4",  homeTeam: tbd("W Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-30T02:00:00Z", venue: venues.hardrock,     round: "Round of 32", status: "upcoming" },
+  { id: "r32-5",  homeTeam: tbd("W Group I"),   awayTeam: tbd("Best 3rd C/D/F/G/H"), kickoff: "2026-06-30T22:00:00Z", venue: venues.nrg,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-6",  homeTeam: tbd("2nd Group E"), awayTeam: tbd("2nd Group I"),         kickoff: "2026-07-01T02:00:00Z", venue: venues.lumen,        round: "Round of 32", status: "upcoming" },
+  { id: "r32-7",  homeTeam: tbd("W Group A"),   awayTeam: tbd("Best 3rd C/E/F/H/I"), kickoff: "2026-07-01T22:00:00Z", venue: venues.gillette,     round: "Round of 32", status: "upcoming" },
+  { id: "r32-8",  homeTeam: tbd("W Group L"),   awayTeam: tbd("Best 3rd E/H/I/J/K"), kickoff: "2026-07-02T02:00:00Z", venue: venues.levis,        round: "Round of 32", status: "upcoming" },
+  { id: "r32-9",  homeTeam: tbd("W Group D"),   awayTeam: tbd("Best 3rd B/E/F/I/J"), kickoff: "2026-07-02T22:00:00Z", venue: venues.azteca,       round: "Round of 32", status: "upcoming" },
+  { id: "r32-10", homeTeam: tbd("W Group G"),   awayTeam: tbd("Best 3rd A/E/H/I/J"), kickoff: "2026-07-03T02:00:00Z", venue: venues.bcplace,      round: "Round of 32", status: "upcoming" },
+  { id: "r32-11", homeTeam: tbd("2nd Group K"), awayTeam: tbd("2nd Group L"),         kickoff: "2026-07-03T22:00:00Z", venue: venues.arrowhead,    round: "Round of 32", status: "upcoming" },
+  { id: "r32-12", homeTeam: tbd("W Group H"),   awayTeam: tbd("2nd Group J"),         kickoff: "2026-07-04T02:00:00Z", venue: venues.mercedesbenz, round: "Round of 32", status: "upcoming" },
+  { id: "r32-13", homeTeam: tbd("W Group B"),   awayTeam: tbd("Best 3rd E/F/G/I/J"), kickoff: "2026-07-04T22:00:00Z", venue: venues.lincoln,      round: "Round of 32", status: "upcoming" },
+  { id: "r32-14", homeTeam: tbd("W Group J"),   awayTeam: tbd("2nd Group H"),         kickoff: "2026-07-05T02:00:00Z", venue: venues.bmo,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-15", homeTeam: tbd("W Group K"),   awayTeam: tbd("Best 3rd D/E/I/J/L"), kickoff: "2026-07-05T22:00:00Z", venue: venues.bbva,         round: "Round of 32", status: "upcoming" },
+  { id: "r32-16", homeTeam: tbd("2nd Group D"), awayTeam: tbd("2nd Group G"),         kickoff: "2026-07-06T02:00:00Z", venue: venues.akron,        round: "Round of 32", status: "upcoming" },
 
   // ── Round of 16 (Jul 6 – Jul 10) ──
-  { id: "r16-m1", homeTeam: tbd("Winner R32 M1"), awayTeam: tbd("Winner R32 M2"), kickoff: "2026-07-06T22:00:00Z", venue: venues.metlife, round: "Round of 16", status: "upcoming" },
-  { id: "r16-m2", homeTeam: tbd("Winner R32 M3"), awayTeam: tbd("Winner R32 M4"), kickoff: "2026-07-07T02:00:00Z", venue: venues.att,     round: "Round of 16", status: "upcoming" },
-  { id: "r16-m3", homeTeam: tbd("Winner R32 M5"), awayTeam: tbd("Winner R32 M6"), kickoff: "2026-07-07T22:00:00Z", venue: venues.sofi,    round: "Round of 16", status: "upcoming" },
-  { id: "r16-m4", homeTeam: tbd("Winner R32 M7"), awayTeam: tbd("Winner R32 M8"), kickoff: "2026-07-08T02:00:00Z", venue: venues.hardrock,round: "Round of 16", status: "upcoming" },
-  { id: "r16-m5", homeTeam: tbd("Winner R32 M9"),  awayTeam: tbd("Winner R32 M10"), kickoff: "2026-07-08T22:00:00Z", venue: venues.nrg,    round: "Round of 16", status: "upcoming" },
-  { id: "r16-m6", homeTeam: tbd("Winner R32 M11"), awayTeam: tbd("Winner R32 M12"), kickoff: "2026-07-09T02:00:00Z", venue: venues.gillette,round: "Round of 16", status: "upcoming" },
-  { id: "r16-m7", homeTeam: tbd("Winner R32 M13"), awayTeam: tbd("Winner R32 M14"), kickoff: "2026-07-09T22:00:00Z", venue: venues.azteca,  round: "Round of 16", status: "upcoming" },
-  { id: "r16-m8", homeTeam: tbd("Winner R32 M15"), awayTeam: tbd("Winner R32 M16"), kickoff: "2026-07-10T02:00:00Z", venue: venues.lumen,   round: "Round of 16", status: "upcoming" },
+  { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-2"),  kickoff: "2026-07-06T22:00:00Z", venue: venues.metlife,  round: "Round of 16", status: "upcoming" },
+  { id: "r16-2", homeTeam: tbd("W R32-3"),  awayTeam: tbd("W R32-4"),  kickoff: "2026-07-07T02:00:00Z", venue: venues.att,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-3", homeTeam: tbd("W R32-5"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-07T22:00:00Z", venue: venues.sofi,     round: "Round of 16", status: "upcoming" },
+  { id: "r16-4", homeTeam: tbd("W R32-7"),  awayTeam: tbd("W R32-8"),  kickoff: "2026-07-08T02:00:00Z", venue: venues.hardrock, round: "Round of 16", status: "upcoming" },
+  { id: "r16-5", homeTeam: tbd("W R32-9"),  awayTeam: tbd("W R32-10"), kickoff: "2026-07-08T22:00:00Z", venue: venues.nrg,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-6", homeTeam: tbd("W R32-11"), awayTeam: tbd("W R32-12"), kickoff: "2026-07-09T02:00:00Z", venue: venues.gillette, round: "Round of 16", status: "upcoming" },
+  { id: "r16-7", homeTeam: tbd("W R32-13"), awayTeam: tbd("W R32-14"), kickoff: "2026-07-09T22:00:00Z", venue: venues.azteca,   round: "Round of 16", status: "upcoming" },
+  { id: "r16-8", homeTeam: tbd("W R32-15"), awayTeam: tbd("W R32-16"), kickoff: "2026-07-10T02:00:00Z", venue: venues.lumen,    round: "Round of 16", status: "upcoming" },
 
   // ── Quarter-Finals (Jul 11–12) ──
-  { id: "qf-m1", homeTeam: tbd("Winner R16 M1"), awayTeam: tbd("Winner R16 M2"), kickoff: "2026-07-11T22:00:00Z", venue: venues.metlife,  round: "Quarter-Finals", status: "upcoming" },
-  { id: "qf-m2", homeTeam: tbd("Winner R16 M3"), awayTeam: tbd("Winner R16 M4"), kickoff: "2026-07-12T02:00:00Z", venue: venues.sofi,     round: "Quarter-Finals", status: "upcoming" },
-  { id: "qf-m3", homeTeam: tbd("Winner R16 M5"), awayTeam: tbd("Winner R16 M6"), kickoff: "2026-07-12T22:00:00Z", venue: venues.att,      round: "Quarter-Finals", status: "upcoming" },
-  { id: "qf-m4", homeTeam: tbd("Winner R16 M7"), awayTeam: tbd("Winner R16 M8"), kickoff: "2026-07-13T02:00:00Z", venue: venues.hardrock, round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-1", homeTeam: tbd("W R16-1"), awayTeam: tbd("W R16-2"), kickoff: "2026-07-11T22:00:00Z", venue: venues.metlife,  round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-12T02:00:00Z", venue: venues.sofi,     round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-3", homeTeam: tbd("W R16-5"), awayTeam: tbd("W R16-6"), kickoff: "2026-07-12T22:00:00Z", venue: venues.att,      round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-4", homeTeam: tbd("W R16-7"), awayTeam: tbd("W R16-8"), kickoff: "2026-07-13T02:00:00Z", venue: venues.hardrock, round: "Quarter-Finals", status: "upcoming" },
 
   // ── Semi-Finals (Jul 14–15) ──
-  { id: "sf-m1", homeTeam: tbd("Winner QF M1"), awayTeam: tbd("Winner QF M2"), kickoff: "2026-07-14T23:00:00Z", venue: venues.metlife, round: "Semi-Finals", status: "upcoming" },
-  { id: "sf-m2", homeTeam: tbd("Winner QF M3"), awayTeam: tbd("Winner QF M4"), kickoff: "2026-07-15T23:00:00Z", venue: venues.att,     round: "Semi-Finals", status: "upcoming" },
+  { id: "sf-1", homeTeam: tbd("W QF-1"), awayTeam: tbd("W QF-2"), kickoff: "2026-07-14T23:00:00Z", venue: venues.metlife, round: "Semi-Finals", status: "upcoming" },
+  { id: "sf-2", homeTeam: tbd("W QF-3"), awayTeam: tbd("W QF-4"), kickoff: "2026-07-15T23:00:00Z", venue: venues.att,     round: "Semi-Finals", status: "upcoming" },
 
   // ── Third Place (Jul 18) ──
-  { id: "3rd-m1", homeTeam: tbd("SF Loser 1"), awayTeam: tbd("SF Loser 2"), kickoff: "2026-07-18T22:00:00Z", venue: venues.mercedesbenz, round: "Third Place", status: "upcoming" },
+  { id: "3rd-1", homeTeam: tbd("SF Loser 1"), awayTeam: tbd("SF Loser 2"), kickoff: "2026-07-18T22:00:00Z", venue: venues.mercedesbenz, round: "Third Place", status: "upcoming" },
 
   // ── Final (Jul 19) — MetLife Stadium, East Rutherford NJ ──
-  { id: "final-m1", homeTeam: tbd("SF Winner 1"), awayTeam: tbd("SF Winner 2"), kickoff: "2026-07-19T23:00:00Z", venue: venues.metlife, round: "Final", status: "upcoming" },
+  { id: "final-1", homeTeam: tbd("SF Winner 1"), awayTeam: tbd("SF Winner 2"), kickoff: "2026-07-19T23:00:00Z", venue: venues.metlife, round: "Final", status: "upcoming" },
 ]
 
 function computeStandings(groupId: string): Standing[] {
@@ -301,40 +302,108 @@ function computeStandings(groupId: string): Standing[] {
 }
 
 function getBracket(): BracketRound[] {
+  // ── Compute current standings for all groups ──────────────────────────────
+  const allStandings: Record<string, Standing[]> = {}
+  for (const gid of ["A","B","C","D","E","F","G","H","I","J","K","L"]) {
+    allStandings[gid] = computeStandings(gid)
+  }
+
+  // A group is "complete" only when all 6 of its matches are finished
+  function isGroupComplete(groupId: string): boolean {
+    const gm = matches.filter(m => m.group === groupId)
+    return gm.length > 0 && gm.every(m => m.status === 'ft')
+  }
+
+  // Resolve a winner slot: return real Team when group is done, else a clean label
+  function resolveWinner(groupId: string): Team | string {
+    const label = `W Group ${groupId}`
+    if (!isGroupComplete(groupId)) return label
+    return allStandings[groupId]?.[0]?.team ?? label
+  }
+
+  // Resolve a runner-up slot: return real Team when group is done, else a clean label
+  function resolveRunnerUp(groupId: string): Team | string {
+    const label = `2nd Group ${groupId}`
+    if (!isGroupComplete(groupId)) return label
+    return allStandings[groupId]?.[1]?.team ?? label
+  }
+
+  // Build a BracketSlot, pulling venue + kickoff from the knockoutMatches entry
+  function makeSlot(id: string, home: Team | string, away: Team | string): BracketSlot {
+    const km = knockoutMatches.find(k => k.id === id)
+    const bothKnown = typeof home !== 'string' && typeof away !== 'string'
+    const kmStatus = km?.status as BracketSlot['status'] | undefined
+    return {
+      id,
+      home,
+      away,
+      kickoff: km?.kickoff,
+      venue: km?.venue,
+      homeScore: km?.homeScore,
+      awayScore: km?.awayScore,
+      // Only mark 'upcoming' (teams known, match not yet played) or live/ft when both teams are set
+      status: bothKnown ? (kmStatus ?? 'upcoming') : 'tbd',
+    }
+  }
+
+  // ── Round of 32 — actual FIFA WC2026 seedings (Matches 73–88) ─────────────
+  // Source: https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage
+  //   M73: 2nd A vs 2nd B          M74: W E vs Best3rd(A/B/C/D/F)
+  //   M75: W F  vs 2nd C           M76: W C  vs 2nd F
+  //   M77: W I  vs Best3rd(C/D/F/G/H) M78: 2nd E vs 2nd I
+  //   M79: W A  vs Best3rd(C/E/F/H/I) M80: W L  vs Best3rd(E/H/I/J/K)
+  //   M81: W D  vs Best3rd(B/E/F/I/J) M82: W G  vs Best3rd(A/E/H/I/J)
+  //   M83: 2nd K vs 2nd L          M84: W H  vs 2nd J
+  //   M85: W B  vs Best3rd(E/F/G/I/J) M86: W J  vs 2nd H
+  //   M87: W K  vs Best3rd(D/E/I/J/L) M88: 2nd D vs 2nd G
   const r32Slots: BracketSlot[] = [
-    { id: 'r32-1',  home: '1st Group A', away: '2nd Group B', status: 'tbd' },
-    { id: 'r32-2',  home: '1st Group C', away: '2nd Group D', status: 'tbd' },
-    { id: 'r32-3',  home: '1st Group E', away: '2nd Group F', status: 'tbd' },
-    { id: 'r32-4',  home: '1st Group G', away: '2nd Group H', status: 'tbd' },
-    { id: 'r32-5',  home: '1st Group I', away: '2nd Group J', status: 'tbd' },
-    { id: 'r32-6',  home: '1st Group K', away: '2nd Group L', status: 'tbd' },
-    { id: 'r32-7',  home: '1st Group B', away: '2nd Group A', status: 'tbd' },
-    { id: 'r32-8',  home: '1st Group D', away: '2nd Group C', status: 'tbd' },
-    { id: 'r32-9',  home: '1st Group F', away: '2nd Group E', status: 'tbd' },
-    { id: 'r32-10', home: '1st Group H', away: '2nd Group G', status: 'tbd' },
-    { id: 'r32-11', home: '1st Group J', away: '2nd Group I', status: 'tbd' },
-    { id: 'r32-12', home: '1st Group L', away: '2nd Group K', status: 'tbd' },
-    { id: 'r32-13', home: 'Best 3rd #1', away: 'Best 3rd #2', status: 'tbd' },
-    { id: 'r32-14', home: 'Best 3rd #3', away: 'Best 3rd #4', status: 'tbd' },
-    { id: 'r32-15', home: 'Best 3rd #5', away: 'Best 3rd #6', status: 'tbd' },
-    { id: 'r32-16', home: 'Best 3rd #7', away: 'Best 3rd #8', status: 'tbd' },
+    makeSlot('r32-1',  resolveRunnerUp('A'), resolveRunnerUp('B')),
+    makeSlot('r32-2',  resolveWinner('E'),   'Best 3rd A/B/C/D/F'),
+    makeSlot('r32-3',  resolveWinner('F'),   resolveRunnerUp('C')),
+    makeSlot('r32-4',  resolveWinner('C'),   resolveRunnerUp('F')),
+    makeSlot('r32-5',  resolveWinner('I'),   'Best 3rd C/D/F/G/H'),
+    makeSlot('r32-6',  resolveRunnerUp('E'), resolveRunnerUp('I')),
+    makeSlot('r32-7',  resolveWinner('A'),   'Best 3rd C/E/F/H/I'),
+    makeSlot('r32-8',  resolveWinner('L'),   'Best 3rd E/H/I/J/K'),
+    makeSlot('r32-9',  resolveWinner('D'),   'Best 3rd B/E/F/I/J'),
+    makeSlot('r32-10', resolveWinner('G'),   'Best 3rd A/E/H/I/J'),
+    makeSlot('r32-11', resolveRunnerUp('K'), resolveRunnerUp('L')),
+    makeSlot('r32-12', resolveWinner('H'),   resolveRunnerUp('J')),
+    makeSlot('r32-13', resolveWinner('B'),   'Best 3rd E/F/G/I/J'),
+    makeSlot('r32-14', resolveWinner('J'),   resolveRunnerUp('H')),
+    makeSlot('r32-15', resolveWinner('K'),   'Best 3rd D/E/I/J/L'),
+    makeSlot('r32-16', resolveRunnerUp('D'), resolveRunnerUp('G')),
   ]
-  const r16Slots: BracketSlot[] = Array.from({ length: 8 }, (_, i) => ({
-    id: `r16-${i+1}`, home: `Winner R32 ${i*2+1}`, away: `Winner R32 ${i*2+2}`, status: 'tbd' as const
-  }))
-  const qfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => ({
-    id: `qf-${i+1}`, home: `Winner R16 ${i*2+1}`, away: `Winner R16 ${i*2+2}`, status: 'tbd' as const
-  }))
-  const sfSlots: BracketSlot[] = Array.from({ length: 2 }, (_, i) => ({
-    id: `sf-${i+1}`, home: `Winner QF ${i*2+1}`, away: `Winner QF ${i*2+2}`, status: 'tbd' as const
-  }))
+
+  // ── Rounds beyond R32 — TBD; pull venue/kickoff from knockoutMatches ──────
+  const r16Slots: BracketSlot[] = Array.from({ length: 8 }, (_, i) => {
+    const id = `r16-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home: `W R32-${i * 2 + 1}`, away: `W R32-${i * 2 + 2}`, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
+  })
+
+  const qfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => {
+    const id = `qf-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home: `W R16-${i * 2 + 1}`, away: `W R16-${i * 2 + 2}`, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
+  })
+
+  const sfSlots: BracketSlot[] = Array.from({ length: 2 }, (_, i) => {
+    const id = `sf-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home: `W QF-${i * 2 + 1}`, away: `W QF-${i * 2 + 2}`, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
+  })
+
+  const km3rd   = knockoutMatches.find(k => k.id === '3rd-1')
+  const kmFinal = knockoutMatches.find(k => k.id === 'final-1')
+
   return [
     { name: "Round of 32",    matches: r32Slots },
     { name: "Round of 16",    matches: r16Slots },
     { name: "Quarter-Finals", matches: qfSlots },
     { name: "Semi-Finals",    matches: sfSlots },
-    { name: "Third Place",    matches: [{ id: "3rd", home: "SF Loser 1", away: "SF Loser 2", status: "tbd" }] },
-    { name: "Final",          matches: [{ id: "final", home: "SF Winner 1", away: "SF Winner 2", status: "tbd" }] },
+    { name: "Third Place",    matches: [{ id: "3rd-1",   home: "SF Loser 1",   away: "SF Loser 2",   kickoff: km3rd?.kickoff,   venue: km3rd?.venue,   status: "tbd" }] },
+    { name: "Final",          matches: [{ id: "final-1", home: "SF Winner 1",  away: "SF Winner 2",  kickoff: kmFinal?.kickoff, venue: kmFinal?.venue, status: "tbd" }] },
   ]
 }
 
