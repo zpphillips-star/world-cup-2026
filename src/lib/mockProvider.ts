@@ -311,7 +311,7 @@ function getBracket(): BracketRound[] {
   // A group is "complete" only when all 6 of its matches are finished
   function isGroupComplete(groupId: string): boolean {
     const gm = matches.filter(m => m.group === groupId)
-    return gm.length > 0 && gm.every(m => m.status === 'ft')
+    return gm.length === 6 && gm.every(m => m.status === 'ft')
   }
 
   // Resolve a winner slot: return real Team when group is done, else a clean label
