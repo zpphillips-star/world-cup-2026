@@ -2,10 +2,11 @@
 
 import { FlagImg } from '@/components/FlagImg'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import type { BracketSlot, Match } from '@/lib/types'
+import type { BracketSlot, Match, Team } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { applyLiveScores } from '@/lib/liveScores'
 import { getBracket } from '@/lib/mockProvider'
+import MatchCardSheet from '@/components/MatchCard'
 
 const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
 const ROUND_SHORT: Record<string, string> = {
@@ -20,11 +21,41 @@ const CARD_H = 60
 const CARD_W = 164
 const CONN_W = 28
 
-function isTeam(x: unknown): x is { id: string; name: string; flag: string } {
+function isTeam(x: unknown): x is Team {
   return typeof x === 'object' && x !== null
 }
 
-function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; isFinal?: boolean; matchLabel?: string }) {
+/** Convert a bracket slot's home/away into a Team, synthesising TBD ones. */
+function toTeam(val: Team | string): Team {
+  if (isTeam(val)) return val
+  return { id: 'tbd', name: val, flag: '🏳️' }
+}
+
+/** Convert a BracketSlot into a Match for the MatchCard sheet. */
+function slotToMatch(slot: BracketSlot, allMatches: Match[]): Match {
+  // Find the underlying knockout Match (same id) to grab venue / kickoff / round
+  const base = allMatches.find(m => m.id === slot.id)
+  const homeTeam = toTeam(slot.home)
+  const awayTeam = toTeam(slot.away)
+  return {
+    id: slot.id,
+    homeTeam,
+    awayTeam,
+    kickoff: slot.kickoff ?? base?.kickoff ?? new Date().toISOString(),
+    venue: slot.venue ?? base?.venue ?? { id: 'tbd', name: 'TBD', city: 'TBD', country: 'TBD', timezone: 'UTC' },
+    round: base?.round ?? 'Knockout',
+    status: slot.status === 'tbd' ? 'upcoming' : slot.status,
+    homeScore: slot.homeScore,
+    awayScore: slot.awayScore,
+  }
+}
+
+function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
+  slot: BracketSlot
+  isFinal?: boolean
+  matchLabel?: string
+  onClick?: () => void
+}) {
   const isTbd = slot.status === 'tbd'
   const hasScore = slot.status === 'ft' || slot.status === 'live'
 
@@ -34,9 +65,11 @@ function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; i
   const awayLabel = awayTeam ? awayTeam.name : (slot.away as string)
 
   return (
-    <div
+    <button
+      onClick={onClick}
       style={{ width: CARD_W, minWidth: CARD_W }}
-      className={`rounded-lg border text-[11px] overflow-hidden
+      className={`rounded-lg border text-[11px] overflow-hidden text-left w-full
+        active:scale-95 transition-transform focus:outline-none
         ${isFinal
           ? 'border-yellow-500/60 bg-gradient-to-br from-yellow-950/30 to-[#0d0d15] shadow-lg shadow-yellow-900/20'
           : isTbd
@@ -54,17 +87,23 @@ function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; i
         </div>
       )}
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {homeTeam && <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4" />}
+        {homeTeam
+          ? <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4" />
+          : <span className="text-base leading-none">🏳️</span>
+        }
         <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.homeScore ?? 0}</span>}
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {awayTeam && <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4" />}
+        {awayTeam
+          ? <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4" />
+          : <span className="text-base leading-none">🏳️</span>
+        }
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.awayScore ?? 0}</span>}
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -75,6 +114,9 @@ export default function BracketClient({ initialMatches }: { initialMatches: Matc
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
   const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Which bracket slot the user tapped — drives the sheet
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
   const fetchScores = useCallback(async () => {
     try {
@@ -108,6 +150,25 @@ export default function BracketClient({ initialMatches }: { initialMatches: Matc
     const liveMatches = applyLiveScores(initialMatches, liveScores, liveAliases)
     return getBracket(liveMatches)
   }, [initialMatches, liveScores, liveAliases])
+
+  // Flat ordered list of all knockout Match objects (for swipe navigation in the sheet)
+  const knockoutMatchList = useMemo<Match[]>(() => {
+    const allRounds = [...ROUND_ORDER, 'Third Place']
+    return allRounds
+      .flatMap(roundName => bracket.find(r => r.name === roundName)?.matches ?? [])
+      .map(slot => slotToMatch(slot, initialMatches))
+      .sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime())
+  }, [bracket, initialMatches])
+
+  // The Match that should open in the sheet right now
+  const selectedMatch = useMemo<Match | null>(() => {
+    if (!selectedSlotId) return null
+    // Re-derive from current bracket so live scores are reflected
+    const allSlots = bracket.flatMap(r => r.matches)
+    const slot = allSlots.find(s => s.id === selectedSlotId)
+    if (!slot) return null
+    return slotToMatch(slot, initialMatches)
+  }, [selectedSlotId, bracket, initialMatches])
 
   const toggleRound = (name: string) => {
     setActiveRounds(prev => {
@@ -203,7 +264,12 @@ export default function BracketClient({ initialMatches }: { initialMatches: Matc
                           key={slot.id}
                           style={{ height: slotH, display: 'flex', alignItems: 'center' }}
                         >
-                          <MatchCard slot={slot} isFinal={isFinalRound} matchLabel={label} />
+                          <SlotCard
+                            slot={slot}
+                            isFinal={isFinalRound}
+                            matchLabel={label}
+                            onClick={() => setSelectedSlotId(slot.id)}
+                          />
                         </div>
                       )
                     })}
@@ -262,10 +328,28 @@ export default function BracketClient({ initialMatches }: { initialMatches: Matc
         <div className="px-4 pb-8">
           <div className="bg-[#13131a] rounded-xl border border-zinc-800 p-3 max-w-[220px]">
             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">\U0001F949 Third Place</p>
-            <MatchCard slot={thirdPlace.matches[0]} />
+            <SlotCard
+              slot={thirdPlace.matches[0]}
+              onClick={() => setSelectedSlotId(thirdPlace.matches[0].id)}
+            />
           </div>
         </div>
+      )}
+
+      {/* Match detail sheet — opens when a bracket slot is tapped */}
+      {selectedMatch && (
+        <MatchCardSheet
+          key={selectedMatch.id}
+          match={selectedMatch}
+          defaultOpen
+          noRow
+          onCloseExternal={() => setSelectedSlotId(null)}
+          allMatches={knockoutMatchList}
+          allLiveData={liveScores}
+          allLiveAliases={liveAliases}
+        />
       )}
     </div>
   )
 }
+

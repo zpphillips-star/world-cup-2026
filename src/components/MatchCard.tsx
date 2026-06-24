@@ -145,6 +145,7 @@ export default function MatchCard({
   scorers,
   defaultOpen = false,
   onCloseExternal,
+  noRow = false,
   // swipe navigation
   allMatches,
   allStatsMap,
@@ -162,6 +163,7 @@ export default function MatchCard({
   scorers?: ScoringEvent[]
   defaultOpen?: boolean
   onCloseExternal?: () => void
+  noRow?: boolean
   allMatches?: Match[]
   allStatsMap?: Record<string, TeamStats | null>
   allStandingsMap?: Record<string, Standing[]>
@@ -234,51 +236,52 @@ export default function MatchCard({
 
   return (
     <>
-      {/* Match row */}
-      <div
-        className="flex items-center px-4 py-2 border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors cursor-pointer select-none"
-        onClick={() => setOpen(true)}
-      >
-        <div className="w-[80px] flex-shrink-0 flex flex-col items-start justify-center">
-          {isLive ? (
-            <>
-              <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase animate-pulse">LIVE</span>
-              {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
-            </>
-          ) : isFt ? (
-            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">FINAL</span>
-          ) : (
-            <span className="text-[12px] font-medium text-zinc-300 leading-snug whitespace-nowrap">
-              {time} <span className="text-[10px] text-zinc-500">{tzAbbr}</span>
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1 flex items-center min-w-0">
-          <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
-            <span className="text-[13px] font-semibold text-white truncate text-right">{match.homeTeam.name}</span>
-            <span className="flex-shrink-0">
-              <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4" />
-            </span>
-          </div>
-          <div className="w-12 flex-shrink-0 text-center">
-            {hasScore ? (
-              <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
-                {match.homeScore}–{match.awayScore}
-              </span>
+      {/* Match row — hidden when used as sheet-only (e.g. bracket tap) */}
+      {!noRow && (
+        <div
+          className="flex items-center px-4 py-2 border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors cursor-pointer select-none"
+          onClick={() => setOpen(true)}
+        >
+          <div className="w-[80px] flex-shrink-0 flex flex-col items-start justify-center">
+            {isLive ? (
+              <>
+                <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase animate-pulse">LIVE</span>
+                {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
+              </>
+            ) : isFt ? (
+              <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">FINAL</span>
             ) : (
-              <span className="text-[12px] font-medium text-zinc-400">vs</span>
+              <span className="text-[12px] font-medium text-zinc-300 leading-snug whitespace-nowrap">
+                {time} <span className="text-[10px] text-zinc-500">{tzAbbr}</span>
+              </span>
             )}
           </div>
-          <div className="flex-1 flex items-center gap-1.5 min-w-0">
-            <span className="flex-shrink-0">
-              <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4" />
-            </span>
-            <span className="text-[13px] font-semibold text-white truncate">{match.awayTeam.name}</span>
+
+          <div className="flex-1 flex items-center min-w-0">
+            <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
+              <span className="text-[13px] font-semibold text-white truncate text-right">{match.homeTeam.name}</span>
+              <span className="flex-shrink-0">
+                <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4" />
+              </span>
+            </div>
+            <div className="w-12 flex-shrink-0 text-center">
+              {hasScore ? (
+                <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
+                  {match.homeScore}–{match.awayScore}
+                </span>
+              ) : (
+                <span className="text-[12px] font-medium text-zinc-400">vs</span>
+              )}
+            </div>
+            <div className="flex-1 flex items-center gap-1.5 min-w-0">
+              <span className="flex-shrink-0">
+                <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4" />
+              </span>
+              <span className="text-[13px] font-semibold text-white truncate">{match.awayTeam.name}</span>
+            </div>
           </div>
         </div>
-
-      </div>
+      )}
 
       {/* Slide-up sheet */}
       {open && (
