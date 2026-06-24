@@ -379,7 +379,6 @@ export default function ScheduleClient({
                     groupStandings={match.group ? effectiveStandingsMap[match.group] : undefined}
                     groupMatches={match.group ? liveMatches.filter(m => m.group === match.group) : undefined}
                     clock={liveData?.clock}
-                    scorers={liveData?.scorers}
                     allMatches={sortedMatches}
                     allStatsMap={statsMap}
                     allStandingsMap={effectiveStandingsMap}
