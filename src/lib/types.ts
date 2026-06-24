@@ -77,7 +77,7 @@ export interface DataProvider {
   getMatch(id: string): Match | null
   getGroups(): Group[]
   getStandings(): Record<string, Standing[]>
-  getBracket(): BracketRound[]
+  getBracket(liveGroupMatches?: Match[]): BracketRound[]
   getTeam(id: string): Team | null
   getTeamStats(teamId: string): TeamStats | null
 }

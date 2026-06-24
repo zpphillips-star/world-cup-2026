@@ -263,7 +263,7 @@ const knockoutMatches: Match[] = [
   { id: "final-1", homeTeam: tbd("SF Winner 1"), awayTeam: tbd("SF Winner 2"), kickoff: "2026-07-19T23:00:00Z", venue: venues.metlife, round: "Final", status: "upcoming" },
 ]
 
-function computeStandings(groupId: string): Standing[] {
+function computeStandings(groupId: string, src: Match[] = matches): Standing[] {
   const groupTeamIds = Object.values(teams)
     .filter(t => t.group === groupId)
     .map(t => t.id)
@@ -277,7 +277,7 @@ function computeStandings(groupId: string): Standing[] {
     }
   }
 
-  const groupMatches = matches.filter(m => m.group === groupId && m.status === "ft")
+  const groupMatches = src.filter(m => m.group === groupId && m.status === "ft")
   for (const m of groupMatches) {
     const h = standingMap[m.homeTeam.id]
     const a = standingMap[m.awayTeam.id]
@@ -301,16 +301,19 @@ function computeStandings(groupId: string): Standing[] {
   )
 }
 
-function getBracket(): BracketRound[] {
+export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
+  // Use live matches when provided, otherwise fall back to static mock data
+  const src = liveGroupMatches ?? matches
+
   // ── Compute current standings for all groups ──────────────────────────────
   const allStandings: Record<string, Standing[]> = {}
   for (const gid of ["A","B","C","D","E","F","G","H","I","J","K","L"]) {
-    allStandings[gid] = computeStandings(gid)
+    allStandings[gid] = computeStandings(gid, src)
   }
 
   // A group is "complete" only when all 6 of its matches are finished
   function isGroupComplete(groupId: string): boolean {
-    const gm = matches.filter(m => m.group === groupId)
+    const gm = src.filter(m => m.group === groupId)
     return gm.length === 6 && gm.every(m => m.status === 'ft')
   }
 

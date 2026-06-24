@@ -1,8 +1,11 @@
 'use client'
 
 import { FlagImg } from '@/components/FlagImg'
-import { useState } from 'react'
-import type { BracketRound, BracketSlot } from '@/lib/types'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import type { BracketSlot, Match } from '@/lib/types'
+import type { ScoreUpdate } from '@/app/api/live-scores/route'
+import { applyLiveScores } from '@/lib/liveScores'
+import { getBracket } from '@/lib/mockProvider'
 
 const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
 const ROUND_SHORT: Record<string, string> = {
@@ -65,8 +68,46 @@ function MatchCard({ slot, isFinal = false, matchLabel }: { slot: BracketSlot; i
   )
 }
 
-export default function BracketClient({ bracket }: { bracket: BracketRound[] }) {
+export default function BracketClient({ initialMatches }: { initialMatches: Match[] }) {
   const [activeRounds, setActiveRounds] = useState<Set<string>>(new Set(['Round of 32']))
+  const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
+  const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
+  const liveScoresRef = useRef(liveScores)
+  useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+  const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const fetchScores = useCallback(async () => {
+    try {
+      const res = await fetch('/api/live-scores')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveScores(data.scores ?? {})
+      setLiveAliases(data.aliases ?? {})
+    } catch { /* fail silently */ }
+  }, [])
+
+  useEffect(() => {
+    fetchScores()
+    scoresIntervalRef.current = setInterval(fetchScores, 30_000)
+    // Adaptive polling: 2s when live, 30s otherwise
+    const adaptivePoller = setInterval(() => {
+      const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
+      const rate = hasLive ? 2_000 : 30_000
+      if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      scoresIntervalRef.current = setInterval(fetchScores, rate)
+    }, 5_000)
+    return () => {
+      if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      clearInterval(adaptivePoller)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Apply live scores to group-stage matches and recompute the bracket
+  const bracket = useMemo(() => {
+    const liveMatches = applyLiveScores(initialMatches, liveScores, liveAliases)
+    return getBracket(liveMatches)
+  }, [initialMatches, liveScores, liveAliases])
 
   const toggleRound = (name: string) => {
     setActiveRounds(prev => {
