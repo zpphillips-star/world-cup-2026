@@ -107,7 +107,11 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
   )
 }
 
-export default function BracketClient({ initialMatches }: { initialMatches: Match[] }) {
+export default function BracketClient({ initialMatches, statsMap = {}, standingsMap = {} }: {
+  initialMatches: Match[]
+  statsMap?: Record<string, import('@/lib/types').TeamStats | null>
+  standingsMap?: Record<string, import('@/lib/types').Standing[]>
+}) {
   const [activeRounds, setActiveRounds] = useState<Set<string>>(new Set(['Round of 32']))
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
@@ -347,6 +351,10 @@ export default function BracketClient({ initialMatches }: { initialMatches: Matc
           allMatches={knockoutMatchList}
           allLiveData={liveScores}
           allLiveAliases={liveAliases}
+          homeStats={statsMap[selectedMatch.homeTeam.id] ?? null}
+          awayStats={statsMap[selectedMatch.awayTeam.id] ?? null}
+          allStatsMap={statsMap}
+          allStandingsMap={standingsMap}
         />
       )}
     </div>
