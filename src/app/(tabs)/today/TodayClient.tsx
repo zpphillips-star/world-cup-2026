@@ -8,6 +8,7 @@ import MatchCard from '@/components/MatchCard'
 import { FlagImg } from '@/components/FlagImg'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { resolveKnockoutTeams } from '@/lib/mockProvider'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // ── Featured match card ───────────────────────────────────────────────────────
@@ -268,7 +269,7 @@ export default function TodayClient({
   }, [fetchScores, fetchStandings])
 
   const liveMatches = useMemo(
-    () => applyLiveScores(matches, liveScores, liveAliases),
+    () => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)),
     [matches, liveScores, liveAliases]
   )
 

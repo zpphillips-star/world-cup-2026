@@ -411,6 +411,37 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// KNOCKOUT TEAM RESOLVER — replaces TBD placeholders with real teams once
+// a group is complete (all 6 matches finished). Used by Schedule, Calendar,
+// and Today tabs so they show "Switzerland" instead of "1st Group B".
+// ─────────────────────────────────────────────────────────────────────────────
+export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
+  // Build completed group standings
+  const allStandings: Record<string, Standing[]> = {}
+  for (const gid of ["A","B","C","D","E","F","G","H","I","J","K","L"]) {
+    const groupSrc = allLiveMatches.filter(m => m.group === gid)
+    if (groupSrc.length === 6 && groupSrc.every(m => m.status === 'ft')) {
+      allStandings[gid] = computeStandings(gid, allLiveMatches)
+    }
+  }
+
+  function resolveTeam(team: Team): Team {
+    const id = team.id
+    const w = id.match(/^1st-group-([a-l])$/)
+    if (w) return allStandings[w[1].toUpperCase()]?.[0]?.team ?? team
+    const r = id.match(/^2nd-group-([a-l])$/)
+    if (r) return allStandings[r[1].toUpperCase()]?.[1]?.team ?? team
+    return team
+  }
+
+  return allLiveMatches.map(m => {
+    const needsResolve = (t: Team) => /^(1st|2nd)-group-[a-l]$/.test(t.id)
+    if (!needsResolve(m.homeTeam) && !needsResolve(m.awayTeam)) return m
+    return { ...m, homeTeam: resolveTeam(m.homeTeam), awayTeam: resolveTeam(m.awayTeam) }
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // TEAM STATS — Historical World Cup records
 // FIFA Rankings as of November 2025 (used for draw seeding)
 // ─────────────────────────────────────────────────────────────────────────────

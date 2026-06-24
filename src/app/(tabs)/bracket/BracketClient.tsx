@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import type { BracketSlot, Match, Team } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { applyLiveScores } from '@/lib/liveScores'
-import { getBracket } from '@/lib/mockProvider'
+import { getBracket, resolveKnockoutTeams } from '@/lib/mockProvider'
 import MatchCardSheet from '@/components/MatchCard'
 
 const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
@@ -151,7 +151,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
 
   // Apply live scores to group-stage matches and recompute the bracket
   const bracket = useMemo(() => {
-    const liveMatches = applyLiveScores(initialMatches, liveScores, liveAliases)
+    const liveMatches = resolveKnockoutTeams(applyLiveScores(initialMatches, liveScores, liveAliases))
     return getBracket(liveMatches)
   }, [initialMatches, liveScores, liveAliases])
 

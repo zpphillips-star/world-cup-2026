@@ -8,6 +8,7 @@ import type { Match, TeamStats, Standing } from '@/lib/types'
 import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { resolveKnockoutTeams } from '@/lib/mockProvider'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 function getLocalDateKey(kickoff: string, timezone: string): string {
@@ -288,7 +289,7 @@ export default function ScheduleClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => applyLiveScores(matches, liveScores, liveAliases), [matches, liveScores, liveAliases])
+  const liveMatches = useMemo(() => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)), [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])

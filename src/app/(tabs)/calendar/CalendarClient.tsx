@@ -8,6 +8,7 @@ import { FlagImg } from '@/components/FlagImg'
 import { Backdrop } from '@/components/Backdrop'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
+import { resolveKnockoutTeams } from '@/lib/mockProvider'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // ── Compact match preview card for the calendar day sheet ──────────────────
@@ -243,7 +244,7 @@ export default function CalendarClient({
 
   // Fix #8: wrap in useMemo so these don't recompute on every render
   const liveMatches = useMemo(
-    () => applyLiveScores(matches, liveScores, liveAliases),
+    () => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)),
     [matches, liveScores, liveAliases]
   )
   const sortedLiveMatches = useMemo(
