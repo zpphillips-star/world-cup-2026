@@ -24,7 +24,7 @@ import { FlagImg } from '@/components/FlagImg'
 
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex flex-col items-center gap-1 bg-[#0d0d15] rounded-xl px-2 py-2.5 min-w-0">
+    <div className="flex flex-col items-center gap-1 bg-[#0d0d15] rounded-md px-2 py-2.5 min-w-0">
       <span className="text-[18px] font-bold text-white tabular-nums leading-none">{value}</span>
       <span className="text-[10px] text-zinc-500 uppercase tracking-widest leading-none">{label}</span>
     </div>
@@ -78,7 +78,7 @@ function GroupTable({ groupId, standings, highlightIds }: {
       <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-3 text-center">
         Group {groupId} Standings
       </p>
-      <div className="rounded-2xl overflow-hidden border border-zinc-800">
+      <div className="rounded-lg overflow-hidden border border-zinc-800">
         {/* Header */}
         <div className="grid bg-zinc-800/60 px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-widest"
           style={{ gridTemplateColumns: '1fr 20px 20px 20px 20px 24px 24px 28px' }}>
@@ -308,7 +308,7 @@ export default function MatchCard({
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
 
           <div
-            className={`fixed bottom-0 left-0 right-0 z-[70] max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
+            className={`fixed bottom-0 left-0 right-0 z-[70] max-h-[88vh] flex flex-col rounded-t-lg overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'}`}
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

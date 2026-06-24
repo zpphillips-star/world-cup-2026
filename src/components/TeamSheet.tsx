@@ -113,7 +113,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
 
       {/* Sheet */}
       <div
-        className={`fixed bottom-0 left-0 right-0 ${panelZ} max-h-[88vh] flex flex-col rounded-t-3xl overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
+        className={`fixed bottom-0 left-0 right-0 ${panelZ} max-h-[88vh] flex flex-col rounded-t-lg overflow-hidden ${closing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         onClick={e => e.stopPropagation()}
       >
@@ -154,7 +154,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           {myStanding && (
             <div>
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Group {team.group} Standing</p>
-              <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 grid grid-cols-7 text-center text-sm gap-1">
+              <div className="bg-[#1a1a24] rounded-lg px-4 py-3 grid grid-cols-7 text-center text-sm gap-1">
                 {[
                   { label: 'P', val: myStanding.played },
                   { label: 'W', val: myStanding.won },
@@ -189,7 +189,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
                 const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
 
                 return (
-                  <div key={m.id} className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
                     <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
@@ -217,7 +217,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           {stats && (
             <div>
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">All-Time World Cup Record</p>
-              <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 grid grid-cols-4 text-center gap-1">
+              <div className="bg-[#1a1a24] rounded-lg px-4 py-3 grid grid-cols-4 text-center gap-1">
                 {[
                   { label: 'W', val: stats.wcWins },
                   { label: 'D', val: stats.wcDraws },

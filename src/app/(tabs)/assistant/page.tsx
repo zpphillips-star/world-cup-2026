@@ -122,7 +122,7 @@ export default function AssistantPage() {
         <div className="px-4 mb-6 space-y-2">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed
+              <div className={`max-w-[80%] rounded-lg px-4 py-2.5 text-sm leading-relaxed
                 ${msg.role === 'user'
                   ? 'bg-[#00d4ff] text-[#0a0a0f] font-medium rounded-br-sm'
                   : 'bg-[#1a1a24] text-white shadow-lg shadow-black/40 rounded-bl-sm'
@@ -133,7 +133,7 @@ export default function AssistantPage() {
           ))}
           {thinking && (
             <div className="flex justify-start">
-              <div className="bg-[#1a1a24] rounded-2xl rounded-bl-sm px-4 py-3 text-gray-500 text-sm shadow-lg shadow-black/40">
+              <div className="bg-[#1a1a24] rounded-lg rounded-bl-sm px-4 py-3 text-gray-500 text-sm shadow-lg shadow-black/40">
                 Thinking…
               </div>
             </div>
@@ -145,14 +145,14 @@ export default function AssistantPage() {
       <div className="px-4 mb-6">
         <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3">{"Today's Matches"}</p>
         {todayMatches.length === 0 ? (
-          <div className="bg-[#13131a] rounded-2xl p-4 text-center text-gray-500 text-sm">No matches today</div>
+          <div className="bg-[#13131a] rounded-lg p-4 text-center text-gray-500 text-sm">No matches today</div>
         ) : (
           <div className="space-y-2">
             {todayMatches.map(m => {
               const home = typeof m.homeTeam === 'object' ? m.homeTeam : { id: '', name: String(m.homeTeam), flag: '🏆' }
               const away = typeof m.awayTeam === 'object' ? m.awayTeam : { id: '', name: String(m.awayTeam), flag: '🏆' }
               return (
-                <div key={m.id} className="bg-[#1a1a24] rounded-2xl px-4 py-3 shadow-lg shadow-black/40">
+                <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 shadow-lg shadow-black/40">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <FlagImg teamId={home.id} fallback={home.flag} className="h-6" />
@@ -180,7 +180,7 @@ export default function AssistantPage() {
         <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3">Tournament at a Glance</p>
         <div className="grid grid-cols-3 gap-2">
           {STATS.map(s => (
-            <div key={s.label} className="bg-[#1a1a24] rounded-2xl p-3 text-center shadow-lg shadow-black/40">
+            <div key={s.label} className="bg-[#1a1a24] rounded-lg p-3 text-center shadow-lg shadow-black/40">
               <div className="text-xl font-black text-white">{s.value}</div>
               <div className="text-[10px] text-gray-500 mt-0.5">{s.label}</div>
             </div>
@@ -196,7 +196,7 @@ export default function AssistantPage() {
             <button
               key={i}
               onClick={() => setOpenFaq(openFaq === i ? null : i)}
-              className="w-full text-left bg-[#1a1a24] rounded-2xl px-4 py-3.5 shadow-lg shadow-black/40 active:scale-[0.98] transition-transform"
+              className="w-full text-left bg-[#1a1a24] rounded-lg px-4 py-3.5 shadow-lg shadow-black/40 active:scale-[0.98] transition-transform"
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-white">{faq.q}</span>
@@ -234,7 +234,7 @@ export default function AssistantPage() {
         </div>
 
         {/* Input row */}
-        <div className="flex items-center gap-2 bg-[#16161f] border border-white/15 rounded-2xl px-4 py-3 shadow-xl shadow-black/60 focus-within:border-[#00d4ff]/50 focus-within:shadow-[0_0_0_1px_rgba(0,212,255,0.15)] transition-all">
+        <div className="flex items-center gap-2 bg-[#16161f] border border-white/15 rounded-lg px-4 py-3 shadow-xl shadow-black/60 focus-within:border-[#00d4ff]/50 focus-within:shadow-[0_0_0_1px_rgba(0,212,255,0.15)] transition-all">
           {/* Bot avatar */}
           <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#0077ff] flex items-center justify-center flex-shrink-0 mr-0.5">
             <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -252,7 +252,7 @@ export default function AssistantPage() {
           <button
             onClick={() => send(input)}
             disabled={!input.trim()}
-            className="w-9 h-9 rounded-xl bg-[#00d4ff] flex items-center justify-center text-[#0a0a0f] disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0 transition-all active:scale-90 shadow-md shadow-[#00d4ff]/20"
+            className="w-9 h-9 rounded-md bg-[#00d4ff] flex items-center justify-center text-[#0a0a0f] disabled:opacity-25 disabled:cursor-not-allowed flex-shrink-0 transition-all active:scale-90 shadow-md shadow-[#00d4ff]/20"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />

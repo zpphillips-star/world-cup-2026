@@ -54,7 +54,7 @@ function DayMatchCard({
         className="w-full text-left active:scale-[0.97] transition-transform mb-3"
       >
         <div
-          className="rounded-2xl overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{
             background: 'linear-gradient(160deg, #0a1628 0%, #13131a 100%)',
             border: '1px solid rgba(255,255,255,0.07)',
@@ -396,7 +396,7 @@ export default function CalendarClient({
         <>
           <Backdrop onDismiss={handleCloseDaySheet} zIndex="z-[55]" bg="bg-black/60" />
           <div
-            className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-3xl overflow-hidden ${daySheetClosing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
+            className={`fixed bottom-0 left-0 right-0 z-[60] max-h-[86vh] flex flex-col rounded-t-lg overflow-hidden ${daySheetClosing ? 'animate-slide-down' : 'animate-slide-up'} bg-[#0f0f18]`}
             onTouchStart={handleSheetTouchStart}
             onTouchEnd={handleSheetTouchEnd}
             onClick={e => e.stopPropagation()}
