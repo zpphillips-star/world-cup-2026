@@ -242,7 +242,7 @@ export default function MatchCard({
         <div className="w-[80px] flex-shrink-0 flex flex-col items-start justify-center">
           {isLive ? (
             <>
-              <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase">LIVE</span>
+              <span className="text-[11px] font-bold tracking-widest text-red-500 uppercase animate-pulse">LIVE</span>
               {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
             </>
           ) : isFt ? (
@@ -336,7 +336,7 @@ export default function MatchCard({
                       </span>
                       {isLive && currentClock && (
                         <div className="flex items-center gap-1 mt-0.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                          <span className="text-[13px] font-bold text-red-500 animate-pulse">LIVE</span>
                           <span className="text-[13px] font-bold text-red-400">{currentClock}</span>
                         </div>
                       )}
