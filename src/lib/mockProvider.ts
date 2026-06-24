@@ -316,7 +316,7 @@ function getBracket(): BracketRound[] {
 
   // Resolve a winner slot: return real Team when group is done, else a clean label
   function resolveWinner(groupId: string): Team | string {
-    const label = `W Group ${groupId}`
+    const label = `1st Group ${groupId}`
     if (!isGroupComplete(groupId)) return label
     return allStandings[groupId]?.[0]?.team ?? label
   }
