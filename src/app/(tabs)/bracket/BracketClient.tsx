@@ -28,7 +28,7 @@ function isTeam(x: unknown): x is Team {
 /** Convert a bracket slot's home/away into a Team, synthesising TBD ones. */
 function toTeam(val: Team | string): Team {
   if (isTeam(val)) return val
-  return { id: 'tbd', name: val, flag: '🏳️' }
+  return { id: 'tbd', name: val, flag: '' }
 }
 
 /** Convert a BracketSlot into a Match for the MatchCard sheet. */
@@ -89,7 +89,7 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
         {homeTeam
           ? <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4" />
-          : <span className="text-base leading-none">🏳️</span>
+          : null
         }
         <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.homeScore ?? 0}</span>}
@@ -98,7 +98,7 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
         {awayTeam
           ? <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4" />
-          : <span className="text-base leading-none">🏳️</span>
+          : null
         }
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
         {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.awayScore ?? 0}</span>}
