@@ -141,22 +141,6 @@ function LiveNowSheet({
                   </div>
                 </div>
 
-                {/* Goal scorers + red cards — name always centered, ball left for home / right for away */}
-                {(liveData?.scorers?.length ?? 0) > 0 && (
-                  <div className="border-t border-zinc-800 mx-4 pt-2.5 pb-2 flex flex-col gap-1">
-                    {(liveData?.scorers ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((e, i) => (
-                      <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
-                        <span className="text-[11px] text-zinc-300 text-right leading-none">
-                          {e.teamSide === 'home' && <span>{e.playerName}</span>}
-                        </span>
-                        <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{e.minute}</span>
-                        <span className="text-[11px] text-zinc-300 text-left leading-none">
-                          {e.teamSide === 'away' && <span>{e.playerName}</span>}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
 
                 {(liveData?.redCards?.length ?? 0) > 0 && (
                   <div className="border-t border-zinc-800 mx-4 pt-2 pb-3 flex flex-col gap-1">
