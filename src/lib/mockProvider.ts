@@ -510,10 +510,11 @@ const teamStats: Record<string, TeamStats> = {
 
 /**
  * Resolves TBD group-position slots in knockout matches to real teams using
- * current standings.  Slots that can't be resolved yet (e.g. "Winner R32 M1")
+ * pre-computed standings.  Useful for showing speculative knockout assignments
+ * before groups are complete.  Slots that can't be resolved (e.g. "Winner R32 M1")
  * are left as-is.
  */
-export function resolveKnockoutTeams(
+export function resolveKnockoutTeamsFromStandings(
   standings: Record<string, Standing[]>
 ): Match[] {
   // Build "1st Group X" / "2nd Group X" / "3rd Group X" → real team map

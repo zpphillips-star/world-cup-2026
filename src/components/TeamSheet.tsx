@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { mockProvider, resolveKnockoutTeams } from '@/lib/mockProvider'
+import { mockProvider, resolveKnockoutTeamsFromStandings } from '@/lib/mockProvider'
 import { FlagImg } from '@/components/FlagImg'
 import type { Team, Standing, Match } from '@/lib/types'
 import { Backdrop } from '@/components/Backdrop'
@@ -51,9 +51,11 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
 
-  // Resolve knockout TBD slots and filter to matches this team is in
+  // Resolve knockout TBD slots using current standings, then filter to matches this team is in.
+  // resolveKnockoutTeamsFromStandings works pre-tournament (0-pt standings) so the section is
+  // always visible with the current projected opponent.
   const allStandings = mockProvider.getStandings()
-  const resolvedKnockout = resolveKnockoutTeams(allStandings)
+  const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
   )

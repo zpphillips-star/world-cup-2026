@@ -115,8 +115,10 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
   const [activeRounds, setActiveRounds] = useState<Set<string>>(new Set(['Round of 32']))
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
+  const [userTimezone, setUserTimezone] = useState('UTC')
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+  useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
   const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Which bracket slot the user tapped — drives the sheet
@@ -345,6 +347,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
         <MatchCardSheet
           key={selectedMatch.id}
           match={selectedMatch}
+          userTimezone={userTimezone}
           defaultOpen
           noRow
           onCloseExternal={() => setSelectedSlotId(null)}

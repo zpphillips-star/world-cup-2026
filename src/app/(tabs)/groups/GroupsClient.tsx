@@ -310,8 +310,10 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   const [standings, setStandings] = useState<Record<string, Standing[]>>(baseStandings)
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
+  const [userTimezone, setUserTimezone] = useState('UTC')
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
+  useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
   // Track scores interval via ref so cleanup always captures the latest ID (fix interval leak)
   const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -408,6 +410,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
       {selectedMatch && (
         <MatchCard
           match={selectedMatch}
+          userTimezone={userTimezone}
           homeStats={statsMap[selectedMatch.homeTeam.id]}
           awayStats={statsMap[selectedMatch.awayTeam.id]}
           groupStandings={selectedMatch.group ? effectiveStandings[selectedMatch.group] : undefined}
