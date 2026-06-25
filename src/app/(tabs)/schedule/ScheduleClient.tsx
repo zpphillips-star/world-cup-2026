@@ -183,7 +183,7 @@ function LiveNowSheet({
             userTimezone={userTimezone}
             homeStats={statsMap[selectedMatch.homeTeam.id]}
             awayStats={statsMap[selectedMatch.awayTeam.id]}
-            groupStandings={selectedMatch.group ? standingsMap[selectedMatch.group] : undefined}
+            groupStandings={selectedMatch.group ? effectiveStandingsMap[selectedMatch.group] : undefined}
             groupMatches={selectedMatch.group ? liveMatches.filter(m => m.group === selectedMatch.group) : undefined}
             clock={liveData?.clock}
             scorers={liveData?.scorers}
@@ -191,7 +191,7 @@ function LiveNowSheet({
             onCloseExternal={() => setSelectedMatch(null)}
             allMatches={allMatchesSorted}
             allStatsMap={statsMap}
-            allStandingsMap={standingsMap}
+            allStandingsMap={effectiveStandingsMap}
             allLiveData={liveScores}
             allLiveAliases={liveAliases}
           />

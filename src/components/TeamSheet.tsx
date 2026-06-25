@@ -62,10 +62,15 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   // When live standings are provided (standingsProp), merge them into the base standings so that
   // resolved positions (e.g. "1st Group B" → Switzerland) use actual results, not mock 0-pt data
   // where all teams tie and insertion order decides.
+  // Use allStandingsMap (full live standings for ALL groups) as the base so every group resolves
+  // correctly, not just the current team's group. Then override the current team's group with the
+  // most specific standings we have (standingsProp or allStandingsMap fallback).
   const baseStandings = mockProvider.getStandings()
-  const allStandings = team.group && standings.length > 0
-    ? { ...baseStandings, [team.group]: standings }
-    : baseStandings
+  const allStandings = {
+    ...baseStandings,
+    ...(allStandingsMap ?? {}),
+    ...(team.group && standings.length > 0 ? { [team.group]: standings } : {}),
+  }
   const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
