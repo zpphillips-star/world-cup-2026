@@ -14,6 +14,8 @@ interface Props {
   standings?: Standing[]
   /** Live group matches with scores applied — if provided, overrides mockProvider */
   groupMatches?: Match[]
+  /** Full standings map — fallback for bracket tab where the match has no group field */
+  allStandingsMap?: Record<string, Standing[]>
   /**
    * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
    * (e.g. opened from inside MatchCard). Higher layer = higher z-indexes so the
@@ -34,7 +36,7 @@ function formatKickoff(iso: string, tz: string) {
   } catch { return '—' }
 }
 
-export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, layer = 2 }: Props) {
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, layer = 2 }: Props) {
   // z-index values depend on which layer this sheet occupies
   // L2 (e.g. from GroupSheet): backdrop z-50 | panel z-60 | strip z-70
   // L3 (e.g. from MatchCard):  backdrop z-75 | panel z-80 | strip z-85
@@ -46,7 +48,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
     m.group && (m.homeTeam.id === team.id || m.awayTeam.id === team.id)
   )
-  const standings = standingsProp ?? (team.group ? mockProvider.getStandings()[team.group] ?? [] : [])
+  const standings = standingsProp ?? (team.group ? (allStandingsMap?.[team.group] ?? mockProvider.getStandings()[team.group] ?? []) : [])
   const myStanding = standings.find(s => s.team.id === team.id)
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
@@ -56,8 +58,8 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   // resolved positions (e.g. "1st Group B" → Switzerland) use actual results, not mock 0-pt data
   // where all teams tie and insertion order decides.
   const baseStandings = mockProvider.getStandings()
-  const allStandings = team.group && standingsProp
-    ? { ...baseStandings, [team.group]: standingsProp }
+  const allStandings = team.group && standings.length > 0
+    ? { ...baseStandings, [team.group]: standings }
     : baseStandings
   const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
