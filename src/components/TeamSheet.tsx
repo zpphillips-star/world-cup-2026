@@ -52,9 +52,13 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const stats = mockProvider.getTeamStats(team.id)
 
   // Resolve knockout TBD slots using current standings, then filter to matches this team is in.
-  // resolveKnockoutTeamsFromStandings works pre-tournament (0-pt standings) so the section is
-  // always visible with the current projected opponent.
-  const allStandings = mockProvider.getStandings()
+  // When live standings are provided (standingsProp), merge them into the base standings so that
+  // resolved positions (e.g. "1st Group B" → Switzerland) use actual results, not mock 0-pt data
+  // where all teams tie and insertion order decides.
+  const baseStandings = mockProvider.getStandings()
+  const allStandings = team.group && standingsProp
+    ? { ...baseStandings, [team.group]: standingsProp }
+    : baseStandings
   const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
@@ -62,9 +66,14 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
 
   // Determine if this team's group stage is finished — needed to decide whether
   // to show elimination / pending status messages.
+  // Primary check: all 6 group matches are 'ft' in the provided match data.
+  // Fallback: live standings show this team played 3 matches (= group stage complete) — handles
+  // tabs like Today/Calendar where liveMatches only contains today's games, not historical ones.
   const srcMatches = groupMatchesProp ?? allMockMatches
   const allGroupMatches = team.group ? srcMatches.filter(m => m.group === team.group) : []
-  const isGroupComplete = allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')
+  const isGroupComplete =
+    (allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')) ||
+    (myStanding?.played === 3)
 
   const [closing, setClosing] = useState(false)
   const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
