@@ -508,6 +508,29 @@ const teamStats: Record<string, TeamStats> = {
   ghana:         { fifaRank: 72, worldCupAppearances: 4,  wcWins: 4,  wcDraws: 4,  wcLosses: 6,  wcGoalsFor: 13,  wcGoalsAgainst: 23,  bestFinish: "QF (2010)" },
 }
 
+/**
+ * Resolves TBD group-position slots in knockout matches to real teams using
+ * current standings.  Slots that can't be resolved yet (e.g. "Winner R32 M1")
+ * are left as-is.
+ */
+export function resolveKnockoutTeams(
+  standings: Record<string, Standing[]>
+): Match[] {
+  // Build "1st Group X" / "2nd Group X" / "3rd Group X" → real team map
+  const posMap: Record<string, Team> = {}
+  for (const [groupId, rows] of Object.entries(standings)) {
+    if (rows[0]) posMap[`1st Group ${groupId}`] = rows[0].team
+    if (rows[1]) posMap[`2nd Group ${groupId}`] = rows[1].team
+    if (rows[2]) posMap[`3rd Group ${groupId}`] = rows[2].team
+  }
+
+  return knockoutMatches.map(m => ({
+    ...m,
+    homeTeam: posMap[m.homeTeam.name] ?? m.homeTeam,
+    awayTeam: posMap[m.awayTeam.name] ?? m.awayTeam,
+  }))
+}
+
 export const mockProvider: DataProvider = {
   getMatches() {
     return [...matches, ...knockoutMatches]

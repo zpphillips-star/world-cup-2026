@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { mockProvider } from '@/lib/mockProvider'
+import { mockProvider, resolveKnockoutTeams } from '@/lib/mockProvider'
 import { FlagImg } from '@/components/FlagImg'
 import type { Team, Standing, Match } from '@/lib/types'
 import { Backdrop } from '@/components/Backdrop'
@@ -50,6 +50,13 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const myStanding = standings.find(s => s.team.id === team.id)
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
+
+  // Resolve knockout TBD slots and filter to matches this team is in
+  const allStandings = mockProvider.getStandings()
+  const resolvedKnockout = resolveKnockoutTeams(allStandings)
+  const myKnockoutMatches = resolvedKnockout.filter(m =>
+    m.homeTeam.id === team.id || m.awayTeam.id === team.id
+  )
 
   const [closing, setClosing] = useState(false)
   const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -212,6 +219,47 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               })}
             </div>
           </div>
+
+          {/* Knockout Stage */}
+          {myKnockoutMatches.length > 0 && (
+            <div>
+              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Knockout Stage</p>
+              <div className="space-y-2">
+                {myKnockoutMatches.sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()).map(m => {
+                  const isHome = m.homeTeam.id === team.id
+                  const opponent = isHome ? m.awayTeam : m.homeTeam
+                  const myScore = m.status === 'ft' ? (isHome ? m.homeScore : m.awayScore) : null
+                  const oppScore = m.status === 'ft' ? (isHome ? m.awayScore : m.homeScore) : null
+                  const won = myScore != null && oppScore != null && myScore > oppScore
+                  const drew = myScore != null && oppScore != null && myScore === oppScore
+                  const lost = myScore != null && oppScore != null && myScore < oppScore
+                  const resultColor = won ? 'text-emerald-400' : drew ? 'text-yellow-400' : lost ? 'text-red-400' : 'text-zinc-400'
+                  const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
+
+                  return (
+                    <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
+                      <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
+                        <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
+                        <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wide">{m.round}</p>
+                      </div>
+                      {m.status === 'ft' && myScore != null && (
+                        <div className="text-right flex-shrink-0">
+                          <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
+                          <span className="text-sm text-white ml-1.5">{myScore}–{oppScore}</span>
+                        </div>
+                      )}
+                      {m.status === 'live' && (
+                        <span className="text-xs font-bold text-red-400 animate-pulse flex-shrink-0">LIVE</span>
+                      )}
+                      {m.status === 'upcoming' && null}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* All-time stats */}
           {stats && (
