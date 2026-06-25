@@ -60,6 +60,12 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
   )
 
+  // Determine if this team's group stage is finished — needed to decide whether
+  // to show elimination / pending status messages.
+  const srcMatches = groupMatchesProp ?? allMockMatches
+  const allGroupMatches = team.group ? srcMatches.filter(m => m.group === team.group) : []
+  const isGroupComplete = allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')
+
   const [closing, setClosing] = useState(false)
   const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -223,43 +229,67 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           </div>
 
           {/* Knockout Stage */}
-          {myKnockoutMatches.length > 0 && (
+          {/* Only show once the group is fully played out */}
+          {isGroupComplete && team.group && groupPos > 0 && (
             <div>
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Knockout Stage</p>
-              <div className="space-y-2">
-                {myKnockoutMatches.sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()).map(m => {
-                  const isHome = m.homeTeam.id === team.id
-                  const opponent = isHome ? m.awayTeam : m.homeTeam
-                  const myScore = m.status === 'ft' ? (isHome ? m.homeScore : m.awayScore) : null
-                  const oppScore = m.status === 'ft' ? (isHome ? m.awayScore : m.homeScore) : null
-                  const won = myScore != null && oppScore != null && myScore > oppScore
-                  const drew = myScore != null && oppScore != null && myScore === oppScore
-                  const lost = myScore != null && oppScore != null && myScore < oppScore
-                  const resultColor = won ? 'text-emerald-400' : drew ? 'text-yellow-400' : lost ? 'text-red-400' : 'text-zinc-400'
-                  const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
 
-                  return (
-                    <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
-                      <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
-                        <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
-                        <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wide">{m.round}</p>
-                      </div>
-                      {m.status === 'ft' && myScore != null && (
-                        <div className="text-right flex-shrink-0">
-                          <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
-                          <span className="text-sm text-white ml-1.5">{myScore}–{oppScore}</span>
+              {/* 1st / 2nd place: show their R32 match(es) */}
+              {myKnockoutMatches.length > 0 && (
+                <div className="space-y-2">
+                  {myKnockoutMatches.sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()).map(m => {
+                    const isHome = m.homeTeam.id === team.id
+                    const opponent = isHome ? m.awayTeam : m.homeTeam
+                    const myScore = m.status === 'ft' ? (isHome ? m.homeScore : m.awayScore) : null
+                    const oppScore = m.status === 'ft' ? (isHome ? m.awayScore : m.homeScore) : null
+                    const won = myScore != null && oppScore != null && myScore > oppScore
+                    const drew = myScore != null && oppScore != null && myScore === oppScore
+                    const lost = myScore != null && oppScore != null && myScore < oppScore
+                    const resultColor = won ? 'text-emerald-400' : drew ? 'text-yellow-400' : lost ? 'text-red-400' : 'text-zinc-400'
+                    const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
+
+                    return (
+                      <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
+                        <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
+                          <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
+                          <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wide">{m.round}</p>
                         </div>
-                      )}
-                      {m.status === 'live' && (
-                        <span className="text-xs font-bold text-red-400 animate-pulse flex-shrink-0">LIVE</span>
-                      )}
-                      {m.status === 'upcoming' && null}
-                    </div>
-                  )
-                })}
-              </div>
+                        {m.status === 'ft' && myScore != null && (
+                          <div className="text-right flex-shrink-0">
+                            <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
+                            <span className="text-sm text-white ml-1.5">{myScore}–{oppScore}</span>
+                          </div>
+                        )}
+                        {m.status === 'live' && (
+                          <span className="text-xs font-bold text-red-400 animate-pulse flex-shrink-0">LIVE</span>
+                        )}
+                        {m.status === 'upcoming' && null}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* 3rd place: may still advance as one of the 8 best 3rd-place teams */}
+              {myKnockoutMatches.length === 0 && groupPos === 3 && (
+                <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <span className="text-xl leading-none">⏳</span>
+                  <div>
+                    <p className="text-sm font-semibold text-yellow-400">Qualification pending</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">Awaiting best 3rd-place results across all groups</p>
+                  </div>
+                </div>
+              )}
+
+              {/* 4th place: definitively eliminated */}
+              {myKnockoutMatches.length === 0 && groupPos >= 4 && (
+                <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <span className="text-xl leading-none">❌</span>
+                  <p className="text-sm text-zinc-400">Did not qualify for knockout stage</p>
+                </div>
+              )}
             </div>
           )}
 
