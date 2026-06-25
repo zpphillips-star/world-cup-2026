@@ -15,16 +15,6 @@ interface Props {
   /** Live group matches with scores applied — if provided, overrides mockProvider */
   groupMatches?: Match[]
   /**
-   * Full standings map keyed by group — used as fallback when standings is not
-   * provided directly (e.g. bracket tab where the match has no group field).
-   */
-  allStandingsMap?: Record<string, Standing[]>
-  /**
-   * Full match list — used as fallback for groupMatches when the current match
-   * has no group (e.g. bracket tab knockout matches).
-   */
-  allMatches?: Match[]
-  /**
    * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
    * (e.g. opened from inside MatchCard). Higher layer = higher z-indexes so the
    * sheet sits above everything below it with its own dim overlay.
@@ -44,38 +34,32 @@ function formatKickoff(iso: string, tz: string) {
   } catch { return '—' }
 }
 
-export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, allMatches, layer = 2 }: Props) {
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, layer = 2 }: Props) {
   // z-index values depend on which layer this sheet occupies
   // L2 (e.g. from GroupSheet): backdrop z-50 | panel z-60 | strip z-70
   // L3 (e.g. from MatchCard):  backdrop z-75 | panel z-80 | strip z-85
   const backdropZ = layer === 3 ? 'z-[75]' : 'z-[50]'
   const panelZ    = layer === 3 ? 'z-[80]' : 'z-[60]'
   const stripZ    = layer === 3 ? 'z-[85]' : 'z-[70]'
-
-  // Resolve group matches: prefer explicit prop → allMatches filtered by group → mock data
+  // Use live data when provided, fall back to static mock data
   const allMockMatches = mockProvider.getMatches()
-  const resolvedGroupMatches = groupMatchesProp
-    ?? (team.group && allMatches ? allMatches.filter(m => m.group === team.group) : null)
-    ?? allMockMatches
-
-  const teamMatches = resolvedGroupMatches.filter(m =>
+  const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
     m.group && (m.homeTeam.id === team.id || m.awayTeam.id === team.id)
   )
-
-  // Resolve standings: prefer explicit prop → allStandingsMap by group → mock data
-  const standings = standingsProp
-    ?? (team.group ? (allStandingsMap?.[team.group] ?? mockProvider.getStandings()[team.group] ?? []) : [])
+  const standings = standingsProp ?? (team.group ? mockProvider.getStandings()[team.group] ?? [] : [])
   const myStanding = standings.find(s => s.team.id === team.id)
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
 
   // Resolve knockout TBD slots using current standings, then filter to matches this team is in.
-  // Merge live standings for the team's group so resolved positions use actual results.
+  // When live standings are provided (standingsProp), merge them into the base standings so that
+  // resolved positions (e.g. "1st Group B" → Switzerland) use actual results, not mock 0-pt data
+  // where all teams tie and insertion order decides.
   const baseStandings = mockProvider.getStandings()
-  const mergedStandings = team.group && standings.length > 0
-    ? { ...(allStandingsMap ?? baseStandings), [team.group]: standings }
-    : (allStandingsMap ?? baseStandings)
-  const resolvedKnockout = resolveKnockoutTeamsFromStandings(mergedStandings)
+  const allStandings = team.group && standingsProp
+    ? { ...baseStandings, [team.group]: standingsProp }
+    : baseStandings
+  const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
   )
@@ -85,7 +69,8 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   // Primary check: all 6 group matches are 'ft' in the provided match data.
   // Fallback: live standings show this team played 3 matches (= group stage complete) — handles
   // tabs like Today/Calendar where liveMatches only contains today's games, not historical ones.
-  const allGroupMatches = team.group ? resolvedGroupMatches.filter(m => m.group === team.group) : []
+  const srcMatches = groupMatchesProp ?? allMockMatches
+  const allGroupMatches = team.group ? srcMatches.filter(m => m.group === team.group) : []
   const isGroupComplete =
     (allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')) ||
     (myStanding?.played === 3)

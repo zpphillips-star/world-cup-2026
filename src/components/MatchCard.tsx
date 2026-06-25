@@ -455,15 +455,7 @@ export default function MatchCard({
 
       {/* Team sheet — opens as L3 on top of this sheet; closing it reveals MatchCard */}
       {teamSheet && (
-        <TeamSheet
-          team={teamSheet}
-          onClose={() => setTeamSheet(null)}
-          layer={3}
-          standings={currentGroupStandings}
-          groupMatches={currentGroupMatches}
-          allStandingsMap={allStandingsMap}
-          allMatches={allMatches}
-        />
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
       )}
     </>
   )
