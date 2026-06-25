@@ -415,6 +415,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           awayStats={statsMap[selectedMatch.awayTeam.id]}
           groupStandings={selectedMatch.group ? effectiveStandings[selectedMatch.group] : undefined}
           groupMatches={selectedMatch.group ? allGroupMatches.filter(m => m.group === selectedMatch.group) : undefined}
+          clock={(liveScores[getMatchScoreKey(selectedMatch)] ?? liveScores[liveAliases[getMatchScoreKey(selectedMatch)]])?.clock}
+          scorers={(liveScores[getMatchScoreKey(selectedMatch)] ?? liveScores[liveAliases[getMatchScoreKey(selectedMatch)]])?.scorers}
           defaultOpen
           onCloseExternal={() => setSelectedMatch(null)}
           allMatches={allGroupMatches}
@@ -432,6 +434,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           onClose={() => setTeamSheet(null)}
           standings={teamSheet.group ? effectiveStandings[teamSheet.group] : undefined}
           groupMatches={teamSheet.group ? allGroupMatches.filter(m => m.group === teamSheet.group) : undefined}
+          allStandingsMap={effectiveStandings}
+          allMatchesFull={allGroupMatches}
         />
       )}
     </div>
