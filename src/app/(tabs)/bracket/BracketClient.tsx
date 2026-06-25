@@ -7,6 +7,9 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { applyLiveScores } from '@/lib/liveScores'
 import { getBracket, resolveKnockoutTeams } from '@/lib/mockProvider'
 import MatchCardSheet from '@/components/MatchCard'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
+import { mergeStandings } from '@/lib/standingsUtils'
+import type { Standing } from '@/lib/types'
 
 const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
 const ROUND_SHORT: Record<string, string> = {
@@ -116,6 +119,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const [userTimezone, setUserTimezone] = useState('UTC')
+  const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
   useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
@@ -134,9 +138,21 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     } catch { /* fail silently */ }
   }, [])
 
+  const fetchStandings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/standings')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveStandingsMap(mergeStandings(standingsMap, data.standings ?? {}))
+    } catch { /* fail silently */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [standingsMap])
+
   useEffect(() => {
     fetchScores()
+    fetchStandings()
     scoresIntervalRef.current = setInterval(fetchScores, 30_000)
+    const standingsInterval = setInterval(fetchStandings, 60_000)
     // Adaptive polling: 2s when live, 30s otherwise
     const adaptivePoller = setInterval(() => {
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
@@ -146,16 +162,23 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     }, 5_000)
     return () => {
       if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      clearInterval(standingsInterval)
       clearInterval(adaptivePoller)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fetchStandings])
 
   // Apply live scores to group-stage matches and recompute the bracket
   const bracket = useMemo(() => {
     const liveMatches = resolveKnockoutTeams(applyLiveScores(initialMatches, liveScores, liveAliases))
     return getBracket(liveMatches)
   }, [initialMatches, liveScores, liveAliases])
+
+  const liveMatchesFull = useMemo(
+    () => applyLiveScores(initialMatches, liveScores, liveAliases),
+    [initialMatches, liveScores, liveAliases]
+  )
+  const { effectiveStandingsMap } = useEffectiveStandings(liveMatchesFull, standingsMap, liveStandingsMap)
 
   // Flat ordered list of all knockout Match objects (for swipe navigation in the sheet)
   const knockoutMatchList = useMemo<Match[]>(() => {
@@ -357,7 +380,8 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
           homeStats={statsMap[selectedMatch.homeTeam.id] ?? null}
           awayStats={statsMap[selectedMatch.awayTeam.id] ?? null}
           allStatsMap={statsMap}
-          allStandingsMap={standingsMap}
+          allStandingsMap={effectiveStandingsMap}
+          contextMatches={liveMatchesFull}
         />
       )}
     </div>

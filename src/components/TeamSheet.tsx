@@ -16,6 +16,8 @@ interface Props {
   groupMatches?: Match[]
   /** Full standings map — fallback for bracket tab where the match has no group field */
   allStandingsMap?: Record<string, Standing[]>
+  /** Full live match list — used as fallback for group stage match display when groupMatches is not provided (e.g. bracket tab) */
+  allMatchesFull?: Match[]
   /**
    * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
    * (e.g. opened from inside MatchCard). Higher layer = higher z-indexes so the
@@ -36,7 +38,7 @@ function formatKickoff(iso: string, tz: string) {
   } catch { return '—' }
 }
 
-export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, layer = 2 }: Props) {
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, allMatchesFull, layer = 2 }: Props) {
   // z-index values depend on which layer this sheet occupies
   // L2 (e.g. from GroupSheet): backdrop z-50 | panel z-60 | strip z-70
   // L3 (e.g. from MatchCard):  backdrop z-75 | panel z-80 | strip z-85
@@ -45,7 +47,10 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const stripZ    = layer === 3 ? 'z-[85]' : 'z-[70]'
   // Use live data when provided, fall back to static mock data
   const allMockMatches = mockProvider.getMatches()
-  const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
+  const resolvedGroupMatches = groupMatchesProp
+    ?? (team.group && allMatchesFull ? allMatchesFull : null)
+    ?? allMockMatches
+  const teamMatches = resolvedGroupMatches.filter(m =>
     m.group && (m.homeTeam.id === team.id || m.awayTeam.id === team.id)
   )
   const standings = standingsProp ?? (team.group ? (allStandingsMap?.[team.group] ?? mockProvider.getStandings()[team.group] ?? []) : [])
@@ -71,11 +76,17 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   // Primary check: all 6 group matches are 'ft' in the provided match data.
   // Fallback: live standings show this team played 3 matches (= group stage complete) — handles
   // tabs like Today/Calendar where liveMatches only contains today's games, not historical ones.
-  const srcMatches = groupMatchesProp ?? allMockMatches
-  const allGroupMatches = team.group ? srcMatches.filter(m => m.group === team.group) : []
+  // Time-based fallback: all 6 static mock kickoffs ended more than 3h ago (robust when ESPN data is stale).
+  const allGroupMatches = team.group ? resolvedGroupMatches.filter(m => m.group === team.group) : []
+  const now = Date.now()
+  const mockGroupMatches = team.group ? allMockMatches.filter(m => m.group === team.group) : []
   const isGroupComplete =
     (allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')) ||
-    (myStanding?.played === 3)
+    (myStanding?.played === 3) ||
+    // All 6 group matches' kickoffs are in the past + 3h buffer (group must be done)
+    (mockGroupMatches.length === 6 && mockGroupMatches.every(m =>
+      new Date(m.kickoff).getTime() + 3 * 60 * 60 * 1000 < now
+    ))
 
   const [closing, setClosing] = useState(false)
   const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
