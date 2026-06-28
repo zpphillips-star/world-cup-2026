@@ -243,10 +243,14 @@ export default function CalendarClient({
   }, [fetchScores, fetchStandings])
 
   // Fix #8: wrap in useMemo so these don't recompute on every render
-  const liveMatches = useMemo(
-    () => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)),
-    [matches, liveScores, liveAliases]
-  )
+  const liveMatches = useMemo(() => {
+    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
+    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
+    // Step 2: resolve TBD knockout team slots to real teams
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply scores now that knockout teams have real names (key lookup works)
+    return applyLiveScores(resolved, liveScores, liveAliases)
+  }, [matches, liveScores, liveAliases])
   const sortedLiveMatches = useMemo(
     () => [...liveMatches].sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()),
     [liveMatches]

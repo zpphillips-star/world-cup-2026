@@ -170,14 +170,20 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
 
   // Apply live scores to group-stage matches and recompute the bracket
   const bracket = useMemo(() => {
-    const liveMatches = resolveKnockoutTeams(applyLiveScores(initialMatches, liveScores, liveAliases))
+    // Step 1: apply group-stage scores so standings can be computed
+    const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
+    // Step 2: resolve TBD knockout teams using completed group standings
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply so knockout slot statuses/scores reflect live data
+    const liveMatches = applyLiveScores(resolved, liveScores, liveAliases)
     return getBracket(liveMatches)
   }, [initialMatches, liveScores, liveAliases])
 
-  const liveMatchesFull = useMemo(
-    () => applyLiveScores(initialMatches, liveScores, liveAliases),
-    [initialMatches, liveScores, liveAliases]
-  )
+  const liveMatchesFull = useMemo(() => {
+    const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    return applyLiveScores(resolved, liveScores, liveAliases)
+  }, [initialMatches, liveScores, liveAliases])
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatchesFull, standingsMap, liveStandingsMap)
 
   // Flat ordered list of all knockout Match objects (for swipe navigation in the sheet)

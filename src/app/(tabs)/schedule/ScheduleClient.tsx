@@ -289,7 +289,14 @@ export default function ScheduleClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)), [matches, liveScores, liveAliases])
+  const liveMatches = useMemo(() => {
+    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
+    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
+    // Step 2: resolve TBD knockout team slots to real teams
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply scores now that knockout teams have real names (key lookup works)
+    return applyLiveScores(resolved, liveScores, liveAliases)
+  }, [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
