@@ -338,10 +338,15 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
     return allStandings[groupId]?.[1]?.team ?? label
   }
 
-  // Build a BracketSlot, pulling venue + kickoff from the knockoutMatches entry
+  // Build a BracketSlot, pulling venue + kickoff from the static knockoutMatches entry
+  // and preferring live status/scores from src (liveGroupMatches) when available.
   function makeSlot(id: string, home: Team | string, away: Team | string): BracketSlot {
     const km = knockoutMatches.find(k => k.id === id)
+    // lm is the live version of this match (after applyLiveScores + resolveKnockoutTeams)
+    const lm = src.find(m => m.id === id)
     const bothKnown = typeof home !== 'string' && typeof away !== 'string'
+    // Prefer live status/scores; fall back to static data
+    const liveStatus = lm?.status as BracketSlot['status'] | undefined
     const kmStatus = km?.status as BracketSlot['status'] | undefined
     return {
       id,
@@ -349,10 +354,10 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
       away,
       kickoff: km?.kickoff,
       venue: km?.venue,
-      homeScore: km?.homeScore,
-      awayScore: km?.awayScore,
-      // Only mark 'upcoming' (teams known, match not yet played) or live/ft when both teams are set
-      status: bothKnown ? (kmStatus ?? 'upcoming') : 'tbd',
+      homeScore: lm?.homeScore ?? km?.homeScore,
+      awayScore: lm?.awayScore ?? km?.awayScore,
+      // Only mark 'upcoming'/'live'/'ft' when both teams are set; else 'tbd'
+      status: bothKnown ? (liveStatus ?? kmStatus ?? 'upcoming') : 'tbd',
     }
   }
 
