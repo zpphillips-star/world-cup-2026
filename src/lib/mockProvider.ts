@@ -390,53 +390,97 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
     makeSlot('r32-16', resolveRunnerUp('D'), resolveRunnerUp('G')),
   ]
 
-  // ── Rounds beyond R32 — TBD; pull venue/kickoff from knockoutMatches ──────
-  // R16 pairings per official FIFA WC2026 bracket:
+  // ── Dynamic winner propagation ────────────────────────────────────────────
+  // Returns the winning Team of a completed knockout match, or the label string
+  // if the match is not yet finished (or ended level — e.g. penalties).
+  function resolveKnockoutWinner(matchId: string, label: string): Team | string {
+    const lm = src.find(m => m.id === matchId)
+    if (!lm || lm.status !== 'ft') return label
+    const hg = lm.homeScore ?? 0
+    const ag = lm.awayScore ?? 0
+    if (hg > ag) return lm.homeTeam
+    if (ag > hg) return lm.awayTeam
+    return label // level after FT (penalty shootout — winner flag not yet tracked)
+  }
+
+  // Returns the losing Team of a completed knockout match (for 3rd-place slot).
+  function resolveKnockoutLoser(matchId: string, label: string): Team | string {
+    const lm = src.find(m => m.id === matchId)
+    if (!lm || lm.status !== 'ft') return label
+    const hg = lm.homeScore ?? 0
+    const ag = lm.awayScore ?? 0
+    if (hg > ag) return lm.awayTeam
+    if (ag > hg) return lm.homeTeam
+    return label
+  }
+
+  // ── R16 — propagate R32 winners ──────────────────────────────────────────
   // M90: r32-1 vs r32-3  M89: r32-2 vs r32-5  M91: r32-4 vs r32-6  M92: r32-7 vs r32-8
   // M94: r32-9 vs r32-10  M93: r32-11 vs r32-12  M95: r32-14 vs r32-16  M96: r32-13 vs r32-15
-  const r16HomeAway: [string, string][] = [
-    ['W R32-1',  'W R32-3'],
-    ['W R32-2',  'W R32-5'],
-    ['W R32-4',  'W R32-6'],
-    ['W R32-7',  'W R32-8'],
-    ['W R32-9',  'W R32-10'],
-    ['W R32-11', 'W R32-12'],
-    ['W R32-14', 'W R32-16'],
-    ['W R32-13', 'W R32-15'],
+  const r16Pairs: [string, string, string][] = [
+    ['r16-1', 'r32-1',  'r32-3'],
+    ['r16-2', 'r32-2',  'r32-5'],
+    ['r16-3', 'r32-4',  'r32-6'],
+    ['r16-4', 'r32-7',  'r32-8'],
+    ['r16-5', 'r32-9',  'r32-10'],
+    ['r16-6', 'r32-11', 'r32-12'],
+    ['r16-7', 'r32-14', 'r32-16'],
+    ['r16-8', 'r32-13', 'r32-15'],
   ]
-  const r16Slots: BracketSlot[] = r16HomeAway.map(([home, away], i) => {
-    const id = `r16-${i + 1}`
-    const km = knockoutMatches.find(k => k.id === id)
-    return { id, home, away, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
+  const r16Slots: BracketSlot[] = r16Pairs.map(([id, hmId, amId]) => {
+    const homeNum = hmId.replace('r32-', '')
+    const awayNum = amId.replace('r32-', '')
+    return makeSlot(id,
+      resolveKnockoutWinner(hmId, `W R32-${homeNum}`),
+      resolveKnockoutWinner(amId, `W R32-${awayNum}`),
+    )
   })
 
-  const qfSlots: BracketSlot[] = Array.from({ length: 4 }, (_, i) => {
-    const id = `qf-${i + 1}`
-    const km = knockoutMatches.find(k => k.id === id)
-    return { id, home: `W R16-${i * 2 + 1}`, away: `W R16-${i * 2 + 2}`, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
-  })
-
-  // SF pairings: M101 = W97 vs W98 (qf-1 vs qf-3), M102 = W99 vs W100 (qf-2 vs qf-4)
-  const sfHomeAway: [string, string][] = [
-    ['W QF-1', 'W QF-3'],
-    ['W QF-2', 'W QF-4'],
+  // ── QF — propagate R16 winners ───────────────────────────────────────────
+  // M97: r16-1 vs r16-2  M99: r16-3 vs r16-4  M98: r16-5 vs r16-6  M100: r16-7 vs r16-8
+  const qfPairs: [string, string, string][] = [
+    ['qf-1', 'r16-1', 'r16-2'],
+    ['qf-2', 'r16-3', 'r16-4'],
+    ['qf-3', 'r16-5', 'r16-6'],
+    ['qf-4', 'r16-7', 'r16-8'],
   ]
-  const sfSlots: BracketSlot[] = sfHomeAway.map(([home, away], i) => {
-    const id = `sf-${i + 1}`
-    const km = knockoutMatches.find(k => k.id === id)
-    return { id, home, away, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
+  const qfSlots: BracketSlot[] = qfPairs.map(([id, hmId, amId]) => {
+    const homeNum = hmId.replace('r16-', '')
+    const awayNum = amId.replace('r16-', '')
+    return makeSlot(id,
+      resolveKnockoutWinner(hmId, `W R16-${homeNum}`),
+      resolveKnockoutWinner(amId, `W R16-${awayNum}`),
+    )
   })
 
-  const km3rd   = knockoutMatches.find(k => k.id === '3rd-1')
-  const kmFinal = knockoutMatches.find(k => k.id === 'final-1')
+  // ── SF — propagate QF winners ─────────────────────────────────────────────
+  // M101 = W97 vs W98 (qf-1 vs qf-3), M102 = W99 vs W100 (qf-2 vs qf-4)
+  const sfPairs: [string, string, string][] = [
+    ['sf-1', 'qf-1', 'qf-3'],
+    ['sf-2', 'qf-2', 'qf-4'],
+  ]
+  const sfSlots: BracketSlot[] = sfPairs.map(([id, hmId, amId]) => {
+    const homeNum = hmId.replace('qf-', '')
+    const awayNum = amId.replace('qf-', '')
+    return makeSlot(id,
+      resolveKnockoutWinner(hmId, `W QF-${homeNum}`),
+      resolveKnockoutWinner(amId, `W QF-${awayNum}`),
+    )
+  })
+
+  // ── 3rd Place + Final — propagate SF results ──────────────────────────────
+  const third1home = resolveKnockoutLoser('sf-1', 'SF Loser 1')
+  const third1away = resolveKnockoutLoser('sf-2', 'SF Loser 2')
+  const finalHome  = resolveKnockoutWinner('sf-1', 'SF Winner 1')
+  const finalAway  = resolveKnockoutWinner('sf-2', 'SF Winner 2')
 
   return [
     { name: "Round of 32",    matches: r32Slots },
     { name: "Round of 16",    matches: r16Slots },
     { name: "Quarter-Finals", matches: qfSlots },
     { name: "Semi-Finals",    matches: sfSlots },
-    { name: "Third Place",    matches: [{ id: "3rd-1",   home: "SF Loser 1",   away: "SF Loser 2",   kickoff: km3rd?.kickoff,   venue: km3rd?.venue,   status: "tbd" }] },
-    { name: "Final",          matches: [{ id: "final-1", home: "SF Winner 1",  away: "SF Winner 2",  kickoff: kmFinal?.kickoff, venue: kmFinal?.venue, status: "tbd" }] },
+    { name: "Third Place",    matches: [makeSlot('3rd-1',   third1home, third1away)] },
+    { name: "Final",          matches: [makeSlot('final-1', finalHome,  finalAway)] },
   ]
 }
 
