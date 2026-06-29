@@ -125,7 +125,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
   useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
   const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Which bracket slot the user tapped ΓÇö drives the sheet
+  // Which bracket slot the user tapped — drives the sheet
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
   const fetchScores = useCallback(async () => {
@@ -240,7 +240,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }}>
       <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Knockout Bracket</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 ┬╖ Elimination Rounds</p>
+        <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 · Elimination Rounds</p>
         <div className="flex gap-2">
           {ROUND_ORDER.map(name => {
             const exists = mainRounds.find(r => r.name === name)
@@ -267,7 +267,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
 
       {displayedRounds.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3 text-zinc-500">
-          <span className="text-3xl">≡ƒÅå</span>
+          <span className="text-3xl">🥅</span>
           <span className="text-sm">Tap a round above to view the bracket</span>
         </div>
       ) : (
@@ -371,7 +371,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
         </div>
       )}
 
-      {/* Match detail sheet ΓÇö opens when a bracket slot is tapped */}
+      {/* Match detail sheet — opens when a bracket slot is tapped */}
       {selectedMatch && (
         <MatchCardSheet
           key={selectedMatch.id}

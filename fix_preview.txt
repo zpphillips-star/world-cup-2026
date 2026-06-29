@@ -1,0 +1,10 @@
+  No corruption found in src\app\(tabs)\bracket\BracketClient.tsx
+  No corruption found in src\app\(tabs)\calendar\CalendarClient.tsx
+  No corruption found in src\app\(tabs)\groups\GroupsClient.tsx
+  No corruption found in src\app\(tabs)\schedule\ScheduleClient.tsx
+  No corruption found in src\app\(tabs)\today\TodayClient.tsx
+  No corruption found in src\components\MatchCard.tsx
+  No corruption found in src\components\TeamSheet.tsx
+  No corruption found in src\lib\mockProvider.ts
+
+Total fixes: 0

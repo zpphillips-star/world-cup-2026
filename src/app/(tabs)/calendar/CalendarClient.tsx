@@ -12,7 +12,7 @@ import { resolveKnockoutTeams } from '@/lib/mockProvider'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
 // ΓöÇΓöÇ Compact match preview card for the calendar day sheet ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// Shows big flags + location. Tap ΓåÆ calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
+// Shows big flags + location. Tap → calls onOpen (MatchCard is rendered at root level to avoid stacking context issues).
 function DayMatchCard({
   match,
   userTimezone,
@@ -34,7 +34,7 @@ function DayMatchCard({
   redCards?: import('@/app/api/live-scores/route').CardEvent[]
   onOpen: () => void
 }) {
-  // no local open state ΓÇö parent controls MatchCard
+  // no local open state — parent controls MatchCard
   const isLive = match.status === 'live'
   const isFt = match.status === 'ft'
   const hasScore = isLive || isFt
@@ -62,7 +62,7 @@ function DayMatchCard({
             boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Top bar ΓÇö group + status */}
+          {/* Top bar — group + status */}
           <div className="flex items-center gap-2 px-4 pt-3 pb-1">
             {match.group && (
               <span className="text-[11px] font-bold text-zinc-400 bg-white/5 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -71,7 +71,7 @@ function DayMatchCard({
             )}
             {isLive && (
               <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">
-                ΓùÅ LIVE {clock && `· ${clock}`}
+                ⭐ LIVE {clock && `· ${clock}`}
               </span>
             )}
             {isFt && (
@@ -136,7 +136,7 @@ function DayMatchCard({
             </div>
           )}
 
-          {/* Red cards ΓÇö separated */}
+          {/* Red cards — separated */}
           {(redCards && redCards.length > 0) && (
             <div className="flex flex-col gap-1 px-4 pb-2">
               <div className="flex items-center gap-2 mb-2">
@@ -147,11 +147,11 @@ function DayMatchCard({
               {redCards.sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
                 <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
                   <span className="text-[12px] text-white font-semibold text-right leading-none">
-                    {c.teamSide === 'home' && <span>≡ƒƒÑ {c.playerName}</span>}
+                    {c.teamSide === 'home' && <span>⚽ {c.playerName}</span>}
                   </span>
                   <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
                   <span className="text-[12px] text-white font-semibold text-left leading-none">
-                    {c.teamSide === 'away' && <span>{c.playerName} ≡ƒƒÑ</span>}
+                    {c.teamSide === 'away' && <span>{c.playerName} ⚽</span>}
                   </span>
                 </div>
               ))}
@@ -161,7 +161,7 @@ function DayMatchCard({
           {/* Location */}
           {match.venue && (
             <div className="flex items-center justify-center gap-1.5 pb-3 text-[11px] text-zinc-400">
-              <span>≡ƒôì</span>
+              <span>📅</span>
               <span>{match.venue.name}{match.venue.city ? `, ${match.venue.city}` : ''}</span>
             </div>
           )}
@@ -246,11 +246,11 @@ export default function CalendarClient({
   const liveMatches = useMemo(() => {
     // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
     const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
-    // Step 2: resolve group-position slots (1st/2nd Group X ΓåÆ real team)
+    // Step 2: resolve group-position slots (1st/2nd Group X → real team)
     const resolved = resolveKnockoutTeams(withGroupScores)
     // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
     const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
-    // Step 4: resolve knockout-winner slots (W R32-X ΓåÆ winner) now R32 matches are ft
+    // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
     return resolveKnockoutTeams(withKnockoutScores)
   }, [matches, liveScores, liveAliases])
   const sortedLiveMatches = useMemo(
@@ -258,7 +258,7 @@ export default function CalendarClient({
     [liveMatches]
   )
 
-  // Compute standings via shared hook ΓÇö instant, no ESPN lag; ESPN overlay when it has more data
+  // Compute standings via shared hook — instant, no ESPN lag; ESPN overlay when it has more data
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   // Build match days index using LOCAL date so calendar day cells always match
@@ -447,7 +447,7 @@ export default function CalendarClient({
         </>
       )}
 
-      {/* MatchCard popup ΓÇö rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}
+      {/* MatchCard popup — rendered at root level (outside day sheet stacking context) so fixed positioning works correctly */}
       {selectedMatch && (() => {
         const key = getMatchScoreKey(selectedMatch)
         const liveData = liveScores[key] ?? liveScores[liveAliases[key]]

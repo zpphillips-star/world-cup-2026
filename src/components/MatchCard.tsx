@@ -60,7 +60,7 @@ function TeamPanel({ team, stats, side }: {
             <StatBox label="GA" value={stats.wcGoalsAgainst} />
           </div>
           <div className={`flex items-center gap-1 ${side === 'away' ? 'flex-row-reverse' : ''}`}>
-            <span className="text-base">≡ƒÅå</span>
+            <span className="text-base">🥅</span>
             <span className="text-[12px] text-zinc-300 font-medium">{stats.bestFinish}</span>
           </div>
         </>

@@ -1,0 +1,5 @@
+Old line count: 640
+New line count: 698
+Line 1 DIFFERS:
+  OLD: 'Γê⌐ΓòùΓöÉimport type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamS'
+  NEW: 'import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStat'

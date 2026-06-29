@@ -207,7 +207,7 @@ function GroupSheet({
             onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
           >
-            Γ£ò
+            ✓
           </button>
 
           <div className="flex items-center gap-3">
@@ -261,7 +261,7 @@ function GroupSheet({
                       <span className="text-gray-200 font-medium">{m.homeTeam.name}</span>
                     </span>
                     <span className="font-bold text-white tabular-nums px-3 text-sm">
-                      {m.homeScore} ΓÇô {m.awayScore}
+                      {m.homeScore} – {m.awayScore}
                     </span>
                     <span className="flex items-center gap-1.5 flex-1 justify-end">
                       <span className="text-gray-200 font-medium text-right">{m.awayTeam.name}</span>
@@ -375,7 +375,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Compute standings from our match data ΓÇö instant, no ESPN lag
+  // Compute standings from our match data — instant, no ESPN lag
   // For each group, pull all matches from groups data and apply live scores
   const allGroupMatches = useMemo(
     () => groups.flatMap(g => applyLiveScores(g.matches, liveScores, liveAliases)),
@@ -408,7 +408,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
     <div className="h-full overflow-y-auto bg-[#0a0a0f]">
       <div className="px-4 pt-2 pb-1">
         <h1 className="text-[16px] font-bold text-white leading-tight tracking-tight">Groups</h1>
-        <p className="text-[10px] text-zinc-500 leading-none">FIFA World Cup 2026 ┬╖ 12 Groups</p>
+        <p className="text-[10px] text-zinc-500 leading-none">FIFA World Cup 2026 · 12 Groups</p>
       </div>
       <div
         className="grid grid-cols-2 gap-2.5 px-3"
@@ -440,7 +440,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
         />
       )}
 
-      {/* Match detail popup ΓÇö opened from a match row tap */}
+      {/* Match detail popup — opened from a match row tap */}
       {selectedMatch && (
         <MatchCard
           match={selectedMatch}
@@ -461,7 +461,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
         />
       )}
 
-      {/* Team sheet ΓÇö closes back to group sheet */}
+      {/* Team sheet — closes back to group sheet */}
       {teamSheet && (
         <TeamSheet
           team={teamSheet}
