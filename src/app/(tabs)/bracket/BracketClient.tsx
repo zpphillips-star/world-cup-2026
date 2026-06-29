@@ -347,9 +347,14 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
                           const color = 'rgba(82,82,91,0.6)'
 
                           if (groupSize >= 2 && Number.isInteger(groupSize)) {
-                            const slots = Array.from({ length: groupSize }, (_, j) => i * groupSize + j)
-                            const yTop = slots[0] * slotH + slotH / 2
-                            const yBot = slots[slots.length - 1] * slotH + slotH / 2
+                            // Use explicit feedPairs from the NEXT round if present,
+                            // otherwise fall back to sequential pairing.
+                            const pairs = nextRound.feedPairs
+                            const srcIndices: number[] = pairs
+                              ? pairs[i]
+                              : Array.from({ length: groupSize }, (_, j) => i * groupSize + j)
+                            const yTop = srcIndices[0] * slotH + slotH / 2
+                            const yBot = srcIndices[srcIndices.length - 1] * slotH + slotH / 2
                             const yMid = (yTop + yBot) / 2
                             const yOut = i * nextSlotH + nextSlotH / 2
 

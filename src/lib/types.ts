@@ -59,6 +59,10 @@ export interface BracketSlot {
 export interface BracketRound {
   name: string
   matches: BracketSlot[]
+  /** For each slot in the NEXT round, the two source slot indices from THIS round.
+   *  e.g. [[0,1],[2,3]] means slot 0 of next round is fed by slots 0&1 here.
+   *  If omitted, connector falls back to sequential pairing. */
+  feedPairs?: [number, number][]
 }
 
 export interface TeamStats {

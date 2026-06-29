@@ -372,22 +372,23 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
   //   M85: W B  vs Best3rd(E/F/G/I/J) M86: W J  vs 2nd H
   //   M87: W K  vs Best3rd(D/E/I/J/L) M88: 2nd D vs 2nd G
   const r32Slots: BracketSlot[] = [
-    makeSlot('r32-1',  resolveRunnerUp('A'), resolveRunnerUp('B')),
-    makeSlot('r32-2',  resolveWinner('E'),   teams.paraguay),
-    makeSlot('r32-3',  resolveWinner('F'),   resolveRunnerUp('C')),
-    makeSlot('r32-4',  resolveWinner('C'),   resolveRunnerUp('F')),
-    makeSlot('r32-5',  resolveWinner('I'),   teams.sweden),
-    makeSlot('r32-6',  resolveRunnerUp('E'), resolveRunnerUp('I')),
-    makeSlot('r32-7',  resolveWinner('A'),   teams.ecuador),
-    makeSlot('r32-8',  resolveWinner('L'),   teams.drcongo),
-    makeSlot('r32-9',  resolveWinner('D'),   teams.bosnia),
-    makeSlot('r32-10', resolveWinner('G'),   teams.senegal),
-    makeSlot('r32-11', resolveRunnerUp('K'), resolveRunnerUp('L')),
-    makeSlot('r32-12', resolveWinner('H'),   resolveRunnerUp('J')),
-    makeSlot('r32-13', resolveWinner('B'),   teams.algeria),
-    makeSlot('r32-14', resolveWinner('J'),   resolveRunnerUp('H')),
-    makeSlot('r32-15', resolveWinner('K'),   teams.ghana),
-    makeSlot('r32-16', resolveRunnerUp('D'), resolveRunnerUp('G')),
+    // Grouped by R16 destination — pair order must match r16Pairs below
+    makeSlot('r32-1',  resolveRunnerUp('A'), resolveRunnerUp('B')),  // → r16-1
+    makeSlot('r32-3',  resolveWinner('F'),   resolveRunnerUp('C')),  // → r16-1
+    makeSlot('r32-2',  resolveWinner('E'),   teams.paraguay),         // → r16-2
+    makeSlot('r32-5',  resolveWinner('I'),   teams.sweden),           // → r16-2
+    makeSlot('r32-4',  resolveWinner('C'),   resolveRunnerUp('F')),  // → r16-3
+    makeSlot('r32-6',  resolveRunnerUp('E'), resolveRunnerUp('I')),  // → r16-3
+    makeSlot('r32-7',  resolveWinner('A'),   teams.ecuador),          // → r16-4
+    makeSlot('r32-8',  resolveWinner('L'),   teams.drcongo),          // → r16-4
+    makeSlot('r32-9',  resolveWinner('D'),   teams.bosnia),           // → r16-5
+    makeSlot('r32-10', resolveWinner('G'),   teams.senegal),          // → r16-5
+    makeSlot('r32-11', resolveRunnerUp('K'), resolveRunnerUp('L')),  // → r16-6
+    makeSlot('r32-12', resolveWinner('H'),   resolveRunnerUp('J')),  // → r16-6
+    makeSlot('r32-14', resolveWinner('J'),   resolveRunnerUp('H')),  // → r16-7
+    makeSlot('r32-16', resolveRunnerUp('D'), resolveRunnerUp('G')),  // → r16-7
+    makeSlot('r32-13', resolveWinner('B'),   teams.algeria),          // → r16-8
+    makeSlot('r32-15', resolveWinner('K'),   teams.ghana),            // → r16-8
   ]
 
   // ΓöÇΓöÇ Dynamic winner propagation ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
@@ -475,10 +476,12 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
   const finalAway  = resolveKnockoutWinner('sf-2', 'SF Winner 2')
 
   return [
-    { name: "Round of 32",    matches: r32Slots },
-    { name: "Round of 16",    matches: r16Slots },
+    { name: "Round of 32",    matches: r32Slots },  // sequential pairs — no feedPairs needed
+    { name: "Round of 16",    matches: r16Slots },  // sequential pairs — no feedPairs needed
     { name: "Quarter-Finals", matches: qfSlots },
-    { name: "Semi-Finals",    matches: sfSlots },
+    // SF cross-seeding: sf-1 = qf-1 vs qf-3 (indices 0,2), sf-2 = qf-2 vs qf-4 (indices 1,3)
+    // feedPairs tells the connector the actual source indices per next-round slot
+    { name: "Semi-Finals",    matches: sfSlots, feedPairs: [[0, 2], [1, 3]] as [number, number][] },
     { name: "Third Place",    matches: [makeSlot('3rd-1',   third1home, third1away)] },
     { name: "Final",          matches: [makeSlot('final-1', finalHome,  finalAway)] },
   ]
