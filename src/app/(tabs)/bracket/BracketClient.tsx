@@ -381,7 +381,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
       {thirdPlace?.matches[0] && activeRounds.has('Final') && (
         <div className="px-4 pb-8">
           <div className="bg-[#13131a] rounded-xl border border-zinc-800 p-3 max-w-[220px]">
-            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">\U0001F949 Third Place</p>
+            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">🥉 Third Place</p>
             <SlotCard
               slot={thirdPlace.matches[0]}
               onClick={() => setSelectedSlotId(thirdPlace.matches[0].id)}
