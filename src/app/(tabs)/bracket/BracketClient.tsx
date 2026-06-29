@@ -312,7 +312,10 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
                     </div>
                     {round.matches.map((slot, matchIdx) => {
                       const prefix = ROUND_MATCH_LABEL[round.name] || ROUND_SHORT[round.name]
-                      const label = isFinalRound ? '\u2B50 Final \u2B50' : `${prefix} ${matchIdx + 1}`
+                      // Derive number from slot ID (e.g. 'r32-3' → '3') so labels always
+                      // match the "W R32-3" / "W R16-2" placeholders in subsequent rounds.
+                      const idNum = slot.id.replace(/^[^-]+-/, '')
+                      const label = isFinalRound ? '\u2B50 Final \u2B50' : `${prefix} ${idNum}`
                       return (
                         <div
                           key={slot.id}
