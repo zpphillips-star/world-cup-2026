@@ -184,7 +184,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
             <div className="flex gap-2 flex-wrap mt-3">
               <span className="text-[11px] font-bold bg-zinc-800/60 text-zinc-300 px-2.5 py-1 rounded-full">#{stats.fifaRank} FIFA</span>
               <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-1 rounded-full">{stats.worldCupAppearances} WC apps</span>
-              <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-1 rounded-full">Best: {stats.bestFinish}</span>
+              <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-1 rounded-full">🏆 {stats.bestFinish}</span>
             </div>
           )}
         </div>
