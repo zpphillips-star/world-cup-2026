@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import type { Standing, Group, Team, Match, TeamStats } from '@/lib/types'
@@ -10,10 +10,11 @@ import { Backdrop } from '@/components/Backdrop'
 import { mergeStandings } from '@/lib/standingsUtils'
 import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
+import { getBracket } from '@/lib/mockProvider'
 
 // -- Standings table --------------------------------------------------------
 
-function StandingsTable({ standings }: { standings: Standing[] }) {
+function StandingsTable({ standings, advancedIds }: { standings: Standing[], advancedIds: Set<string> }) {
   return (
     <table className="w-full text-xs">
       <thead>
@@ -30,7 +31,7 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
       </thead>
       <tbody>
         {standings.map((s, idx) => {
-          const advances = idx < 2
+          const advances = advancedIds.has(s.team.id)
           return (
             <tr key={s.team.id} className={`border-b border-gray-800/60 last:border-b-0 ${advances ? 'bg-green-950/20' : ''}`}>
               <td className="py-2 relative">
@@ -40,9 +41,14 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
               <td className="py-2">
                 <div className="flex items-center gap-1.5">
                   <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4" />
-                  <span className={`font-medium truncate max-w-[100px] ${advances ? 'text-white' : 'text-gray-300'}`}>
+                  <span className={`font-medium truncate max-w-[80px] ${advances ? 'text-white' : 'text-gray-300'}`}>
                     {s.team.name}
                   </span>
+                  {advances && (
+                    <span className="ml-auto text-[8px] font-bold text-green-400 bg-green-950/80 border border-green-800/50 rounded px-1 leading-[14px] flex-shrink-0">
+                      R32
+                    </span>
+                  )}
                 </div>
               </td>
               <td className="text-center py-2 text-gray-300">{s.played}</td>
@@ -64,10 +70,12 @@ function StandingsTable({ standings }: { standings: Standing[] }) {
 function GroupCard({
   groupId,
   standings,
+  advancedIds,
   onOpen,
 }: {
   groupId: string
   standings: Standing[]
+  advancedIds: Set<string>
   onOpen: () => void
 }) {
   return (
@@ -105,14 +113,20 @@ function GroupCard({
 
         {/* Teams */}
         <div className="px-4 pb-4 space-y-3">
-          {standings.map((s) => (
-            <div key={s.team.id} className="flex items-center gap-2.5">
-              <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 flex-shrink-0 rounded-[1px]" />
-              <span className="text-[12.5px] font-medium text-zinc-200 leading-tight truncate">
-                {s.team.name}
-              </span>
-            </div>
-          ))}
+          {standings.map((s) => {
+            const advanced = advancedIds.has(s.team.id)
+            return (
+              <div key={s.team.id} className="flex items-center gap-2.5">
+                <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 flex-shrink-0 rounded-[1px]" />
+                <span className={`text-[12.5px] font-medium leading-tight truncate ${advanced ? 'text-green-200' : 'text-zinc-400'}`}>
+                  {s.team.name}
+                </span>
+                {advanced && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </button>
@@ -125,6 +139,7 @@ function GroupSheet({
   groupId,
   standings,
   group,
+  advancedIds,
   onClose,
   onTeamOpen,
   onMatchOpen,
@@ -134,6 +149,7 @@ function GroupSheet({
   groupId: string
   standings: Standing[]
   group: Group
+  advancedIds: Set<string>
   onClose: () => void
   onTeamOpen: (team: Team) => void
   onMatchOpen: (match: Match) => void
@@ -153,7 +169,7 @@ function GroupSheet({
     closingTimerRef.current = setTimeout(onClose, 260)
   }
 
-  // ── Swipe between groups ──────────────────────────────────────────────────
+  // ΓöÇΓöÇ Swipe between groups ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
   const currentGroupIdx = allGroupIds?.indexOf(groupId) ?? -1
@@ -191,7 +207,7 @@ function GroupSheet({
             onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
           >
-            ✕
+            Γ£ò
           </button>
 
           <div className="flex items-center gap-3">
@@ -200,14 +216,14 @@ function GroupSheet({
 
           {/* Large flags — tappable */}
           <div className="flex gap-4 mt-3">
-            {standings.map((s, idx) => (
+            {standings.map((s) => (
               <button
                 key={s.team.id}
                 className="flex flex-col items-center gap-0.5 active:scale-90 transition-transform"
                 onClick={() => onTeamOpen(s.team)}
               >
                 <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-8" />
-                <span className={`text-[10px] font-medium ${idx < 2 ? 'text-green-400' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium ${advancedIds.has(s.team.id) ? 'text-green-400' : 'text-gray-400'}`}>
                   {s.team.name.length > 6 ? s.team.name.slice(0, 6) + '…' : s.team.name}
                 </span>
               </button>
@@ -223,9 +239,11 @@ function GroupSheet({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="w-2 h-2 rounded-sm bg-green-500" />
-              <span className="text-[10px] text-green-400 font-semibold uppercase tracking-wider">Top 2 advance to Round of 32</span>
+              <span className="text-[10px] text-green-400 font-semibold uppercase tracking-wider">
+                {standings.filter(s => advancedIds.has(s.team.id)).length || 2} teams advance to Round of 32
+              </span>
             </div>
-            <StandingsTable standings={standings} />
+            <StandingsTable standings={standings} advancedIds={advancedIds} />
           </div>
 
           {completedMatches.length > 0 && (
@@ -243,7 +261,7 @@ function GroupSheet({
                       <span className="text-gray-200 font-medium">{m.homeTeam.name}</span>
                     </span>
                     <span className="font-bold text-white tabular-nums px-3 text-sm">
-                      {m.homeScore} – {m.awayScore}
+                      {m.homeScore} ΓÇô {m.awayScore}
                     </span>
                     <span className="flex items-center gap-1.5 flex-1 justify-end">
                       <span className="text-gray-200 font-medium text-right">{m.awayTeam.name}</span>
@@ -357,13 +375,27 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Compute standings from our match data — instant, no ESPN lag
+  // Compute standings from our match data ΓÇö instant, no ESPN lag
   // For each group, pull all matches from groups data and apply live scores
   const allGroupMatches = useMemo(
     () => groups.flatMap(g => applyLiveScores(g.matches, liveScores, liveAliases)),
     [groups, liveScores, liveAliases]
   )
   const { effectiveStandingsMap: effectiveStandings } = useEffectiveStandings(allGroupMatches, baseStandings, standings)
+
+  // Derive which team IDs advanced to R32 — dynamically from the bracket data
+  const advancedTeamIds = useMemo(() => {
+    const bracket = getBracket(allGroupMatches)
+    const r32Round = bracket.find(r => r.name === 'Round of 32')
+    const ids = new Set<string>()
+    if (r32Round) {
+      for (const slot of r32Round.matches) {
+        if (typeof slot.home !== 'string') ids.add(slot.home.id)
+        if (typeof slot.away !== 'string') ids.add(slot.away.id)
+      }
+    }
+    return ids
+  }, [allGroupMatches])
 
   const activeStandings = activeGroup ? effectiveStandings[activeGroup] : null
   const activeGroupData = activeGroup ? groups.find(g => g.id === activeGroup) : null
@@ -376,7 +408,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
     <div className="h-full overflow-y-auto bg-[#0a0a0f]">
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · 12 Groups</p>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 ┬╖ 12 Groups</p>
       </div>
       <div
         className="grid grid-cols-2 gap-4 px-4"
@@ -387,6 +419,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
             key={groupId}
             groupId={groupId}
             standings={groupStandings}
+            advancedIds={advancedTeamIds}
             onOpen={() => setActiveGroup(groupId)}
           />
         ))}
@@ -398,6 +431,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           groupId={activeGroup}
           standings={activeStandings}
           group={activeGroupWithLiveScores}
+          advancedIds={advancedTeamIds}
           onClose={() => setActiveGroup(null)}
           onTeamOpen={(team) => setTeamSheet(team)}
           onMatchOpen={(match) => setSelectedMatch(match)}
@@ -406,7 +440,7 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
         />
       )}
 
-      {/* Match detail popup — opened from a match row tap */}
+      {/* Match detail popup ΓÇö opened from a match row tap */}
       {selectedMatch && (
         <MatchCard
           match={selectedMatch}
@@ -415,6 +449,8 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
           awayStats={statsMap[selectedMatch.awayTeam.id]}
           groupStandings={selectedMatch.group ? effectiveStandings[selectedMatch.group] : undefined}
           groupMatches={selectedMatch.group ? allGroupMatches.filter(m => m.group === selectedMatch.group) : undefined}
+          clock={(liveScores[getMatchScoreKey(selectedMatch)] ?? liveScores[liveAliases[getMatchScoreKey(selectedMatch)]])?.clock}
+          scorers={(liveScores[getMatchScoreKey(selectedMatch)] ?? liveScores[liveAliases[getMatchScoreKey(selectedMatch)]])?.scorers}
           defaultOpen
           onCloseExternal={() => setSelectedMatch(null)}
           allMatches={allGroupMatches}
@@ -425,13 +461,15 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
         />
       )}
 
-      {/* Team sheet — closes back to group sheet */}
+      {/* Team sheet ΓÇö closes back to group sheet */}
       {teamSheet && (
         <TeamSheet
           team={teamSheet}
           onClose={() => setTeamSheet(null)}
           standings={teamSheet.group ? effectiveStandings[teamSheet.group] : undefined}
           groupMatches={teamSheet.group ? allGroupMatches.filter(m => m.group === teamSheet.group) : undefined}
+          allStandingsMap={effectiveStandings}
+          allMatchesFull={allGroupMatches}
         />
       )}
     </div>
