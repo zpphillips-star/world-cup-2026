@@ -10,13 +10,13 @@ import { jerseyKits } from '@/data/jerseyKits'
 interface Props {
   team: Team
   onClose: () => void
-  /** Live standings for this team's group ΓÇö if provided, overrides mockProvider */
+  /** Live standings for this team's group — if provided, overrides mockProvider */
   standings?: Standing[]
-  /** Live group matches with scores applied ΓÇö if provided, overrides mockProvider */
+  /** Live group matches with scores applied — if provided, overrides mockProvider */
   groupMatches?: Match[]
-  /** Full standings map ΓÇö fallback for bracket tab where the match has no group field */
+  /** Full standings map — fallback for bracket tab where the match has no group field */
   allStandingsMap?: Record<string, Standing[]>
-  /** Full live match list ΓÇö used as fallback for group stage match display when groupMatches is not provided (e.g. bracket tab) */
+  /** Full live match list — used as fallback for group stage match display when groupMatches is not provided (e.g. bracket tab) */
   allMatchesFull?: Match[]
   /**
    * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
@@ -60,7 +60,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
 
   // Resolve knockout TBD slots using current standings, then filter to matches this team is in.
   // When live standings are provided (standingsProp), merge them into the base standings so that
-  // resolved positions (e.g. "1st Group B" ΓåÆ Switzerland) use actual results, not mock 0-pt data
+  // resolved positions (e.g. "1st Group B" → Switzerland) use actual results, not mock 0-pt data
   // where all teams tie and insertion order decides.
   // Use allStandingsMap (full live standings for ALL groups) as the base so every group resolves
   // correctly, not just the current team's group. Then override the current team's group with the
@@ -76,10 +76,10 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
   )
 
-  // Determine if this team's group stage is finished ΓÇö needed to decide whether
+  // Determine if this team's group stage is finished — needed to decide whether
   // to show elimination / pending status messages.
   // Primary check: all 6 group matches are 'ft' in the provided match data.
-  // Fallback: live standings show this team played 3 matches (= group stage complete) ΓÇö handles
+  // Fallback: live standings show this team played 3 matches (= group stage complete) — handles
   // tabs like Today/Calendar where liveMatches only contains today's games, not historical ones.
   // Time-based fallback: all 6 static mock kickoffs ended more than 3h ago (robust when ESPN data is stale).
   const allGroupMatches = team.group ? resolvedGroupMatches.filter(m => m.group === team.group) : []
@@ -118,7 +118,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
       {/* Backdrop */}
       <Backdrop onDismiss={handleClose} zIndex={backdropZ} bg="bg-black/70" />
 
-      {/* Shop strip ΓÇö fixed to very top of screen, only visible when flag is open */}
+      {/* Shop strip — fixed to very top of screen, only visible when flag is open */}
       <a
         href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}&tag=zpphillips-20`}
         target="_blank"
@@ -134,14 +134,14 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               {kit?.home ? (
                 <div className="flex flex-col items-center gap-0.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={kit.home} alt={`${team.name} home kit`} style={{ height: 52 }} className="w-auto object-contain drop-shadow-lg" />
+                  <img src={kit.home} alt={`${team.name} home kit`} style={{ height: 52 }} className="w-auto object-contain drop-shadow-lg" onError={(e) => { const p = e.currentTarget.parentElement; if (p) p.style.display = "none" }} />
                   <span className="text-[10px] text-zinc-400 leading-none">home</span>
                 </div>
               ) : null}
               {kit?.away ? (
                 <div className="flex flex-col items-center gap-0.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={kit.away} alt={`${team.name} away kit`} style={{ height: 52 }} className="w-auto object-contain drop-shadow-lg" />
+                  <img src={kit.away} alt={`${team.name} away kit`} style={{ height: 52 }} className="w-auto object-contain drop-shadow-lg" onError={(e) => { const p = e.currentTarget.parentElement; if (p) p.style.display = "none" }} />
                   <span className="text-[10px] text-zinc-400 leading-none">away</span>
                 </div>
               ) : null}
@@ -150,7 +150,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
         })()}
         <FlagImg teamId={team.id} fallback={team.flag} className="h-4 w-auto" />
         <span className="text-[12px] font-semibold text-cyan-300">Get {team.name}&apos;s 2026 jersey</span>
-        <span className="text-cyan-400 text-[11px]">ΓåÆ</span>
+        <span className="text-cyan-400 text-[11px]">→</span>
       </a>
 
       {/* Sheet */}
@@ -165,7 +165,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           <button
             onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm"
-          >Γ£ò</button>
+          >✕</button>
 
           <div className="flex items-center gap-4 mt-1">
             <FlagImg teamId={team.id} fallback={team.flag} className="h-14" />
@@ -310,7 +310,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               {/* 3rd place: may still advance as one of the 8 best 3rd-place teams */}
               {myKnockoutMatches.length === 0 && groupPos === 3 && (
                 <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
-                  <span className="text-xl leading-none">ΓÅ│</span>
+                  <span className="text-xl leading-none">⏳</span>
                   <div>
                     <p className="text-sm font-semibold text-yellow-400">Qualification pending</p>
                     <p className="text-[11px] text-zinc-500 mt-0.5">Awaiting best 3rd-place results across all groups</p>
@@ -321,7 +321,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               {/* 4th place: definitively eliminated */}
               {myKnockoutMatches.length === 0 && groupPos >= 4 && (
                 <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
-                  <span className="text-xl leading-none">Γ¥î</span>
+                  <span className="text-xl leading-none">❌</span>
                   <p className="text-sm text-zinc-400">Did not qualify for knockout stage</p>
                 </div>
               )}
