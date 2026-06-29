@@ -292,10 +292,12 @@ export default function ScheduleClient({
   const liveMatches = useMemo(() => {
     // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
     const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
-    // Step 2: resolve TBD knockout team slots to real teams
+    // Step 2: resolve group-position slots (1st/2nd Group X → real team)
     const resolved = resolveKnockoutTeams(withGroupScores)
-    // Step 3: re-apply scores now that knockout teams have real names (key lookup works)
-    return applyLiveScores(resolved, liveScores, liveAliases)
+    // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
+    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
+    // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
+    return resolveKnockoutTeams(withKnockoutScores)
   }, [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
