@@ -222,7 +222,7 @@ const knockoutMatches: Match[] = [
   { id: "r32-1",  homeTeam: tbd("2nd Group A"),   awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T19:00:00Z", venue: venues.sofi,         round: "Round of 32", homeScore: 0, awayScore: 1, status: "ft" },
   { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay, kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", status: "upcoming" },
   { id: "r32-3",  homeTeam: tbd("1st Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-30T01:00:00Z", venue: venues.bbva,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,          round: "Round of 32", homeScore: 2, awayScore: 1, status: "ft" },
   { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: teams.sweden, kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,      round: "Round of 32", status: "upcoming" },
   { id: "r32-6",  homeTeam: tbd("2nd Group E"),   awayTeam: tbd("2nd Group I"),         kickoff: "2026-06-30T17:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
   { id: "r32-7",  homeTeam: tbd("1st Group A"),   awayTeam: teams.ecuador, kickoff: "2026-07-01T01:00:00Z", venue: venues.azteca,       round: "Round of 32", status: "upcoming" },
