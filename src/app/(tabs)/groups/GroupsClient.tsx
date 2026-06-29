@@ -93,32 +93,32 @@ function GroupCard({
       >
         {/* Watermark group letter */}
         <span
-          className="absolute right-2 bottom-[-4px] font-black text-[56px] leading-none select-none pointer-events-none"
+          className="absolute right-2 bottom-[-2px] font-black text-[36px] leading-none select-none pointer-events-none"
           style={{ color: 'rgba(255,255,255,0.04)' }}
         >
           {groupId}
         </span>
 
         {/* Header */}
-        <div className="px-4 pt-4 pb-2 flex items-baseline justify-between">
+        <div className="px-2.5 pt-1.5 pb-1 flex items-baseline justify-between">
           <div className="flex items-baseline gap-1">
-            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Group</span>
-            <span className="text-[17px] font-bold text-white leading-none ml-1">{groupId}</span>
+            <span className="text-[7px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Group</span>
+            <span className="text-[13px] font-bold text-white leading-none ml-0.5">{groupId}</span>
           </div>
           <span className="text-zinc-700 text-xs">›</span>
         </div>
 
         {/* Divider */}
-        <div className="mx-4 h-px bg-white/[0.04] mb-2.5" />
+        <div className="mx-2.5 h-px bg-white/[0.04] mb-1" />
 
         {/* Teams */}
-        <div className="px-4 pb-4 space-y-3">
+        <div className="px-2.5 pb-1.5 space-y-0.5">
           {standings.map((s) => {
             const advanced = advancedIds.has(s.team.id)
             return (
-              <div key={s.team.id} className="flex items-center gap-2.5">
-                <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-4 flex-shrink-0 rounded-[1px]" />
-                <span className={`text-[12.5px] font-medium leading-tight truncate ${advanced ? 'text-green-200' : 'text-zinc-400'}`}>
+              <div key={s.team.id} className="flex items-center gap-1.5">
+                <FlagImg teamId={s.team.id} fallback={s.team.flag} className="h-3 flex-shrink-0 rounded-[1px]" />
+                <span className={`text-[10.5px] font-medium leading-none truncate ${advanced ? 'text-green-200' : 'text-zinc-400'}`}>
                   {s.team.name}
                 </span>
                 {advanced && (
@@ -406,13 +406,13 @@ export default function GroupsClient({ standings: baseStandings, groups, statsMa
 
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]">
-      <div className="px-5 pt-5 pb-3">
-        <h1 className="text-[22px] font-bold text-white tracking-tight">Groups</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 ┬╖ 12 Groups</p>
+      <div className="px-4 pt-2 pb-1">
+        <h1 className="text-[16px] font-bold text-white leading-tight tracking-tight">Groups</h1>
+        <p className="text-[10px] text-zinc-500 leading-none">FIFA World Cup 2026 ┬╖ 12 Groups</p>
       </div>
       <div
-        className="grid grid-cols-2 gap-4 px-4"
-        style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}
+        className="grid grid-cols-2 gap-2.5 px-3"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         {Object.entries(effectiveStandings).map(([groupId, groupStandings]) => (
           <GroupCard
