@@ -1,4 +1,4 @@
-import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStats } from './types'
+﻿import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStats } from './types'
 
 // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 // VENUES — All 16 official FIFA World Cup 2026 venues
@@ -58,7 +58,7 @@ const teams: Record<string, Team> = {
   germany:      { id: "germany",      name: "Germany",               flag: "🇩🇪", group: "E" },
   ecuador:      { id: "ecuador",      name: "Ecuador",               flag: "∩┐╜∩┐╜🇨", group: "E" },
   ivorycoast:   { id: "ivorycoast",   name: "Ivory Coast",           flag: "🇨🇮", group: "E" },
-  curacao:      { id: "curacao",      name: "Cura├ºao",               flag: "🇨🇼", group: "E" },
+  curacao:      { id: "curacao",      name: "Curaçao",               flag: "🇨🇼", group: "E" },
 
   // GROUP F — Opens Jun 14
   netherlands:  { id: "netherlands",  name: "Netherlands",           flag: "🇳🇱", group: "F" },
@@ -104,7 +104,7 @@ const teams: Record<string, Team> = {
 }
 
 // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-// GROUP STAGE MATCHES — All 72 matches (12 groups ├ù 6 matches each)
+// GROUP STAGE MATCHES — All 72 matches (12 groups × 6 matches each)
 // Match IDs = official FIFA match numbers
 // Kickoff times: Γ£à = confirmed from Wikipedia | ΓÜá∩╕Å = date confirmed, time TBD (uses 20:00 UTC placeholder)
 // Source: Wikipedia individual Group pages A–L
@@ -547,17 +547,17 @@ export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
 // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const teamStats: Record<string, TeamStats> = {
   // Group A
-  mexico:        { fifaRank: 15, worldCupAppearances: 17, wcWins: 16, wcDraws: 14, wcLosses: 27, wcGoalsFor: 60,  wcGoalsAgainst: 101, bestFinish: "QF (├ù5)" },
+  mexico:        { fifaRank: 15, worldCupAppearances: 17, wcWins: 16, wcDraws: 14, wcLosses: 27, wcGoalsFor: 60,  wcGoalsAgainst: 101, bestFinish: "QF (×5)" },
   southkorea:    { fifaRank: 22, worldCupAppearances: 11, wcWins: 8,  wcDraws: 8,  wcLosses: 20, wcGoalsFor: 36,  wcGoalsAgainst: 74,  bestFinish: "4th (2002)" },
   southafrica:   { fifaRank: 61, worldCupAppearances: 3,  wcWins: 1,  wcDraws: 3,  wcLosses: 3,  wcGoalsFor: 6,   wcGoalsAgainst: 11,  bestFinish: "Group Stage" },
   czechrepublic: { fifaRank: 44, worldCupAppearances: 9,  wcWins: 12, wcDraws: 6,  wcLosses: 12, wcGoalsFor: 46,  wcGoalsAgainst: 45,  bestFinish: "2nd (1934, 1962)" },
   // Group B
   canada:        { fifaRank: 27, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 0,  wcLosses: 4,  wcGoalsFor: 2,   wcGoalsAgainst: 10,  bestFinish: "Group Stage" },
-  switzerland:   { fifaRank: 17, worldCupAppearances: 12, wcWins: 17, wcDraws: 10, wcLosses: 15, wcGoalsFor: 68,  wcGoalsAgainst: 65,  bestFinish: "QF (├ù3)" },
+  switzerland:   { fifaRank: 17, worldCupAppearances: 12, wcWins: 17, wcDraws: 10, wcLosses: 15, wcGoalsFor: 68,  wcGoalsAgainst: 65,  bestFinish: "QF (×3)" },
   qatar:         { fifaRank: 51, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 0,  wcLosses: 6,  wcGoalsFor: 5,   wcGoalsAgainst: 17,  bestFinish: "Group Stage" },
   bosnia:        { fifaRank: 71, worldCupAppearances: 2,  wcWins: 1,  wcDraws: 0,  wcLosses: 2,  wcGoalsFor: 4,   wcGoalsAgainst: 4,   bestFinish: "Group Stage" },
   // Group C
-  brazil:        { fifaRank: 5,  worldCupAppearances: 22, wcWins: 73, wcDraws: 18, wcLosses: 19, wcGoalsFor: 237, wcGoalsAgainst: 105, bestFinish: "Champions (├ù5)" },
+  brazil:        { fifaRank: 5,  worldCupAppearances: 22, wcWins: 73, wcDraws: 18, wcLosses: 19, wcGoalsFor: 237, wcGoalsAgainst: 105, bestFinish: "Champions (×5)" },
   morocco:       { fifaRank: 11, worldCupAppearances: 7,  wcWins: 6,  wcDraws: 5,  wcLosses: 9,  wcGoalsFor: 16,  wcGoalsAgainst: 27,  bestFinish: "4th (2022)" },
   scotland:      { fifaRank: 36, worldCupAppearances: 8,  wcWins: 4,  wcDraws: 7,  wcLosses: 12, wcGoalsFor: 25,  wcGoalsAgainst: 41,  bestFinish: "Group Stage" },
   haiti:         { fifaRank: 84, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 1,  wcLosses: 5,  wcGoalsFor: 2,   wcGoalsAgainst: 14,  bestFinish: "Group Stage" },
@@ -567,13 +567,13 @@ const teamStats: Record<string, TeamStats> = {
   paraguay:      { fifaRank: 39, worldCupAppearances: 9,  wcWins: 8,  wcDraws: 9,  wcLosses: 10, wcGoalsFor: 30,  wcGoalsAgainst: 36,  bestFinish: "QF (2010)" },
   turkey:        { fifaRank: 25, worldCupAppearances: 3,  wcWins: 6,  wcDraws: 1,  wcLosses: 4,  wcGoalsFor: 24,  wcGoalsAgainst: 20,  bestFinish: "3rd (2002)" },
   // Group E
-  germany:       { fifaRank: 9,  worldCupAppearances: 20, wcWins: 67, wcDraws: 20, wcLosses: 20, wcGoalsFor: 226, wcGoalsAgainst: 125, bestFinish: "Champions (├ù4)" },
+  germany:       { fifaRank: 9,  worldCupAppearances: 20, wcWins: 67, wcDraws: 20, wcLosses: 20, wcGoalsFor: 226, wcGoalsAgainst: 125, bestFinish: "Champions (×4)" },
   ecuador:       { fifaRank: 23, worldCupAppearances: 4,  wcWins: 4,  wcDraws: 2,  wcLosses: 7,  wcGoalsFor: 14,  wcGoalsAgainst: 22,  bestFinish: "QF (2006)" },
   ivorycoast:    { fifaRank: 42, worldCupAppearances: 4,  wcWins: 2,  wcDraws: 2,  wcLosses: 8,  wcGoalsFor: 11,  wcGoalsAgainst: 26,  bestFinish: "Group Stage" },
   curacao:       { fifaRank: 82, worldCupAppearances: 0,  wcWins: 0,  wcDraws: 0,  wcLosses: 0,  wcGoalsFor: 0,   wcGoalsAgainst: 0,   bestFinish: "Debut 2026" },
   // Group F
-  netherlands:   { fifaRank: 7,  worldCupAppearances: 11, wcWins: 27, wcDraws: 14, wcLosses: 13, wcGoalsFor: 90,  wcGoalsAgainst: 57,  bestFinish: "2nd (├ù3)" },
-  japan:         { fifaRank: 18, worldCupAppearances: 8,  wcWins: 9,  wcDraws: 5,  wcLosses: 10, wcGoalsFor: 27,  wcGoalsAgainst: 33,  bestFinish: "R16 (├ù4)" },
+  netherlands:   { fifaRank: 7,  worldCupAppearances: 11, wcWins: 27, wcDraws: 14, wcLosses: 13, wcGoalsFor: 90,  wcGoalsAgainst: 57,  bestFinish: "2nd (×3)" },
+  japan:         { fifaRank: 18, worldCupAppearances: 8,  wcWins: 9,  wcDraws: 5,  wcLosses: 10, wcGoalsFor: 27,  wcGoalsAgainst: 33,  bestFinish: "R16 (×4)" },
   tunisia:       { fifaRank: 40, worldCupAppearances: 6,  wcWins: 1,  wcDraws: 4,  wcLosses: 13, wcGoalsFor: 9,   wcGoalsAgainst: 31,  bestFinish: "Group Stage" },
   sweden:        { fifaRank: 43, worldCupAppearances: 12, wcWins: 16, wcDraws: 8,  wcLosses: 18, wcGoalsFor: 74,  wcGoalsAgainst: 69,  bestFinish: "2nd (1958)" },
   // Group G
@@ -583,16 +583,16 @@ const teamStats: Record<string, TeamStats> = {
   newzealand:    { fifaRank: 86, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 1,  wcLosses: 5,  wcGoalsFor: 4,   wcGoalsAgainst: 17,  bestFinish: "Group Stage" },
   // Group H
   spain:         { fifaRank: 1,  worldCupAppearances: 16, wcWins: 30, wcDraws: 17, wcLosses: 16, wcGoalsFor: 104, wcGoalsAgainst: 74,  bestFinish: "Champions (2010)" },
-  uruguay:       { fifaRank: 16, worldCupAppearances: 14, wcWins: 23, wcDraws: 8,  wcLosses: 17, wcGoalsFor: 89,  wcGoalsAgainst: 68,  bestFinish: "Champions (├ù2)" },
+  uruguay:       { fifaRank: 16, worldCupAppearances: 14, wcWins: 23, wcDraws: 8,  wcLosses: 17, wcGoalsFor: 89,  wcGoalsAgainst: 68,  bestFinish: "Champions (×2)" },
   saudiarabia:   { fifaRank: 60, worldCupAppearances: 6,  wcWins: 4,  wcDraws: 3,  wcLosses: 11, wcGoalsFor: 17,  wcGoalsAgainst: 43,  bestFinish: "R16 (1994)" },
   capeverde:     { fifaRank: 68, worldCupAppearances: 0,  wcWins: 0,  wcDraws: 0,  wcLosses: 0,  wcGoalsFor: 0,   wcGoalsAgainst: 0,   bestFinish: "Debut 2026" },
   // Group I
-  france:        { fifaRank: 3,  worldCupAppearances: 16, wcWins: 34, wcDraws: 14, wcLosses: 14, wcGoalsFor: 120, wcGoalsAgainst: 68,  bestFinish: "Champions (├ù2)" },
+  france:        { fifaRank: 3,  worldCupAppearances: 16, wcWins: 34, wcDraws: 14, wcLosses: 14, wcGoalsFor: 120, wcGoalsAgainst: 68,  bestFinish: "Champions (×2)" },
   senegal:       { fifaRank: 19, worldCupAppearances: 3,  wcWins: 4,  wcDraws: 3,  wcLosses: 3,  wcGoalsFor: 11,  wcGoalsAgainst: 10,  bestFinish: "QF (2002)" },
   norway:        { fifaRank: 29, worldCupAppearances: 3,  wcWins: 2,  wcDraws: 3,  wcLosses: 4,  wcGoalsFor: 7,   wcGoalsAgainst: 8,   bestFinish: "QF (1938)" },
   iraq:          { fifaRank: 58, worldCupAppearances: 2,  wcWins: 0,  wcDraws: 0,  wcLosses: 6,  wcGoalsFor: 4,   wcGoalsAgainst: 22,  bestFinish: "Group Stage" },
   // Group J
-  argentina:     { fifaRank: 2,  worldCupAppearances: 18, wcWins: 45, wcDraws: 14, wcLosses: 16, wcGoalsFor: 145, wcGoalsAgainst: 76,  bestFinish: "Champions (├ù3)" },
+  argentina:     { fifaRank: 2,  worldCupAppearances: 18, wcWins: 45, wcDraws: 14, wcLosses: 16, wcGoalsFor: 145, wcGoalsAgainst: 76,  bestFinish: "Champions (×3)" },
   austria:       { fifaRank: 24, worldCupAppearances: 7,  wcWins: 12, wcDraws: 5,  wcLosses: 13, wcGoalsFor: 49,  wcGoalsAgainst: 55,  bestFinish: "3rd (1954)" },
   algeria:       { fifaRank: 35, worldCupAppearances: 4,  wcWins: 3,  wcDraws: 3,  wcLosses: 7,  wcGoalsFor: 13,  wcGoalsAgainst: 21,  bestFinish: "R16 (2014)" },
   jordan:        { fifaRank: 66, worldCupAppearances: 0,  wcWins: 0,  wcDraws: 0,  wcLosses: 0,  wcGoalsFor: 0,   wcGoalsAgainst: 0,   bestFinish: "Debut 2026" },
