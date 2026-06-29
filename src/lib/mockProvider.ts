@@ -486,8 +486,9 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // KNOCKOUT TEAM RESOLVER — replaces TBD placeholders with real teams once
-// a group is complete (all 6 matches finished). Used by Schedule, Calendar,
-// and Today tabs so they show "Switzerland" instead of "1st Group B".
+// a group is complete (all 6 matches finished) or a knockout match has a
+// winner. Used by Schedule, Calendar, and Today tabs so they show e.g.
+// "Canada" instead of "W R32-1".
 // ─────────────────────────────────────────────────────────────────────────────
 export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
   // Build completed group standings
@@ -499,7 +500,7 @@ export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
     }
   }
 
-  function resolveTeam(team: Team): Team {
+  function resolveGroupTeam(team: Team): Team {
     const id = team.id
     const w = id.match(/^1st-group-([a-l])$/)
     if (w) return allStandings[w[1].toUpperCase()]?.[0]?.team ?? team
@@ -508,10 +509,35 @@ export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
     return team
   }
 
-  return allLiveMatches.map(m => {
-    const needsResolve = (t: Team) => /^(1st|2nd)-group-[a-l]$/.test(t.id)
-    if (!needsResolve(m.homeTeam) && !needsResolve(m.awayTeam)) return m
-    return { ...m, homeTeam: resolveTeam(m.homeTeam), awayTeam: resolveTeam(m.awayTeam) }
+  // Pass 1 — resolve group-stage placeholders (e.g. "2nd Group B" → Canada)
+  const pass1 = allLiveMatches.map(m => {
+    const needsGroup = (t: Team) => /^(1st|2nd)-group-[a-l]$/.test(t.id)
+    if (!needsGroup(m.homeTeam) && !needsGroup(m.awayTeam)) return m
+    return { ...m, homeTeam: resolveGroupTeam(m.homeTeam), awayTeam: resolveGroupTeam(m.awayTeam) }
+  })
+
+  // Build winner map from every completed knockout match in pass1
+  const knockoutWinners: Record<string, Team> = {}
+  for (const m of pass1) {
+    if (m.status !== 'ft') continue
+    const home = m.homeScore ?? -1
+    const away = m.awayScore ?? -1
+    if (home > away) knockoutWinners[m.id] = m.homeTeam
+    else if (away > home) knockoutWinners[m.id] = m.awayTeam
+    // draw shouldn't occur in knockout; leave unresolved
+  }
+
+  // Pass 2 — resolve "W R32-N", "W R16-N", "W QF-N", "W SF-N" placeholders
+  function resolveKnockoutTeam(team: Team): Team {
+    const m = team.id.match(/^w-(r32|r16|qf|sf)-(\d+)$/)
+    if (m) return knockoutWinners[`${m[1]}-${m[2]}`] ?? team
+    return team
+  }
+
+  return pass1.map(m => {
+    const needsKnockout = (t: Team) => /^w-(r32|r16|qf|sf)-\d+$/.test(t.id)
+    if (!needsKnockout(m.homeTeam) && !needsKnockout(m.awayTeam)) return m
+    return { ...m, homeTeam: resolveKnockoutTeam(m.homeTeam), awayTeam: resolveKnockoutTeam(m.awayTeam) }
   })
 }
 
