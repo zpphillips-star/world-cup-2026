@@ -20,7 +20,7 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   const d = new Date(year, month - 1, day, 12, 0, 0)
   const weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
   const mon = d.toLocaleDateString('en-US', { month: 'short', timeZone: timezone })
-  return `${weekday} ┬╖ ${mon} ${day}`
+  return `${weekday} · ${mon} ${day}`
 }
 
 // ΓöÇΓöÇ Live Now sheet ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
@@ -129,7 +129,7 @@ function LiveNowSheet({
                   {/* Score */}
                   <div className="flex flex-col items-center min-w-[64px]">
                     <span className="text-3xl font-black text-red-400 tabular-nums leading-none">
-                      {m.homeScore} ΓÇô {m.awayScore}
+                      {m.homeScore} – {m.awayScore}
                     </span>
                   </div>
 

@@ -71,7 +71,7 @@ function DayMatchCard({
             )}
             {isLive && (
               <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">
-                ΓùÅ LIVE {clock && `┬╖ ${clock}`}
+                ΓùÅ LIVE {clock && `· ${clock}`}
               </span>
             )}
             {isFt && (
@@ -98,7 +98,7 @@ function DayMatchCard({
             <div className="flex flex-col items-center gap-0.5 px-2">
               {hasScore ? (
                 <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
-                  {match.homeScore} ΓÇô {match.awayScore}
+                  {match.homeScore} – {match.awayScore}
                 </span>
               ) : (
                 <span className="text-2xl font-bold text-zinc-500">VS</span>

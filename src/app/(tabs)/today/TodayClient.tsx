@@ -107,7 +107,7 @@ function FeaturedMatchCard({
                   className={`${featured ? 'text-[40px]' : 'text-[28px]'} font-extrabold tabular-nums leading-none text-white`}
                   style={{ fontVariantNumeric: 'tabular-nums' }}
                 >
-                  {match.homeScore}ΓÇô{match.awayScore}
+                  {match.homeScore}–{match.awayScore}
                 </span>
                 {isFt && <span className="text-[9px] text-zinc-600 uppercase tracking-widest mt-0.5">Full Time</span>}
               </>
@@ -309,7 +309,7 @@ export default function TodayClient({
       {/* Header ΓÇö matches Schedule/Groups/Calendar style */}
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Today</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 ┬╖ {todayLabel}</p>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · {todayLabel}</p>
       </div>
 
       {todayMatches.length === 0 ? (

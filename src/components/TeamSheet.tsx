@@ -34,8 +34,8 @@ function formatKickoff(iso: string, tz: string) {
     const abbr = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
       .formatToParts(d).find(p => p.type === 'timeZoneName')?.value ?? ''
     const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz })
-    return `${date} ┬╖ ${time} ${abbr}`
-  } catch { return 'ΓÇö' }
+    return `${date} · ${time} ${abbr}`
+  } catch { return '—' }
 }
 
 export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, allMatchesFull, layer = 2 }: Props) {
@@ -173,7 +173,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               <h2 className="text-xl font-black text-white">{team.name}</h2>
               {team.group && (
                 <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  Group {team.group} ┬╖ #{groupPos}
+                  Group {team.group} · #{groupPos}
                 </span>
               )}
             </div>
@@ -235,12 +235,12 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
                     <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
-                      <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} ┬╖ {m.venue.city}</p>
+                      <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
                     </div>
                     {m.status === 'ft' && myScore != null && (
                       <div className="text-right flex-shrink-0">
                         <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
-                        <span className="text-sm text-white ml-1.5">{isHome ? `${myScore}ΓÇô${oppScore}` : `${myScore}ΓÇô${oppScore}`}</span>
+                        <span className="text-sm text-white ml-1.5">{isHome ? `${myScore}–${oppScore}` : `${myScore}–${oppScore}`}</span>
                       </div>
                     )}
                     {m.status === 'live' && (
