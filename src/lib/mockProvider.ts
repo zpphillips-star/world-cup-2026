@@ -210,7 +210,7 @@ const matches: Match[] = [
 ]
 
 // Helper to make a TBD placeholder team
-function tbd(label: string): Team { return { id: label.replace(/\s+/g, '-').toLowerCase(), name: label, flag: '🥅' } }
+function tbd(label: string): Team { return { id: label.replace(/\s+/g, '-').toLowerCase(), name: label, flag: '🏆' } }
 
 // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 // KNOCKOUT STAGE — Round of 32 through Final
