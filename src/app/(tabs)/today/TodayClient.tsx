@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import type { Match, TeamStats, Standing } from '@/lib/types'
@@ -11,7 +11,7 @@ import { applyLiveScores, getMatchScoreKey } from '@/lib/liveScores'
 import { resolveKnockoutTeams } from '@/lib/mockProvider'
 import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
 
-// ── Featured match card ───────────────────────────────────────────────────────
+// ΓöÇΓöÇ Featured match card ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function FeaturedMatchCard({
   match,
   liveData,
@@ -85,7 +85,7 @@ function FeaturedMatchCard({
           )}
         </div>
 
-        {/* Main match row: flag · name | score | name · flag */}
+        {/* Main match row: flag ┬╖ name | score | name ┬╖ flag */}
         <div className="flex items-center px-4 py-4 gap-3">
           {/* Home */}
           <div className="flex-1 flex flex-col items-center gap-2">
@@ -107,7 +107,7 @@ function FeaturedMatchCard({
                   className={`${featured ? 'text-[40px]' : 'text-[28px]'} font-extrabold tabular-nums leading-none text-white`}
                   style={{ fontVariantNumeric: 'tabular-nums' }}
                 >
-                  {match.homeScore}–{match.awayScore}
+                  {match.homeScore}ΓÇô{match.awayScore}
                 </span>
                 {isFt && <span className="text-[9px] text-zinc-600 uppercase tracking-widest mt-0.5">Full Time</span>}
               </>
@@ -146,7 +146,7 @@ function FeaturedMatchCard({
           </div>
         )}
 
-        {/* Red cards — separated section */}
+        {/* Red cards ΓÇö separated section */}
         {(liveData?.redCards?.length ?? 0) > 0 && (
           <div className="flex flex-col gap-1 px-4 pb-3 border-t border-white/[0.04] pt-2">
             <div className="flex items-center gap-2 mb-1">
@@ -157,18 +157,18 @@ function FeaturedMatchCard({
             {(liveData?.redCards ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
               <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
                 <span className="text-[11px] text-zinc-300 font-medium text-right leading-none">
-                  {c.teamSide === 'home' && <span>🟥 {surname(c.playerName)}</span>}
+                  {c.teamSide === 'home' && <span>≡ƒƒÑ {surname(c.playerName)}</span>}
                 </span>
                 <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
                 <span className="text-[11px] text-zinc-300 font-medium text-left leading-none">
-                  {c.teamSide === 'away' && <span>{surname(c.playerName)} 🟥</span>}
+                  {c.teamSide === 'away' && <span>{surname(c.playerName)} ≡ƒƒÑ</span>}
                 </span>
               </div>
             ))}
           </div>
         )}
 
-        {/* Stadium / city — always shown */}
+        {/* Stadium / city ΓÇö always shown */}
         <div className="px-4 pb-3 text-center">
           <span className="text-[11px] text-zinc-500">{match.venue.name}, {match.venue.city}</span>
         </div>
@@ -177,7 +177,7 @@ function FeaturedMatchCard({
   )
 }
 
-// ── Section header ────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Section header ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function SectionHeader({ label, color, count, pulse }: {
   label: string
   color: string
@@ -198,7 +198,7 @@ function SectionHeader({ label, color, count, pulse }: {
   )
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Main ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export default function TodayClient({
   matches,
   statsMap = {},
@@ -268,12 +268,18 @@ export default function TodayClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(
-    () => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)),
-    [matches, liveScores, liveAliases]
-  )
+  const liveMatches = useMemo(() => {
+    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
+    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
+    // Step 2: resolve group-position slots (1st/2nd Group X ΓåÆ real team)
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
+    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
+    // Step 4: resolve knockout-winner slots (W R32-X ΓåÆ winner) now R32 matches are ft
+    return resolveKnockoutTeams(withKnockoutScores)
+  }, [matches, liveScores, liveAliases])
 
-  // Recompute standings via shared hook — instant, no API lag; ESPN overlay when it has more data
+  // Recompute standings via shared hook ΓÇö instant, no API lag; ESPN overlay when it has more data
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   const todayMatches = useMemo(() => {
@@ -300,16 +306,16 @@ export default function TodayClient({
   return (
     <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))' }}>
 
-      {/* Header — matches Schedule/Groups/Calendar style */}
+      {/* Header ΓÇö matches Schedule/Groups/Calendar style */}
       <div className="px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Today</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 · {todayLabel}</p>
+        <p className="text-[12px] text-zinc-500 mt-0.5">FIFA World Cup 2026 ┬╖ {todayLabel}</p>
       </div>
 
       {todayMatches.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
           <div className="w-20 h-20 rounded-3xl bg-zinc-900 flex items-center justify-center mb-5">
-            <span className="text-4xl">⚽</span>
+            <span className="text-4xl">ΓÜ╜</span>
           </div>
           <p className="text-white font-bold text-xl">No matches today</p>
           <p className="text-zinc-500 text-sm mt-2 leading-relaxed">Check the Schedule tab for upcoming games</p>
@@ -317,7 +323,7 @@ export default function TodayClient({
       ) : (
         <div className="px-4 space-y-8">
 
-          {/* FINISHED — top, already happened */}
+          {/* FINISHED ΓÇö top, already happened */}
           {finishedToday.length > 0 && (
             <div>
               <SectionHeader label="Final" color="bg-zinc-500" count={finishedToday.length} />
@@ -335,7 +341,7 @@ export default function TodayClient({
             </div>
           )}
 
-          {/* LIVE — middle, most featured */}
+          {/* LIVE ΓÇö middle, most featured */}
           {liveToday.length > 0 && (
             <div>
               <div className="flex items-center gap-2.5 mb-4">
@@ -361,7 +367,7 @@ export default function TodayClient({
             </div>
           )}
 
-          {/* UPCOMING — bottom */}
+          {/* UPCOMING ΓÇö bottom */}
           {upcomingToday.length > 0 && (
             <div>
               <SectionHeader label="Upcoming" color="bg-[#00d4ff]" count={upcomingToday.length} />
@@ -404,7 +410,6 @@ export default function TodayClient({
     </div>
   )
 }
-
 
 
 

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import MatchCard from '@/components/MatchCard'
@@ -20,10 +20,10 @@ function formatDateHeader(isoDate: string, timezone: string): string {
   const d = new Date(year, month - 1, day, 12, 0, 0)
   const weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
   const mon = d.toLocaleDateString('en-US', { month: 'short', timeZone: timezone })
-  return `${weekday} · ${mon} ${day}`
+  return `${weekday} ┬╖ ${mon} ${day}`
 }
 
-// ── Live Now sheet ──────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Live Now sheet ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 function LiveNowSheet({
   liveMatches,
@@ -71,7 +71,7 @@ function LiveNowSheet({
           <button
             onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
-          >✕</button>
+          >Γ£ò</button>
 
           <div className="flex items-center gap-2.5">
             <div className="relative flex-shrink-0">
@@ -129,7 +129,7 @@ function LiveNowSheet({
                   {/* Score */}
                   <div className="flex flex-col items-center min-w-[64px]">
                     <span className="text-3xl font-black text-red-400 tabular-nums leading-none">
-                      {m.homeScore} – {m.awayScore}
+                      {m.homeScore} ΓÇô {m.awayScore}
                     </span>
                   </div>
 
@@ -151,11 +151,11 @@ function LiveNowSheet({
                     {(liveData?.redCards ?? []).sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
                       <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
                         <span className="text-[11px] text-zinc-300 text-right leading-none">
-                          {c.teamSide === 'home' && <span>🟥 {c.playerName}</span>}
+                          {c.teamSide === 'home' && <span>≡ƒƒÑ {c.playerName}</span>}
                         </span>
                         <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
                         <span className="text-[11px] text-zinc-300 text-left leading-none">
-                          {c.teamSide === 'away' && <span>{c.playerName} 🟥</span>}
+                          {c.teamSide === 'away' && <span>{c.playerName} ≡ƒƒÑ</span>}
                         </span>
                       </div>
                     ))}
@@ -164,8 +164,8 @@ function LiveNowSheet({
 
                 {/* Venue + tap hint */}
                 <div className="bg-black/20 px-4 py-2 flex items-center justify-between">
-                  <span className="text-[10px] text-zinc-500">📍 {m.venue.name}, {m.venue.city}</span>
-                  <span className="text-[10px] text-zinc-600">Tap for details →</span>
+                  <span className="text-[10px] text-zinc-500">≡ƒôì {m.venue.name}, {m.venue.city}</span>
+                  <span className="text-[10px] text-zinc-600">Tap for details ΓåÆ</span>
                 </div>
               </button>
             )
@@ -173,7 +173,7 @@ function LiveNowSheet({
         </div>
       </div>
 
-      {/* Full match detail — opened from a card tap */}
+      {/* Full match detail ΓÇö opened from a card tap */}
       {selectedMatch && (() => {
         const key = getMatchScoreKey(selectedMatch)
         const liveData = liveScores[key] ?? liveScores[liveAliases[key]]
@@ -201,7 +201,7 @@ function LiveNowSheet({
   )
 }
 
-// ── Main ───────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Main ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 export default function ScheduleClient({
   matches,
@@ -289,12 +289,21 @@ export default function ScheduleClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)), [matches, liveScores, liveAliases])
+  const liveMatches = useMemo(() => {
+    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
+    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
+    // Step 2: resolve group-position slots (1st/2nd Group X ΓåÆ real team)
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
+    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
+    // Step 4: resolve knockout-winner slots (W R32-X ΓåÆ winner) now R32 matches are ft
+    return resolveKnockoutTeams(withKnockoutScores)
+  }, [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
 
-  // Recompute standings via shared hook — instant, no API lag; ESPN overlay when it has more data
+  // Recompute standings via shared hook ΓÇö instant, no API lag; ESPN overlay when it has more data
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)
 
   const sortedMatches = useMemo(
@@ -316,7 +325,7 @@ export default function ScheduleClient({
 
   return (
     <div className="pb-16 max-w-2xl mx-auto">
-      {/* Live banner — tappable */}
+      {/* Live banner ΓÇö tappable */}
       {hasAnyLive && (
         <button
           className="w-full text-left relative overflow-hidden"
@@ -350,7 +359,7 @@ export default function ScheduleClient({
         const isToday = isoDate === today
         return (
           <div key={isoDate} ref={isToday ? todayRef : undefined}>
-            {/* Day separator — spacer between days */}
+            {/* Day separator ΓÇö spacer between days */}
             {idx > 0 && <div className="h-5" />}
 
             {/* Sticky date header */}
@@ -380,6 +389,7 @@ export default function ScheduleClient({
                     groupStandings={match.group ? effectiveStandingsMap[match.group] : undefined}
                     groupMatches={match.group ? liveMatches.filter(m => m.group === match.group) : undefined}
                     clock={liveData?.clock}
+                    scorers={liveData?.scorers}
                     allMatches={sortedMatches}
                     allStatsMap={statsMap}
                     allStandingsMap={effectiveStandingsMap}
@@ -415,7 +425,6 @@ export default function ScheduleClient({
     </div>
   )
 }
-
 
 
 

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import type { Match, TeamStats, Standing, Team } from '@/lib/types'
@@ -60,7 +60,7 @@ function TeamPanel({ team, stats, side }: {
             <StatBox label="GA" value={stats.wcGoalsAgainst} />
           </div>
           <div className={`flex items-center gap-1 ${side === 'away' ? 'flex-row-reverse' : ''}`}>
-            <span className="text-base">🏆</span>
+            <span className="text-base">≡ƒÅå</span>
             <span className="text-[12px] text-zinc-300 font-medium">{stats.bestFinish}</span>
           </div>
         </>
@@ -153,6 +153,7 @@ export default function MatchCard({
   allStandingsMap,
   allLiveData,
   allLiveAliases,
+  contextMatches,
 }: {
   match: Match
   userTimezone?: string
@@ -170,6 +171,7 @@ export default function MatchCard({
   allStandingsMap?: Record<string, Standing[]>
   allLiveData?: Record<string, ScoreUpdate>
   allLiveAliases?: Record<string, string>
+  contextMatches?: Match[]
 }){
   const [open, setOpen] = useState(defaultOpen)
   const [closing, setClosing] = useState(false)
@@ -190,7 +192,7 @@ export default function MatchCard({
     return () => { if (closingTimerRef.current) clearTimeout(closingTimerRef.current) }
   }, [])
 
-  // ── Swipe navigation ───────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Swipe navigation ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   const [currentIdx, setCurrentIdx] = useState<number>(() => {
     if (!allMatches) return 0
     const i = allMatches.findIndex(m => m.id === match.id)
@@ -214,7 +216,7 @@ export default function MatchCard({
     else if (dx > 0 && currentIdx > 0) setCurrentIdx(i => i - 1)
   }
 
-  // ── Current match data (navigated or original) ─────────────────────────────
+  // ΓöÇΓöÇ Current match data (navigated or original) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   const currentMatch = allMatches?.[currentIdx] ?? match
   const liveKey = getMatchScoreKey(currentMatch)
   const currentLiveData = allLiveData?.[liveKey] ?? (allLiveAliases ? allLiveData?.[allLiveAliases[liveKey]] : undefined)
@@ -224,7 +226,9 @@ export default function MatchCard({
   const currentHomeStats    = allStatsMap?.[currentMatch.homeTeam.id] ?? (currentMatch.id === match.id ? homeStats : null)
   const currentAwayStats    = allStatsMap?.[currentMatch.awayTeam.id] ?? (currentMatch.id === match.id ? awayStats : null)
   const currentGroupMatches = currentMatch.group
-    ? (allMatches?.filter(m => m.group === currentMatch.group) ?? (currentMatch.id === match.id ? groupMatches : undefined))
+    ? (currentMatch.id === match.id && groupMatches
+       ? groupMatches
+       : allMatches?.filter(m => m.group === currentMatch.group))
     : undefined
   const currentGroupStandings = currentMatch.group
     ? (allStandingsMap?.[currentMatch.group] ?? (currentMatch.id === match.id ? groupStandings : undefined))
@@ -237,7 +241,7 @@ export default function MatchCard({
 
   return (
     <>
-      {/* Match row — hidden when used as sheet-only (e.g. bracket tap) */}
+      {/* Match row ΓÇö hidden when used as sheet-only (e.g. bracket tap) */}
       {!noRow && (
         <div
           className="flex items-center px-4 py-2 border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors cursor-pointer select-none"
@@ -268,7 +272,7 @@ export default function MatchCard({
             <div className="w-12 flex-shrink-0 text-center">
               {hasScore ? (
                 <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
-                  {match.homeScore}–{match.awayScore}
+                  {match.homeScore}ΓÇô{match.awayScore}
                 </span>
               ) : (
                 <span className="text-[12px] font-medium text-zinc-400">vs</span>
@@ -289,7 +293,7 @@ export default function MatchCard({
         <>
           <Backdrop onDismiss={handleClose} zIndex="z-[65]" bg="bg-black/70" />
 
-          {/* Jersey ad banner — full-width prominent, anchored just above the sheet */}
+          {/* Jersey ad banner ΓÇö full-width prominent, anchored just above the sheet */}
           {/* TODO: add &tag=YOUR-TRACKING-ID to links once Amazon Associates approved */}
 
           <div
@@ -305,7 +309,7 @@ export default function MatchCard({
               <button
                 onClick={handleClose}
                 className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
-              >✕</button>
+              >Γ£ò</button>
 
               <div className="flex items-center gap-2 mb-2">
                 {currentMatch.group && (
@@ -313,10 +317,10 @@ export default function MatchCard({
                     Group {currentMatch.group}
                   </span>
                 )}
-                {isLive && <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">● LIVE</span>}
+                {isLive && <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">ΓùÅ LIVE</span>}
                 {isFt && <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">FINAL</span>}
                 {currentMatch.status === 'upcoming' && (
-                  <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{date} · {time} {tzAbbr}</span>
+                  <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{date} ┬╖ {time} {tzAbbr}</span>
                 )}
 
               </div>
@@ -336,7 +340,7 @@ export default function MatchCard({
                   {hasScore ? (
                     <>
                       <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
-                        {currentMatch.homeScore} – {currentMatch.awayScore}
+                        {currentMatch.homeScore} ΓÇô {currentMatch.awayScore}
                       </span>
                       {isLive && currentClock && (
                         <div className="flex items-center gap-1 mt-0.5">
@@ -366,11 +370,11 @@ export default function MatchCard({
 
               {currentMatch.venue?.name && (
                 <div className="flex items-center justify-center gap-1.5 mt-4">
-                  <span className="text-sm">📍</span>
+                  <span className="text-sm">≡ƒôì</span>
                   <span className="text-[11px] text-zinc-500 text-center">{currentMatch.venue.name}, {currentMatch.venue.city}</span>
                 </div>
               )}
-              {/* Swipe hint — shown only when navigation is available */}
+              {/* Swipe hint ΓÇö shown only when navigation is available */}
               {allMatches && allMatches.length > 1 && (
                 <p className="text-[10px] text-zinc-700 text-center mt-2">Swipe left or right to browse matches</p>
               )}
@@ -415,11 +419,11 @@ export default function MatchCard({
                     {[...currentRedCards].sort((a, b) => parseInt(a.minute) - parseInt(b.minute)).map((c, i) => (
                       <div key={i} className="grid items-center w-full" style={{ gridTemplateColumns: '1fr 40px 1fr', columnGap: '8px' }}>
                         <span className="text-[12px] text-white font-semibold text-right leading-none">
-                          {c.teamSide === 'home' && <span>🟥 {c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''}</span>}
+                          {c.teamSide === 'home' && <span>≡ƒƒÑ {c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''}</span>}
                         </span>
                         <span className="text-[11px] text-zinc-500 font-medium leading-none text-center">{c.minute}</span>
                         <span className="text-[12px] text-white font-semibold text-left leading-none">
-                          {c.teamSide === 'away' && <span>{c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''} 🟥</span>}
+                          {c.teamSide === 'away' && <span>{c.playerName}{c.cardType === 'yellow-red' ? ' (2Y)' : ''} ≡ƒƒÑ</span>}
                         </span>
                       </div>
                     ))}
@@ -453,11 +457,10 @@ export default function MatchCard({
         </>
       )}
 
-      {/* Team sheet — opens as L3 on top of this sheet; closing it reveals MatchCard */}
+      {/* Team sheet ΓÇö opens as L3 on top of this sheet; closing it reveals MatchCard */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} allStandingsMap={allStandingsMap} allMatchesFull={contextMatches} />
       )}
     </>
   )
 }
-

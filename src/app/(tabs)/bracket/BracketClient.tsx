@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { FlagImg } from '@/components/FlagImg'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
@@ -7,6 +7,9 @@ import type { ScoreUpdate } from '@/app/api/live-scores/route'
 import { applyLiveScores } from '@/lib/liveScores'
 import { getBracket, resolveKnockoutTeams } from '@/lib/mockProvider'
 import MatchCardSheet from '@/components/MatchCard'
+import { useEffectiveStandings } from '@/lib/useEffectiveStandings'
+import { mergeStandings } from '@/lib/standingsUtils'
+import type { Standing } from '@/lib/types'
 
 const ROUND_ORDER = ['Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Final']
 const ROUND_SHORT: Record<string, string> = {
@@ -116,12 +119,13 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
   const [liveScores, setLiveScores] = useState<Record<string, ScoreUpdate>>({})
   const [liveAliases, setLiveAliases] = useState<Record<string, string>>({})
   const [userTimezone, setUserTimezone] = useState('UTC')
+  const [liveStandingsMap, setLiveStandingsMap] = useState<Record<string, Standing[]>>(standingsMap)
   const liveScoresRef = useRef(liveScores)
   useEffect(() => { liveScoresRef.current = liveScores }, [liveScores])
   useEffect(() => { setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone) }, [])
   const scoresIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Which bracket slot the user tapped — drives the sheet
+  // Which bracket slot the user tapped ΓÇö drives the sheet
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null)
 
   const fetchScores = useCallback(async () => {
@@ -134,9 +138,21 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     } catch { /* fail silently */ }
   }, [])
 
+  const fetchStandings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/standings')
+      if (!res.ok) return
+      const data = await res.json()
+      setLiveStandingsMap(mergeStandings(standingsMap, data.standings ?? {}))
+    } catch { /* fail silently */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [standingsMap])
+
   useEffect(() => {
     fetchScores()
+    fetchStandings()
     scoresIntervalRef.current = setInterval(fetchScores, 30_000)
+    const standingsInterval = setInterval(fetchStandings, 60_000)
     // Adaptive polling: 2s when live, 30s otherwise
     const adaptivePoller = setInterval(() => {
       const hasLive = Object.values(liveScoresRef.current).some(s => s.status === 'live')
@@ -146,16 +162,29 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     }, 5_000)
     return () => {
       if (scoresIntervalRef.current) clearInterval(scoresIntervalRef.current)
+      clearInterval(standingsInterval)
       clearInterval(adaptivePoller)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fetchStandings])
 
   // Apply live scores to group-stage matches and recompute the bracket
   const bracket = useMemo(() => {
-    const liveMatches = resolveKnockoutTeams(applyLiveScores(initialMatches, liveScores, liveAliases))
+    // Step 1: apply group-stage scores so standings can be computed
+    const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
+    // Step 2: resolve TBD knockout teams using completed group standings
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    // Step 3: re-apply so knockout slot statuses/scores reflect live data
+    const liveMatches = applyLiveScores(resolved, liveScores, liveAliases)
     return getBracket(liveMatches)
   }, [initialMatches, liveScores, liveAliases])
+
+  const liveMatchesFull = useMemo(() => {
+    const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
+    const resolved = resolveKnockoutTeams(withGroupScores)
+    return applyLiveScores(resolved, liveScores, liveAliases)
+  }, [initialMatches, liveScores, liveAliases])
+  const { effectiveStandingsMap } = useEffectiveStandings(liveMatchesFull, standingsMap, liveStandingsMap)
 
   // Flat ordered list of all knockout Match objects (for swipe navigation in the sheet)
   const knockoutMatchList = useMemo<Match[]>(() => {
@@ -211,7 +240,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     <div className="h-full overflow-y-auto bg-[#0a0a0f]" style={{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }}>
       <div className="sticky top-0 z-10 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-zinc-800 px-5 pt-5 pb-3">
         <h1 className="text-[22px] font-bold text-white tracking-tight">Knockout Bracket</h1>
-        <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 · Elimination Rounds</p>
+        <p className="text-[12px] text-zinc-500 mt-0.5 mb-2.5">FIFA World Cup 2026 ┬╖ Elimination Rounds</p>
         <div className="flex gap-2">
           {ROUND_ORDER.map(name => {
             const exists = mainRounds.find(r => r.name === name)
@@ -238,7 +267,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
 
       {displayedRounds.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 gap-3 text-zinc-500">
-          <span className="text-3xl">🏆</span>
+          <span className="text-3xl">≡ƒÅå</span>
           <span className="text-sm">Tap a round above to view the bracket</span>
         </div>
       ) : (
@@ -342,7 +371,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
         </div>
       )}
 
-      {/* Match detail sheet — opens when a bracket slot is tapped */}
+      {/* Match detail sheet ΓÇö opens when a bracket slot is tapped */}
       {selectedMatch && (
         <MatchCardSheet
           key={selectedMatch.id}
@@ -357,10 +386,10 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
           homeStats={statsMap[selectedMatch.homeTeam.id] ?? null}
           awayStats={statsMap[selectedMatch.awayTeam.id] ?? null}
           allStatsMap={statsMap}
-          allStandingsMap={standingsMap}
+          allStandingsMap={effectiveStandingsMap}
+          contextMatches={liveMatchesFull}
         />
       )}
     </div>
   )
 }
-

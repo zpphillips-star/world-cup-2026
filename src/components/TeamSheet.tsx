@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useRef } from 'react'
 import { mockProvider, resolveKnockoutTeamsFromStandings } from '@/lib/mockProvider'
@@ -10,10 +10,14 @@ import { jerseyKits } from '@/data/jerseyKits'
 interface Props {
   team: Team
   onClose: () => void
-  /** Live standings for this team's group — if provided, overrides mockProvider */
+  /** Live standings for this team's group ΓÇö if provided, overrides mockProvider */
   standings?: Standing[]
-  /** Live group matches with scores applied — if provided, overrides mockProvider */
+  /** Live group matches with scores applied ΓÇö if provided, overrides mockProvider */
   groupMatches?: Match[]
+  /** Full standings map ΓÇö fallback for bracket tab where the match has no group field */
+  allStandingsMap?: Record<string, Standing[]>
+  /** Full live match list ΓÇö used as fallback for group stage match display when groupMatches is not provided (e.g. bracket tab) */
+  allMatchesFull?: Match[]
   /**
    * Stacking layer: 2 = L2 sheet (e.g. opened from GroupSheet), 3 = L3 sheet
    * (e.g. opened from inside MatchCard). Higher layer = higher z-indexes so the
@@ -30,11 +34,11 @@ function formatKickoff(iso: string, tz: string) {
     const abbr = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' })
       .formatToParts(d).find(p => p.type === 'timeZoneName')?.value ?? ''
     const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz })
-    return `${date} · ${time} ${abbr}`
-  } catch { return '—' }
+    return `${date} ┬╖ ${time} ${abbr}`
+  } catch { return 'ΓÇö' }
 }
 
-export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, layer = 2 }: Props) {
+export function TeamSheet({ team, onClose, standings: standingsProp, groupMatches: groupMatchesProp, allStandingsMap, allMatchesFull, layer = 2 }: Props) {
   // z-index values depend on which layer this sheet occupies
   // L2 (e.g. from GroupSheet): backdrop z-50 | panel z-60 | strip z-70
   // L3 (e.g. from MatchCard):  backdrop z-75 | panel z-80 | strip z-85
@@ -43,22 +47,51 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
   const stripZ    = layer === 3 ? 'z-[85]' : 'z-[70]'
   // Use live data when provided, fall back to static mock data
   const allMockMatches = mockProvider.getMatches()
-  const teamMatches = (groupMatchesProp ?? allMockMatches).filter(m =>
+  const resolvedGroupMatches = groupMatchesProp
+    ?? (team.group && allMatchesFull ? allMatchesFull : null)
+    ?? allMockMatches
+  const teamMatches = resolvedGroupMatches.filter(m =>
     m.group && (m.homeTeam.id === team.id || m.awayTeam.id === team.id)
   )
-  const standings = standingsProp ?? (team.group ? mockProvider.getStandings()[team.group] ?? [] : [])
+  const standings = standingsProp ?? (team.group ? (allStandingsMap?.[team.group] ?? mockProvider.getStandings()[team.group] ?? []) : [])
   const myStanding = standings.find(s => s.team.id === team.id)
   const groupPos = standings.findIndex(s => s.team.id === team.id) + 1
   const stats = mockProvider.getTeamStats(team.id)
 
   // Resolve knockout TBD slots using current standings, then filter to matches this team is in.
-  // resolveKnockoutTeamsFromStandings works pre-tournament (0-pt standings) so the section is
-  // always visible with the current projected opponent.
-  const allStandings = mockProvider.getStandings()
+  // When live standings are provided (standingsProp), merge them into the base standings so that
+  // resolved positions (e.g. "1st Group B" ΓåÆ Switzerland) use actual results, not mock 0-pt data
+  // where all teams tie and insertion order decides.
+  // Use allStandingsMap (full live standings for ALL groups) as the base so every group resolves
+  // correctly, not just the current team's group. Then override the current team's group with the
+  // most specific standings we have (standingsProp or allStandingsMap fallback).
+  const baseStandings = mockProvider.getStandings()
+  const allStandings = {
+    ...baseStandings,
+    ...(allStandingsMap ?? {}),
+    ...(team.group && standings.length > 0 ? { [team.group]: standings } : {}),
+  }
   const resolvedKnockout = resolveKnockoutTeamsFromStandings(allStandings)
   const myKnockoutMatches = resolvedKnockout.filter(m =>
     m.homeTeam.id === team.id || m.awayTeam.id === team.id
   )
+
+  // Determine if this team's group stage is finished ΓÇö needed to decide whether
+  // to show elimination / pending status messages.
+  // Primary check: all 6 group matches are 'ft' in the provided match data.
+  // Fallback: live standings show this team played 3 matches (= group stage complete) ΓÇö handles
+  // tabs like Today/Calendar where liveMatches only contains today's games, not historical ones.
+  // Time-based fallback: all 6 static mock kickoffs ended more than 3h ago (robust when ESPN data is stale).
+  const allGroupMatches = team.group ? resolvedGroupMatches.filter(m => m.group === team.group) : []
+  const now = Date.now()
+  const mockGroupMatches = team.group ? allMockMatches.filter(m => m.group === team.group) : []
+  const isGroupComplete =
+    (allGroupMatches.length === 6 && allGroupMatches.every(m => m.status === 'ft')) ||
+    (myStanding?.played === 3) ||
+    // All 6 group matches' kickoffs are in the past + 3h buffer (group must be done)
+    (mockGroupMatches.length === 6 && mockGroupMatches.every(m =>
+      new Date(m.kickoff).getTime() + 3 * 60 * 60 * 1000 < now
+    ))
 
   const [closing, setClosing] = useState(false)
   const closingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -85,7 +118,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
       {/* Backdrop */}
       <Backdrop onDismiss={handleClose} zIndex={backdropZ} bg="bg-black/70" />
 
-      {/* Shop strip — fixed to very top of screen, only visible when flag is open */}
+      {/* Shop strip ΓÇö fixed to very top of screen, only visible when flag is open */}
       <a
         href={`https://www.amazon.com/s?k=${encodeURIComponent(team.name + ' 2026 World Cup soccer jersey')}&tag=zpphillips-20`}
         target="_blank"
@@ -117,7 +150,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
         })()}
         <FlagImg teamId={team.id} fallback={team.flag} className="h-4 w-auto" />
         <span className="text-[12px] font-semibold text-cyan-300">Get {team.name}&apos;s 2026 jersey</span>
-        <span className="text-cyan-400 text-[11px]">→</span>
+        <span className="text-cyan-400 text-[11px]">ΓåÆ</span>
       </a>
 
       {/* Sheet */}
@@ -132,7 +165,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           <button
             onClick={handleClose}
             className="absolute top-4 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white text-sm"
-          >✕</button>
+          >Γ£ò</button>
 
           <div className="flex items-center gap-4 mt-1">
             <FlagImg teamId={team.id} fallback={team.flag} className="h-14" />
@@ -140,7 +173,7 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
               <h2 className="text-xl font-black text-white">{team.name}</h2>
               {team.group && (
                 <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  Group {team.group} · #{groupPos}
+                  Group {team.group} ┬╖ #{groupPos}
                 </span>
               )}
             </div>
@@ -202,12 +235,12 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
                     <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
-                      <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
+                      <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} ┬╖ {m.venue.city}</p>
                     </div>
                     {m.status === 'ft' && myScore != null && (
                       <div className="text-right flex-shrink-0">
                         <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
-                        <span className="text-sm text-white ml-1.5">{isHome ? `${myScore}–${oppScore}` : `${myScore}–${oppScore}`}</span>
+                        <span className="text-sm text-white ml-1.5">{isHome ? `${myScore}ΓÇô${oppScore}` : `${myScore}ΓÇô${oppScore}`}</span>
                       </div>
                     )}
                     {m.status === 'live' && (
@@ -223,43 +256,75 @@ export function TeamSheet({ team, onClose, standings: standingsProp, groupMatche
           </div>
 
           {/* Knockout Stage */}
-          {myKnockoutMatches.length > 0 && (
+          {/* Only show once the group is fully played out */}
+          {isGroupComplete && team.group && groupPos > 0 && (
             <div>
               <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Knockout Stage</p>
-              <div className="space-y-2">
-                {myKnockoutMatches.sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()).map(m => {
-                  const isHome = m.homeTeam.id === team.id
-                  const opponent = isHome ? m.awayTeam : m.homeTeam
-                  const myScore = m.status === 'ft' ? (isHome ? m.homeScore : m.awayScore) : null
-                  const oppScore = m.status === 'ft' ? (isHome ? m.awayScore : m.homeScore) : null
-                  const won = myScore != null && oppScore != null && myScore > oppScore
-                  const drew = myScore != null && oppScore != null && myScore === oppScore
-                  const lost = myScore != null && oppScore != null && myScore < oppScore
-                  const resultColor = won ? 'text-emerald-400' : drew ? 'text-yellow-400' : lost ? 'text-red-400' : 'text-zinc-400'
-                  const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
 
-                  return (
-                    <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
-                      <FlagImg teamId={opponent.id} fallback={opponent.flag} className="h-7" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">{opponent.name}</p>
-                        <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
-                        <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wide">{m.round}</p>
-                      </div>
-                      {m.status === 'ft' && myScore != null && (
-                        <div className="text-right flex-shrink-0">
-                          <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
-                          <span className="text-sm text-white ml-1.5">{myScore}–{oppScore}</span>
+              {/* 1st / 2nd place: show their R32 match(es) */}
+              {myKnockoutMatches.length > 0 && (
+                <div className="space-y-2">
+                  {myKnockoutMatches.sort((a, b) => new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime()).map(m => {
+                    const isHome = m.homeTeam.id === team.id
+                    const opponent = isHome ? m.awayTeam : m.homeTeam
+                    // Placeholder IDs like "w-r32-3", "1st-group-a" mean the opponent isn't resolved yet
+                    const isPlaceholderOpponent =
+                      /^w-(r32|r16|qf|sf)-\d+$/.test(opponent.id) ||
+                      /^(1st|2nd|3rd)-group-[a-l]$/.test(opponent.id) ||
+                      opponent.id.startsWith('best-3rd-')
+                    const opponentName = isPlaceholderOpponent ? 'TBD' : opponent.name
+                    const myScore = m.status === 'ft' ? (isHome ? m.homeScore : m.awayScore) : null
+                    const oppScore = m.status === 'ft' ? (isHome ? m.awayScore : m.homeScore) : null
+                    const won = myScore != null && oppScore != null && myScore > oppScore
+                    const drew = myScore != null && oppScore != null && myScore === oppScore
+                    const lost = myScore != null && oppScore != null && myScore < oppScore
+                    const resultColor = won ? 'text-emerald-400' : drew ? 'text-yellow-400' : lost ? 'text-red-400' : 'text-zinc-400'
+                    const resultLabel = won ? 'W' : drew ? 'D' : lost ? 'L' : ''
+
+                    return (
+                      <div key={m.id} className="bg-[#1a1a24] rounded-lg px-4 py-3 flex items-center gap-3">
+                        <FlagImg teamId={isPlaceholderOpponent ? '' : opponent.id} fallback={opponent.flag} className="h-7" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{opponentName}</p>
+                          <p className="text-[11px] text-zinc-500">{formatKickoff(m.kickoff, m.venue.timezone)} · {m.venue.city}</p>
+                          <p className="text-[10px] text-zinc-600 mt-0.5 uppercase tracking-wide">{m.round}</p>
                         </div>
-                      )}
-                      {m.status === 'live' && (
-                        <span className="text-xs font-bold text-red-400 animate-pulse flex-shrink-0">LIVE</span>
-                      )}
-                      {m.status === 'upcoming' && null}
-                    </div>
-                  )
-                })}
-              </div>
+                        {m.status === 'ft' && myScore != null && (
+                          <div className="text-right flex-shrink-0">
+                            <span className={`text-sm font-black ${resultColor}`}>{resultLabel}</span>
+                            <span className="text-sm text-white ml-1.5">{myScore}–{oppScore}</span>
+                          </div>
+                        )}
+                        {m.status === 'live' && (
+                          <span className="text-xs font-bold text-red-400 animate-pulse flex-shrink-0">LIVE</span>
+                        )}
+                        {m.status === 'upcoming' && (
+                          <span className="text-xs text-zinc-500 flex-shrink-0">Upcoming</span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* 3rd place: may still advance as one of the 8 best 3rd-place teams */}
+              {myKnockoutMatches.length === 0 && groupPos === 3 && (
+                <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <span className="text-xl leading-none">ΓÅ│</span>
+                  <div>
+                    <p className="text-sm font-semibold text-yellow-400">Qualification pending</p>
+                    <p className="text-[11px] text-zinc-500 mt-0.5">Awaiting best 3rd-place results across all groups</p>
+                  </div>
+                </div>
+              )}
+
+              {/* 4th place: definitively eliminated */}
+              {myKnockoutMatches.length === 0 && groupPos >= 4 && (
+                <div className="bg-[#1a1a24] rounded-2xl px-4 py-3 flex items-center gap-3">
+                  <span className="text-xl leading-none">Γ¥î</span>
+                  <p className="text-sm text-zinc-400">Did not qualify for knockout stage</p>
+                </div>
+              )}
             </div>
           )}
 
