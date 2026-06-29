@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import Image from 'next/image'
 
 const leftTabs = [
   {
@@ -101,13 +100,14 @@ export default function BottomNav() {
                   : '0 4px 16px rgba(0,0,0,0.5)',
               }}
             >
-              <Image
-                src="/icons/apple-touch-icon.png"
-                width={44}
-                height={44}
-                alt="Today"
-                className="rounded-2xl"
-              />
+              <svg width={36} height={36} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="18" r="16" fill={todayActive ? "#00d4ff" : "#4a4a5a"} />
+                <polygon points="18,10 22.8,13.5 21,19 15,19 13.2,13.5" fill={todayActive ? "#006a80" : "#2a2a3a"} />
+                <polygon points="10,13 13.2,13.5 15,19 11,22 7.5,18.5" fill={todayActive ? "#006a80" : "#2a2a3a"} />
+                <polygon points="26,13 22.8,13.5 21,19 25,22 28.5,18.5" fill={todayActive ? "#006a80" : "#2a2a3a"} />
+                <polygon points="18,28 15,19 21,19 25,22 22,27" fill={todayActive ? "#006a80" : "#2a2a3a"} />
+                <polygon points="18,28 15,19 11,22 14,27" fill={todayActive ? "#006a80" : "#2a2a3a"} />
+              </svg>
             </div>
             <span className={`text-xs font-semibold ${todayActive ? 'text-[#00d4ff]' : 'text-gray-400'}`}>
               Today
@@ -129,3 +129,5 @@ export default function BottomNav() {
     </nav>
   )
 }
+
+
