@@ -609,10 +609,16 @@ const teamStats: Record<string, TeamStats> = {
 }
 
 /**
- * Resolves TBD group-position slots in knockout matches to real teams using
- * pre-computed standings.  Useful for showing speculative knockout assignments
- * before groups are complete.  Slots that can't be resolved (e.g. "Winner R32 M1")
- * are left as-is.
+ * Resolves TBD placeholders in knockout matches to real teams.
+ *
+ * Two-pass resolution:
+ *   1. Group-position slots ("1st/2nd/3rd Group X") → real team via standings.
+ *   2. R32-winner slots ("W R32-X") → real team via completed R32 results.
+ *
+ * This ensures that any team which has advanced past the R32 (e.g. Canada
+ * winning r32-1) appears correctly in their R16 match on the team card,
+ * and works generically for any advanced team.  Slots that can't be resolved
+ * yet are left as-is.
  */
 export function resolveKnockoutTeamsFromStandings(
   standings: Record<string, Standing[]>
@@ -625,10 +631,35 @@ export function resolveKnockoutTeamsFromStandings(
     if (rows[2]) posMap[`3rd Group ${groupId}`] = rows[2].team
   }
 
+  // Resolve a team from the group-position map (first pass only)
+  const resolveFromPos = (team: Team): Team => posMap[team.name] ?? team
+
+  // Identify placeholder teams that have not yet been resolved to a real team
+  const isPlaceholder = (t: Team) =>
+    /^(1st|2nd|3rd)-group-[a-l]$/.test(t.id) || t.id.startsWith('best-3rd-')
+
+  // Build "W R32-X" → real team map by examining completed R32 matches.
+  // This propagates R32 winners into R16 (and beyond) slots so that any team
+  // that has already advanced shows up on their team card.
+  const winnerMap: Record<string, Team> = {}
+  for (const m of knockoutMatches) {
+    if (!m.id.startsWith('r32-') || m.status !== 'ft') continue
+    const home = resolveFromPos(m.homeTeam)
+    const away = resolveFromPos(m.awayTeam)
+    // Only proceed when both teams are known (not still group-stage placeholders)
+    if (isPlaceholder(home) || isPlaceholder(away)) continue
+    const hs = m.homeScore ?? 0
+    const as_ = m.awayScore ?? 0
+    if (hs !== as_) {
+      // Key is e.g. "W R32-1" — matches the tbd("W R32-1").name used in R16 slots
+      winnerMap[`W ${m.id.toUpperCase()}`] = hs > as_ ? home : away
+    }
+  }
+
   return knockoutMatches.map(m => ({
     ...m,
-    homeTeam: posMap[m.homeTeam.name] ?? m.homeTeam,
-    awayTeam: posMap[m.awayTeam.name] ?? m.awayTeam,
+    homeTeam: winnerMap[m.homeTeam.name] ?? posMap[m.homeTeam.name] ?? m.homeTeam,
+    awayTeam: winnerMap[m.awayTeam.name] ?? posMap[m.awayTeam.name] ?? m.awayTeam,
   }))
 }
 
