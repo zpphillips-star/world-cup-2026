@@ -289,16 +289,7 @@ export default function ScheduleClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => {
-    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
-    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
-    // Step 2: resolve group-position slots (1st/2nd Group X → real team)
-    const resolved = resolveKnockoutTeams(withGroupScores)
-    // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
-    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
-    // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
-    return resolveKnockoutTeams(withKnockoutScores)
-  }, [matches, liveScores, liveAliases])
+  const liveMatches = useMemo(() => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)), [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])
   const currentlyLive = useMemo(() => liveMatches.filter(m => m.status === 'live'), [liveMatches])
@@ -389,7 +380,6 @@ export default function ScheduleClient({
                     groupStandings={match.group ? effectiveStandingsMap[match.group] : undefined}
                     groupMatches={match.group ? liveMatches.filter(m => m.group === match.group) : undefined}
                     clock={liveData?.clock}
-                    scorers={liveData?.scorers}
                     allMatches={sortedMatches}
                     allStatsMap={statsMap}
                     allStandingsMap={effectiveStandingsMap}

@@ -167,3 +167,4 @@ export async function GET() {
     return Response.json({ scores: {}, aliases: {}, fetchedAt: Date.now() })
   }
 }
+

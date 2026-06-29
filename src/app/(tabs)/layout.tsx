@@ -8,3 +8,4 @@ export default function TabsLayout({ children }: { children: React.ReactNode }) 
     </div>
   )
 }
+

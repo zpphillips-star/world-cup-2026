@@ -1,4 +1,4 @@
-import dataProvider from '@/lib/dataProvider'
+﻿import dataProvider from '@/lib/dataProvider'
 import ScheduleClient from './ScheduleClient'
 import type { TeamStats, Standing } from '@/lib/types'
 

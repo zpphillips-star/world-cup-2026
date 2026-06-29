@@ -1,4 +1,4 @@
-import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStats } from './types'
+﻿import type { DataProvider, Match, Team, Venue, Group, Standing, BracketRound, BracketSlot, TeamStats } from './types'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // VENUES — All 16 official FIFA World Cup 2026 venues
@@ -113,100 +113,100 @@ const matches: Match[] = [
 
   // GROUP A — Mexico, South Korea, South Africa, Czech Republic
   // Source: ESPN API (all times UTC, venues verified)
-  { id: "m1",  homeTeam: teams.mexico,       awayTeam: teams.southafrica,   kickoff: "2026-06-11T19:00:00Z", venue: venues.azteca,       group: "A", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m2",  homeTeam: teams.southkorea,   awayTeam: teams.czechrepublic, kickoff: "2026-06-12T02:00:00Z", venue: venues.akron,        group: "A", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m25", homeTeam: teams.czechrepublic,awayTeam: teams.southafrica,   kickoff: "2026-06-18T16:00:00Z", venue: venues.mercedesbenz, group: "A", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m28", homeTeam: teams.mexico,       awayTeam: teams.southkorea,    kickoff: "2026-06-19T01:00:00Z", venue: venues.akron,        group: "A", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m53", homeTeam: teams.czechrepublic,awayTeam: teams.mexico,        kickoff: "2026-06-25T01:00:00Z", venue: venues.azteca,       group: "A", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m54", homeTeam: teams.southafrica,  awayTeam: teams.southkorea,    kickoff: "2026-06-25T01:00:00Z", venue: venues.bbva,         group: "A", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m1",  homeTeam: teams.mexico,       awayTeam: teams.southafrica,   kickoff: "2026-06-11T19:00:00Z", venue: venues.azteca,       group: "A", round: "Group Stage", homeScore: 2, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m2",  homeTeam: teams.southkorea,   awayTeam: teams.czechrepublic, kickoff: "2026-06-12T02:00:00Z", venue: venues.akron,        group: "A", round: "Group Stage", homeScore: 2, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m25", homeTeam: teams.czechrepublic,awayTeam: teams.southafrica,   kickoff: "2026-06-18T16:00:00Z", venue: venues.mercedesbenz, group: "A", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m28", homeTeam: teams.mexico,       awayTeam: teams.southkorea,    kickoff: "2026-06-19T01:00:00Z", venue: venues.akron,        group: "A", round: "Group Stage", homeScore: 1, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m53", homeTeam: teams.czechrepublic,awayTeam: teams.mexico,        kickoff: "2026-06-25T01:00:00Z", venue: venues.azteca,       group: "A", round: "Group Stage", homeScore: 0, awayScore: 3, status: "ft", matchday: 3 },
+  { id: "m54", homeTeam: teams.southafrica,  awayTeam: teams.southkorea,    kickoff: "2026-06-25T01:00:00Z", venue: venues.bbva,         group: "A", round: "Group Stage", homeScore: 1, awayScore: 0, status: "ft", matchday: 3 },
 
   // GROUP B — Canada, Switzerland, Qatar, Bosnia and Herzegovina
-  { id: "m3",  homeTeam: teams.canada,       awayTeam: teams.bosnia,        kickoff: "2026-06-12T19:00:00Z", venue: venues.bmo,          group: "B", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m8",  homeTeam: teams.qatar,        awayTeam: teams.switzerland,   kickoff: "2026-06-13T19:00:00Z", venue: venues.levis,        group: "B", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m26", homeTeam: teams.switzerland,  awayTeam: teams.bosnia,        kickoff: "2026-06-18T19:00:00Z", venue: venues.sofi,         group: "B", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m27", homeTeam: teams.canada,       awayTeam: teams.qatar,         kickoff: "2026-06-18T22:00:00Z", venue: venues.bcplace,      group: "B", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m51", homeTeam: teams.switzerland,  awayTeam: teams.canada,        kickoff: "2026-06-24T19:00:00Z", venue: venues.bcplace,      group: "B", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m52", homeTeam: teams.bosnia,       awayTeam: teams.qatar,         kickoff: "2026-06-24T19:00:00Z", venue: venues.lumen,        group: "B", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m3",  homeTeam: teams.canada,       awayTeam: teams.bosnia,        kickoff: "2026-06-12T19:00:00Z", venue: venues.bmo,          group: "B", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m8",  homeTeam: teams.qatar,        awayTeam: teams.switzerland,   kickoff: "2026-06-13T19:00:00Z", venue: venues.levis,        group: "B", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m26", homeTeam: teams.switzerland,  awayTeam: teams.bosnia,        kickoff: "2026-06-18T19:00:00Z", venue: venues.sofi,         group: "B", round: "Group Stage", homeScore: 4, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m27", homeTeam: teams.canada,       awayTeam: teams.qatar,         kickoff: "2026-06-18T22:00:00Z", venue: venues.bcplace,      group: "B", round: "Group Stage", homeScore: 6, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m51", homeTeam: teams.switzerland,  awayTeam: teams.canada,        kickoff: "2026-06-24T19:00:00Z", venue: venues.bcplace,      group: "B", round: "Group Stage", homeScore: 2, awayScore: 1, status: "ft", matchday: 3 },
+  { id: "m52", homeTeam: teams.bosnia,       awayTeam: teams.qatar,         kickoff: "2026-06-24T19:00:00Z", venue: venues.lumen,        group: "B", round: "Group Stage", homeScore: 3, awayScore: 1, status: "ft", matchday: 3 },
 
   // GROUP C — Brazil, Morocco, Scotland, Haiti
-  { id: "m7",  homeTeam: teams.brazil,       awayTeam: teams.morocco,       kickoff: "2026-06-13T22:00:00Z", venue: venues.metlife,      group: "C", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m5",  homeTeam: teams.haiti,        awayTeam: teams.scotland,      kickoff: "2026-06-14T01:00:00Z", venue: venues.gillette,     group: "C", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m30", homeTeam: teams.scotland,     awayTeam: teams.morocco,       kickoff: "2026-06-19T22:00:00Z", venue: venues.gillette,     group: "C", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m29", homeTeam: teams.brazil,       awayTeam: teams.haiti,         kickoff: "2026-06-20T00:30:00Z", venue: venues.lincoln,      group: "C", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m49", homeTeam: teams.scotland,     awayTeam: teams.brazil,        kickoff: "2026-06-24T22:00:00Z", venue: venues.hardrock,     group: "C", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m50", homeTeam: teams.morocco,      awayTeam: teams.haiti,         kickoff: "2026-06-24T22:00:00Z", venue: venues.mercedesbenz, group: "C", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m7",  homeTeam: teams.brazil,       awayTeam: teams.morocco,       kickoff: "2026-06-13T22:00:00Z", venue: venues.metlife,      group: "C", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m5",  homeTeam: teams.haiti,        awayTeam: teams.scotland,      kickoff: "2026-06-14T01:00:00Z", venue: venues.gillette,     group: "C", round: "Group Stage", homeScore: 0, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m30", homeTeam: teams.scotland,     awayTeam: teams.morocco,       kickoff: "2026-06-19T22:00:00Z", venue: venues.gillette,     group: "C", round: "Group Stage", homeScore: 0, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m29", homeTeam: teams.brazil,       awayTeam: teams.haiti,         kickoff: "2026-06-20T00:30:00Z", venue: venues.lincoln,      group: "C", round: "Group Stage", homeScore: 3, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m49", homeTeam: teams.scotland,     awayTeam: teams.brazil,        kickoff: "2026-06-24T22:00:00Z", venue: venues.hardrock,     group: "C", round: "Group Stage", homeScore: 0, awayScore: 3, status: "ft", matchday: 3 },
+  { id: "m50", homeTeam: teams.morocco,      awayTeam: teams.haiti,         kickoff: "2026-06-24T22:00:00Z", venue: venues.mercedesbenz, group: "C", round: "Group Stage", homeScore: 4, awayScore: 2, status: "ft", matchday: 3 },
 
   // GROUP D — United States, Australia, Paraguay, Turkey (West Coast)
-  { id: "m4",  homeTeam: teams.usa,          awayTeam: teams.paraguay,      kickoff: "2026-06-13T01:00:00Z", venue: venues.sofi,         group: "D", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m6",  homeTeam: teams.australia,    awayTeam: teams.turkey,        kickoff: "2026-06-14T04:00:00Z", venue: venues.bcplace,      group: "D", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m32", homeTeam: teams.usa,          awayTeam: teams.australia,     kickoff: "2026-06-19T19:00:00Z", venue: venues.lumen,        group: "D", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m31", homeTeam: teams.turkey,       awayTeam: teams.paraguay,      kickoff: "2026-06-20T03:00:00Z", venue: venues.levis,        group: "D", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m59", homeTeam: teams.turkey,       awayTeam: teams.usa,           kickoff: "2026-06-26T02:00:00Z", venue: venues.sofi,         group: "D", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m60", homeTeam: teams.paraguay,     awayTeam: teams.australia,     kickoff: "2026-06-26T02:00:00Z", venue: venues.levis,        group: "D", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m4",  homeTeam: teams.usa,          awayTeam: teams.paraguay,      kickoff: "2026-06-13T01:00:00Z", venue: venues.sofi,         group: "D", round: "Group Stage", homeScore: 4, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m6",  homeTeam: teams.australia,    awayTeam: teams.turkey,        kickoff: "2026-06-14T04:00:00Z", venue: venues.bcplace,      group: "D", round: "Group Stage", homeScore: 2, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m32", homeTeam: teams.usa,          awayTeam: teams.australia,     kickoff: "2026-06-19T19:00:00Z", venue: venues.lumen,        group: "D", round: "Group Stage", homeScore: 2, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m31", homeTeam: teams.turkey,       awayTeam: teams.paraguay,      kickoff: "2026-06-20T03:00:00Z", venue: venues.levis,        group: "D", round: "Group Stage", homeScore: 0, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m59", homeTeam: teams.turkey,       awayTeam: teams.usa,           kickoff: "2026-06-26T02:00:00Z", venue: venues.sofi,         group: "D", round: "Group Stage", homeScore: 3, awayScore: 2, status: "ft", matchday: 3 },
+  { id: "m60", homeTeam: teams.paraguay,     awayTeam: teams.australia,     kickoff: "2026-06-26T02:00:00Z", venue: venues.levis,        group: "D", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 3 },
 
   // GROUP E — Germany, Ecuador, Ivory Coast, Curacao
-  { id: "m10", homeTeam: teams.germany,      awayTeam: teams.curacao,       kickoff: "2026-06-14T17:00:00Z", venue: venues.nrg,          group: "E", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m9",  homeTeam: teams.ivorycoast,   awayTeam: teams.ecuador,       kickoff: "2026-06-14T23:00:00Z", venue: venues.lincoln,      group: "E", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m33", homeTeam: teams.germany,      awayTeam: teams.ivorycoast,    kickoff: "2026-06-20T20:00:00Z", venue: venues.bmo,          group: "E", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m34", homeTeam: teams.ecuador,      awayTeam: teams.curacao,       kickoff: "2026-06-21T00:00:00Z", venue: venues.arrowhead,    group: "E", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m55", homeTeam: teams.curacao,      awayTeam: teams.ivorycoast,    kickoff: "2026-06-25T20:00:00Z", venue: venues.lincoln,      group: "E", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m56", homeTeam: teams.ecuador,      awayTeam: teams.germany,       kickoff: "2026-06-25T20:00:00Z", venue: venues.metlife,      group: "E", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m10", homeTeam: teams.germany,      awayTeam: teams.curacao,       kickoff: "2026-06-14T17:00:00Z", venue: venues.nrg,          group: "E", round: "Group Stage", homeScore: 7, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m9",  homeTeam: teams.ivorycoast,   awayTeam: teams.ecuador,       kickoff: "2026-06-14T23:00:00Z", venue: venues.lincoln,      group: "E", round: "Group Stage", homeScore: 1, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m33", homeTeam: teams.germany,      awayTeam: teams.ivorycoast,    kickoff: "2026-06-20T20:00:00Z", venue: venues.bmo,          group: "E", round: "Group Stage", homeScore: 2, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m34", homeTeam: teams.ecuador,      awayTeam: teams.curacao,       kickoff: "2026-06-21T00:00:00Z", venue: venues.arrowhead,    group: "E", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m55", homeTeam: teams.curacao,      awayTeam: teams.ivorycoast,    kickoff: "2026-06-25T20:00:00Z", venue: venues.lincoln,      group: "E", round: "Group Stage", homeScore: 0, awayScore: 2, status: "ft", matchday: 3 },
+  { id: "m56", homeTeam: teams.ecuador,      awayTeam: teams.germany,       kickoff: "2026-06-25T20:00:00Z", venue: venues.metlife,      group: "E", round: "Group Stage", homeScore: 2, awayScore: 1, status: "ft", matchday: 3 },
 
   // GROUP F — Netherlands, Japan, Sweden, Tunisia
-  { id: "m11", homeTeam: teams.netherlands,  awayTeam: teams.japan,         kickoff: "2026-06-14T20:00:00Z", venue: venues.att,          group: "F", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m12", homeTeam: teams.sweden,       awayTeam: teams.tunisia,       kickoff: "2026-06-15T02:00:00Z", venue: venues.bbva,         group: "F", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m35", homeTeam: teams.netherlands,  awayTeam: teams.sweden,        kickoff: "2026-06-20T17:00:00Z", venue: venues.nrg,          group: "F", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m36", homeTeam: teams.tunisia,      awayTeam: teams.japan,         kickoff: "2026-06-21T04:00:00Z", venue: venues.bbva,         group: "F", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m57", homeTeam: teams.japan,        awayTeam: teams.sweden,        kickoff: "2026-06-25T23:00:00Z", venue: venues.att,          group: "F", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m58", homeTeam: teams.tunisia,      awayTeam: teams.netherlands,   kickoff: "2026-06-25T23:00:00Z", venue: venues.arrowhead,    group: "F", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m11", homeTeam: teams.netherlands,  awayTeam: teams.japan,         kickoff: "2026-06-14T20:00:00Z", venue: venues.att,          group: "F", round: "Group Stage", homeScore: 2, awayScore: 2, status: "ft", matchday: 1 },
+  { id: "m12", homeTeam: teams.sweden,       awayTeam: teams.tunisia,       kickoff: "2026-06-15T02:00:00Z", venue: venues.bbva,         group: "F", round: "Group Stage", homeScore: 5, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m35", homeTeam: teams.netherlands,  awayTeam: teams.sweden,        kickoff: "2026-06-20T17:00:00Z", venue: venues.nrg,          group: "F", round: "Group Stage", homeScore: 5, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m36", homeTeam: teams.tunisia,      awayTeam: teams.japan,         kickoff: "2026-06-21T04:00:00Z", venue: venues.bbva,         group: "F", round: "Group Stage", homeScore: 0, awayScore: 4, status: "ft", matchday: 2 },
+  { id: "m57", homeTeam: teams.japan,        awayTeam: teams.sweden,        kickoff: "2026-06-25T23:00:00Z", venue: venues.att,          group: "F", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 3 },
+  { id: "m58", homeTeam: teams.tunisia,      awayTeam: teams.netherlands,   kickoff: "2026-06-25T23:00:00Z", venue: venues.arrowhead,    group: "F", round: "Group Stage", homeScore: 1, awayScore: 3, status: "ft", matchday: 3 },
 
   // GROUP G — Belgium, Iran, Egypt, New Zealand (all West Coast USA/Canada)
-  { id: "m16", homeTeam: teams.belgium,      awayTeam: teams.egypt,         kickoff: "2026-06-15T19:00:00Z", venue: venues.lumen,        group: "G", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m15", homeTeam: teams.iran,         awayTeam: teams.newzealand,    kickoff: "2026-06-16T01:00:00Z", venue: venues.sofi,         group: "G", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m39", homeTeam: teams.belgium,      awayTeam: teams.iran,          kickoff: "2026-06-21T19:00:00Z", venue: venues.sofi,         group: "G", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m40", homeTeam: teams.newzealand,   awayTeam: teams.egypt,         kickoff: "2026-06-22T01:00:00Z", venue: venues.bcplace,      group: "G", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m63", homeTeam: teams.egypt,        awayTeam: teams.iran,          kickoff: "2026-06-27T03:00:00Z", venue: venues.lumen,        group: "G", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m64", homeTeam: teams.newzealand,   awayTeam: teams.belgium,       kickoff: "2026-06-27T03:00:00Z", venue: venues.bcplace,      group: "G", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m16", homeTeam: teams.belgium,      awayTeam: teams.egypt,         kickoff: "2026-06-15T19:00:00Z", venue: venues.lumen,        group: "G", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m15", homeTeam: teams.iran,         awayTeam: teams.newzealand,    kickoff: "2026-06-16T01:00:00Z", venue: venues.sofi,         group: "G", round: "Group Stage", homeScore: 2, awayScore: 2, status: "ft", matchday: 1 },
+  { id: "m39", homeTeam: teams.belgium,      awayTeam: teams.iran,          kickoff: "2026-06-21T19:00:00Z", venue: venues.sofi,         group: "G", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m40", homeTeam: teams.newzealand,   awayTeam: teams.egypt,         kickoff: "2026-06-22T01:00:00Z", venue: venues.bcplace,      group: "G", round: "Group Stage", homeScore: 1, awayScore: 3, status: "ft", matchday: 2 },
+  { id: "m63", homeTeam: teams.egypt,        awayTeam: teams.iran,          kickoff: "2026-06-27T03:00:00Z", venue: venues.lumen,        group: "G", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 3 },
+  { id: "m64", homeTeam: teams.newzealand,   awayTeam: teams.belgium,       kickoff: "2026-06-27T03:00:00Z", venue: venues.bcplace,      group: "G", round: "Group Stage", homeScore: 1, awayScore: 5, status: "ft", matchday: 3 },
 
   // GROUP H — Spain, Uruguay, Saudi Arabia, Cape Verde
-  { id: "m14", homeTeam: teams.spain,        awayTeam: teams.capeverde,     kickoff: "2026-06-15T16:00:00Z", venue: venues.mercedesbenz, group: "H", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m13", homeTeam: teams.saudiarabia,  awayTeam: teams.uruguay,       kickoff: "2026-06-15T22:00:00Z", venue: venues.hardrock,     group: "H", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m38", homeTeam: teams.spain,        awayTeam: teams.saudiarabia,   kickoff: "2026-06-21T16:00:00Z", venue: venues.mercedesbenz, group: "H", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m37", homeTeam: teams.uruguay,      awayTeam: teams.capeverde,     kickoff: "2026-06-21T22:00:00Z", venue: venues.hardrock,     group: "H", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m65", homeTeam: teams.capeverde,    awayTeam: teams.saudiarabia,   kickoff: "2026-06-27T00:00:00Z", venue: venues.nrg,          group: "H", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m66", homeTeam: teams.uruguay,      awayTeam: teams.spain,         kickoff: "2026-06-27T00:00:00Z", venue: venues.akron,        group: "H", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m14", homeTeam: teams.spain,        awayTeam: teams.capeverde,     kickoff: "2026-06-15T16:00:00Z", venue: venues.mercedesbenz, group: "H", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m13", homeTeam: teams.saudiarabia,  awayTeam: teams.uruguay,       kickoff: "2026-06-15T22:00:00Z", venue: venues.hardrock,     group: "H", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m38", homeTeam: teams.spain,        awayTeam: teams.saudiarabia,   kickoff: "2026-06-21T16:00:00Z", venue: venues.mercedesbenz, group: "H", round: "Group Stage", homeScore: 4, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m37", homeTeam: teams.uruguay,      awayTeam: teams.capeverde,     kickoff: "2026-06-21T22:00:00Z", venue: venues.hardrock,     group: "H", round: "Group Stage", homeScore: 2, awayScore: 2, status: "ft", matchday: 2 },
+  { id: "m65", homeTeam: teams.capeverde,    awayTeam: teams.saudiarabia,   kickoff: "2026-06-27T00:00:00Z", venue: venues.nrg,          group: "H", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 3 },
+  { id: "m66", homeTeam: teams.uruguay,      awayTeam: teams.spain,         kickoff: "2026-06-27T00:00:00Z", venue: venues.akron,        group: "H", round: "Group Stage", homeScore: 0, awayScore: 1, status: "ft", matchday: 3 },
 
   // GROUP I — France, Senegal, Norway, Iraq
-  { id: "m17", homeTeam: teams.france,       awayTeam: teams.senegal,       kickoff: "2026-06-16T19:00:00Z", venue: venues.metlife,      group: "I", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m18", homeTeam: teams.iraq,         awayTeam: teams.norway,        kickoff: "2026-06-16T22:00:00Z", venue: venues.gillette,     group: "I", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m42", homeTeam: teams.france,       awayTeam: teams.iraq,          kickoff: "2026-06-22T21:00:00Z", venue: venues.lincoln,      group: "I", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m41", homeTeam: teams.norway,       awayTeam: teams.senegal,       kickoff: "2026-06-23T00:00:00Z", venue: venues.metlife,      group: "I", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m61", homeTeam: teams.norway,       awayTeam: teams.france,        kickoff: "2026-06-26T19:00:00Z", venue: venues.gillette,     group: "I", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m62", homeTeam: teams.senegal,      awayTeam: teams.iraq,          kickoff: "2026-06-26T19:00:00Z", venue: venues.bmo,          group: "I", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m17", homeTeam: teams.france,       awayTeam: teams.senegal,       kickoff: "2026-06-16T19:00:00Z", venue: venues.metlife,      group: "I", round: "Group Stage", homeScore: 3, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m18", homeTeam: teams.iraq,         awayTeam: teams.norway,        kickoff: "2026-06-16T22:00:00Z", venue: venues.gillette,     group: "I", round: "Group Stage", homeScore: 1, awayScore: 4, status: "ft", matchday: 1 },
+  { id: "m42", homeTeam: teams.france,       awayTeam: teams.iraq,          kickoff: "2026-06-22T21:00:00Z", venue: venues.lincoln,      group: "I", round: "Group Stage", homeScore: 3, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m41", homeTeam: teams.norway,       awayTeam: teams.senegal,       kickoff: "2026-06-23T00:00:00Z", venue: venues.metlife,      group: "I", round: "Group Stage", homeScore: 3, awayScore: 2, status: "ft", matchday: 2 },
+  { id: "m61", homeTeam: teams.norway,       awayTeam: teams.france,        kickoff: "2026-06-26T19:00:00Z", venue: venues.gillette,     group: "I", round: "Group Stage", homeScore: 1, awayScore: 4, status: "ft", matchday: 3 },
+  { id: "m62", homeTeam: teams.senegal,      awayTeam: teams.iraq,          kickoff: "2026-06-26T19:00:00Z", venue: venues.bmo,          group: "I", round: "Group Stage", homeScore: 5, awayScore: 0, status: "ft", matchday: 3 },
 
   // GROUP J — Argentina, Austria, Algeria, Jordan
-  { id: "m19", homeTeam: teams.argentina,    awayTeam: teams.algeria,       kickoff: "2026-06-17T01:00:00Z", venue: venues.arrowhead,    group: "J", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m20", homeTeam: teams.austria,      awayTeam: teams.jordan,        kickoff: "2026-06-17T04:00:00Z", venue: venues.levis,        group: "J", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m43", homeTeam: teams.argentina,    awayTeam: teams.austria,       kickoff: "2026-06-22T17:00:00Z", venue: venues.att,          group: "J", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m44", homeTeam: teams.jordan,       awayTeam: teams.algeria,       kickoff: "2026-06-23T03:00:00Z", venue: venues.levis,        group: "J", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m69", homeTeam: teams.algeria,      awayTeam: teams.austria,       kickoff: "2026-06-28T02:00:00Z", venue: venues.arrowhead,    group: "J", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m70", homeTeam: teams.jordan,       awayTeam: teams.argentina,     kickoff: "2026-06-28T02:00:00Z", venue: venues.att,          group: "J", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m19", homeTeam: teams.argentina,    awayTeam: teams.algeria,       kickoff: "2026-06-17T01:00:00Z", venue: venues.arrowhead,    group: "J", round: "Group Stage", homeScore: 3, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m20", homeTeam: teams.austria,      awayTeam: teams.jordan,        kickoff: "2026-06-17T04:00:00Z", venue: venues.levis,        group: "J", round: "Group Stage", homeScore: 3, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m43", homeTeam: teams.argentina,    awayTeam: teams.austria,       kickoff: "2026-06-22T17:00:00Z", venue: venues.att,          group: "J", round: "Group Stage", homeScore: 2, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m44", homeTeam: teams.jordan,       awayTeam: teams.algeria,       kickoff: "2026-06-23T03:00:00Z", venue: venues.levis,        group: "J", round: "Group Stage", homeScore: 1, awayScore: 2, status: "ft", matchday: 2 },
+  { id: "m69", homeTeam: teams.algeria,      awayTeam: teams.austria,       kickoff: "2026-06-28T02:00:00Z", venue: venues.arrowhead,    group: "J", round: "Group Stage", homeScore: 3, awayScore: 3, status: "ft", matchday: 3 },
+  { id: "m70", homeTeam: teams.jordan,       awayTeam: teams.argentina,     kickoff: "2026-06-28T02:00:00Z", venue: venues.att,          group: "J", round: "Group Stage", homeScore: 1, awayScore: 3, status: "ft", matchday: 3 },
 
   // GROUP K — Portugal, Colombia, Uzbekistan, DR Congo
-  { id: "m23", homeTeam: teams.portugal,     awayTeam: teams.drcongo,       kickoff: "2026-06-17T17:00:00Z", venue: venues.nrg,          group: "K", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m24", homeTeam: teams.uzbekistan,   awayTeam: teams.colombia,      kickoff: "2026-06-18T02:00:00Z", venue: venues.azteca,       group: "K", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m47", homeTeam: teams.portugal,     awayTeam: teams.uzbekistan,    kickoff: "2026-06-23T17:00:00Z", venue: venues.nrg,          group: "K", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m48", homeTeam: teams.colombia,     awayTeam: teams.drcongo,       kickoff: "2026-06-24T02:00:00Z", venue: venues.akron,        group: "K", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m71", homeTeam: teams.colombia,     awayTeam: teams.portugal,      kickoff: "2026-06-27T23:30:00Z", venue: venues.hardrock,     group: "K", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m72", homeTeam: teams.drcongo,      awayTeam: teams.uzbekistan,    kickoff: "2026-06-27T23:30:00Z", venue: venues.mercedesbenz, group: "K", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m23", homeTeam: teams.portugal,     awayTeam: teams.drcongo,       kickoff: "2026-06-17T17:00:00Z", venue: venues.nrg,          group: "K", round: "Group Stage", homeScore: 1, awayScore: 1, status: "ft", matchday: 1 },
+  { id: "m24", homeTeam: teams.uzbekistan,   awayTeam: teams.colombia,      kickoff: "2026-06-18T02:00:00Z", venue: venues.azteca,       group: "K", round: "Group Stage", homeScore: 1, awayScore: 3, status: "ft", matchday: 1 },
+  { id: "m47", homeTeam: teams.portugal,     awayTeam: teams.uzbekistan,    kickoff: "2026-06-23T17:00:00Z", venue: venues.nrg,          group: "K", round: "Group Stage", homeScore: 5, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m48", homeTeam: teams.colombia,     awayTeam: teams.drcongo,       kickoff: "2026-06-24T02:00:00Z", venue: venues.akron,        group: "K", round: "Group Stage", homeScore: 1, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m71", homeTeam: teams.colombia,     awayTeam: teams.portugal,      kickoff: "2026-06-27T23:30:00Z", venue: venues.hardrock,     group: "K", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 3 },
+  { id: "m72", homeTeam: teams.drcongo,      awayTeam: teams.uzbekistan,    kickoff: "2026-06-27T23:30:00Z", venue: venues.mercedesbenz, group: "K", round: "Group Stage", homeScore: 3, awayScore: 1, status: "ft", matchday: 3 },
 
   // GROUP L — England, Croatia, Panama, Ghana
-  { id: "m22", homeTeam: teams.england,      awayTeam: teams.croatia,       kickoff: "2026-06-17T20:00:00Z", venue: venues.att,          group: "L", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m21", homeTeam: teams.ghana,        awayTeam: teams.panama,        kickoff: "2026-06-17T23:00:00Z", venue: venues.bmo,          group: "L", round: "Group Stage", status: "upcoming", matchday: 1 },
-  { id: "m45", homeTeam: teams.england,      awayTeam: teams.ghana,         kickoff: "2026-06-23T20:00:00Z", venue: venues.gillette,     group: "L", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m46", homeTeam: teams.panama,       awayTeam: teams.croatia,       kickoff: "2026-06-23T23:00:00Z", venue: venues.bmo,          group: "L", round: "Group Stage", status: "upcoming", matchday: 2 },
-  { id: "m67", homeTeam: teams.panama,       awayTeam: teams.england,       kickoff: "2026-06-27T21:00:00Z", venue: venues.metlife,      group: "L", round: "Group Stage", status: "upcoming", matchday: 3 },
-  { id: "m68", homeTeam: teams.croatia,      awayTeam: teams.ghana,         kickoff: "2026-06-27T21:00:00Z", venue: venues.lincoln,      group: "L", round: "Group Stage", status: "upcoming", matchday: 3 },
+  { id: "m22", homeTeam: teams.england,      awayTeam: teams.croatia,       kickoff: "2026-06-17T20:00:00Z", venue: venues.att,          group: "L", round: "Group Stage", homeScore: 4, awayScore: 2, status: "ft", matchday: 1 },
+  { id: "m21", homeTeam: teams.ghana,        awayTeam: teams.panama,        kickoff: "2026-06-17T23:00:00Z", venue: venues.bmo,          group: "L", round: "Group Stage", homeScore: 1, awayScore: 0, status: "ft", matchday: 1 },
+  { id: "m45", homeTeam: teams.england,      awayTeam: teams.ghana,         kickoff: "2026-06-23T20:00:00Z", venue: venues.gillette,     group: "L", round: "Group Stage", homeScore: 0, awayScore: 0, status: "ft", matchday: 2 },
+  { id: "m46", homeTeam: teams.panama,       awayTeam: teams.croatia,       kickoff: "2026-06-23T23:00:00Z", venue: venues.bmo,          group: "L", round: "Group Stage", homeScore: 0, awayScore: 1, status: "ft", matchday: 2 },
+  { id: "m67", homeTeam: teams.panama,       awayTeam: teams.england,       kickoff: "2026-06-27T21:00:00Z", venue: venues.metlife,      group: "L", round: "Group Stage", homeScore: 0, awayScore: 2, status: "ft", matchday: 3 },
+  { id: "m68", homeTeam: teams.croatia,      awayTeam: teams.ghana,         kickoff: "2026-06-27T21:00:00Z", venue: venues.lincoln,      group: "L", round: "Group Stage", homeScore: 2, awayScore: 1, status: "ft", matchday: 3 },
 ]
 
 // Helper to make a TBD placeholder team
@@ -217,56 +217,49 @@ function tbd(label: string): Team { return { id: label.replace(/\s+/g, '-').toLo
 // All TBD — determined by group stage results
 // ─────────────────────────────────────────────────────────────────────────────
 const knockoutMatches: Match[] = [
-  // ── Round of 32 (Jun 28 – Jul 3) — FIFA official match numbers 73–88 ──
-  // Kickoff times (UTC) and venues verified against ESPN/FIFA official schedule
-  { id: "r32-1",  homeTeam: tbd("2nd Group A"),   awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T19:00:00Z", venue: venues.sofi,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay, kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", status: "upcoming" },
+  // ── Round of 32 (Jun 28 – Jul 6) — FIFA official match numbers 73–88 ──
+  // Seedings per official FIFA WC2026 bracket announcement
+  { id: "r32-1",  homeTeam: tbd("2nd Group A"), awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T19:00:00Z", venue: venues.sofi,      round: "Round of 32", homeScore: 0, awayScore: 1, status: "ft" },
+  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: tbd("Best 3rd A/B/C/D/F"), kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,          round: "Round of 32", status: "upcoming" },
   { id: "r32-3",  homeTeam: tbd("1st Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-30T01:00:00Z", venue: venues.bbva,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,          round: "Round of 32", status: "upcoming" },
-  { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: teams.sweden, kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-6",  homeTeam: tbd("2nd Group E"),   awayTeam: tbd("2nd Group I"),         kickoff: "2026-06-30T17:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
-  { id: "r32-7",  homeTeam: tbd("1st Group A"),   awayTeam: teams.ecuador, kickoff: "2026-07-01T01:00:00Z", venue: venues.azteca,       round: "Round of 32", status: "upcoming" },
-  { id: "r32-8",  homeTeam: tbd("1st Group L"),   awayTeam: teams.drcongo, kickoff: "2026-07-01T16:00:00Z", venue: venues.mercedesbenz, round: "Round of 32", status: "upcoming" },
-  { id: "r32-9",  homeTeam: tbd("1st Group D"),   awayTeam: teams.bosnia, kickoff: "2026-07-02T00:00:00Z", venue: venues.levis,        round: "Round of 32", status: "upcoming" },
-  { id: "r32-10", homeTeam: tbd("1st Group G"),   awayTeam: teams.senegal, kickoff: "2026-07-01T20:00:00Z", venue: venues.lumen,        round: "Round of 32", status: "upcoming" },
-  { id: "r32-11", homeTeam: tbd("2nd Group K"),   awayTeam: tbd("2nd Group L"),         kickoff: "2026-07-02T23:00:00Z", venue: venues.bmo,          round: "Round of 32", status: "upcoming" },
-  { id: "r32-12", homeTeam: tbd("1st Group H"),   awayTeam: tbd("2nd Group J"),         kickoff: "2026-07-02T19:00:00Z", venue: venues.sofi,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-13", homeTeam: tbd("1st Group B"),   awayTeam: teams.algeria, kickoff: "2026-07-03T03:00:00Z", venue: venues.bcplace,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-14", homeTeam: tbd("1st Group J"),   awayTeam: tbd("2nd Group H"),         kickoff: "2026-07-03T22:00:00Z", venue: venues.hardrock,     round: "Round of 32", status: "upcoming" },
-  { id: "r32-15", homeTeam: tbd("1st Group K"),   awayTeam: teams.ghana, kickoff: "2026-07-04T01:30:00Z", venue: venues.arrowhead,    round: "Round of 32", status: "upcoming" },
-  { id: "r32-16", homeTeam: tbd("2nd Group D"),   awayTeam: tbd("2nd Group G"),         kickoff: "2026-07-03T18:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,     round: "Round of 32", status: "upcoming" },
+  { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: tbd("Best 3rd C/D/F/G/H"), kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-6",  homeTeam: tbd("2nd Group E"), awayTeam: tbd("2nd Group I"),         kickoff: "2026-06-30T17:00:00Z", venue: venues.att,        round: "Round of 32", status: "upcoming" },
+  { id: "r32-7",  homeTeam: tbd("1st Group A"),   awayTeam: tbd("Best 3rd C/E/F/H/I"), kickoff: "2026-07-01T01:00:00Z", venue: venues.azteca,     round: "Round of 32", status: "upcoming" },
+  { id: "r32-8",  homeTeam: tbd("1st Group L"),   awayTeam: tbd("Best 3rd E/H/I/J/K"), kickoff: "2026-07-01T16:00:00Z", venue: venues.mercedesbenz,        round: "Round of 32", status: "upcoming" },
+  { id: "r32-9",  homeTeam: tbd("1st Group D"),   awayTeam: tbd("Best 3rd B/E/F/I/J"), kickoff: "2026-07-02T00:00:00Z", venue: venues.levis,       round: "Round of 32", status: "upcoming" },
+  { id: "r32-10", homeTeam: tbd("1st Group G"),   awayTeam: tbd("Best 3rd A/E/H/I/J"), kickoff: "2026-07-01T20:00:00Z", venue: venues.lumen,      round: "Round of 32", status: "upcoming" },
+  { id: "r32-11", homeTeam: tbd("2nd Group K"), awayTeam: tbd("2nd Group L"),         kickoff: "2026-07-02T23:00:00Z", venue: venues.bmo,    round: "Round of 32", status: "upcoming" },
+  { id: "r32-12", homeTeam: tbd("1st Group H"),   awayTeam: tbd("2nd Group J"),         kickoff: "2026-07-02T19:00:00Z", venue: venues.sofi, round: "Round of 32", status: "upcoming" },
+  { id: "r32-13", homeTeam: tbd("1st Group B"),   awayTeam: tbd("Best 3rd E/F/G/I/J"), kickoff: "2026-07-03T03:00:00Z", venue: venues.bcplace,      round: "Round of 32", status: "upcoming" },
+  { id: "r32-14", homeTeam: tbd("1st Group J"),   awayTeam: tbd("2nd Group H"),         kickoff: "2026-07-03T22:00:00Z", venue: venues.hardrock,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-15", homeTeam: tbd("1st Group K"),   awayTeam: tbd("Best 3rd D/E/I/J/L"), kickoff: "2026-07-04T01:30:00Z", venue: venues.arrowhead,         round: "Round of 32", status: "upcoming" },
+  { id: "r32-16", homeTeam: tbd("2nd Group D"), awayTeam: tbd("2nd Group G"),         kickoff: "2026-07-03T18:00:00Z", venue: venues.att,        round: "Round of 32", status: "upcoming" },
 
-  // ── Round of 16 (Jul 4 – Jul 7) — FIFA match numbers 89–96 ──
-  // M90: W73 vs W75 (r32-1 vs r32-3)  M89: W74 vs W77 (r32-2 vs r32-5)
-  // M91: W76 vs W78 (r32-4 vs r32-6)  M92: W79 vs W80 (r32-7 vs r32-8)
-  // M94: W81 vs W82 (r32-9 vs r32-10) M93: W83 vs W84 (r32-11 vs r32-12)
-  // M95: W86 vs W88 (r32-14 vs r32-16) M96: W85 vs W87 (r32-13 vs r32-15)
-  { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-3"),  kickoff: "2026-07-04T17:00:00Z", venue: venues.nrg,          round: "Round of 16", status: "upcoming" },
-  { id: "r16-2", homeTeam: tbd("W R32-2"),  awayTeam: tbd("W R32-5"),  kickoff: "2026-07-04T21:00:00Z", venue: venues.lincoln,      round: "Round of 16", status: "upcoming" },
-  { id: "r16-3", homeTeam: tbd("W R32-4"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-05T20:00:00Z", venue: venues.metlife,      round: "Round of 16", status: "upcoming" },
-  { id: "r16-4", homeTeam: tbd("W R32-7"),  awayTeam: tbd("W R32-8"),  kickoff: "2026-07-06T00:00:00Z", venue: venues.azteca,       round: "Round of 16", status: "upcoming" },
-  { id: "r16-5", homeTeam: tbd("W R32-9"),  awayTeam: tbd("W R32-10"), kickoff: "2026-07-07T00:00:00Z", venue: venues.lumen,        round: "Round of 16", status: "upcoming" },
-  { id: "r16-6", homeTeam: tbd("W R32-11"), awayTeam: tbd("W R32-12"), kickoff: "2026-07-06T19:00:00Z", venue: venues.att,          round: "Round of 16", status: "upcoming" },
-  { id: "r16-7", homeTeam: tbd("W R32-14"), awayTeam: tbd("W R32-16"), kickoff: "2026-07-07T16:00:00Z", venue: venues.mercedesbenz, round: "Round of 16", status: "upcoming" },
-  { id: "r16-8", homeTeam: tbd("W R32-13"), awayTeam: tbd("W R32-15"), kickoff: "2026-07-07T20:00:00Z", venue: venues.bcplace,      round: "Round of 16", status: "upcoming" },
+  // ── Round of 16 (Jul 6 – Jul 10) ──
+  { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-2"),  kickoff: "2026-07-04T17:00:00Z", venue: venues.metlife,  round: "Round of 16", status: "upcoming" },
+  { id: "r16-2", homeTeam: tbd("W R32-3"),  awayTeam: tbd("W R32-4"),  kickoff: "2026-07-04T21:00:00Z", venue: venues.att,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-3", homeTeam: tbd("W R32-5"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-05T20:00:00Z", venue: venues.sofi,     round: "Round of 16", status: "upcoming" },
+  { id: "r16-4", homeTeam: tbd("W R32-7"),  awayTeam: tbd("W R32-8"),  kickoff: "2026-07-06T00:00:00Z", venue: venues.hardrock, round: "Round of 16", status: "upcoming" },
+  { id: "r16-5", homeTeam: tbd("W R32-9"),  awayTeam: tbd("W R32-10"), kickoff: "2026-07-06T19:00:00Z", venue: venues.nrg,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-6", homeTeam: tbd("W R32-11"), awayTeam: tbd("W R32-12"), kickoff: "2026-07-07T00:00:00Z", venue: venues.gillette, round: "Round of 16", status: "upcoming" },
+  { id: "r16-7", homeTeam: tbd("W R32-13"), awayTeam: tbd("W R32-14"), kickoff: "2026-07-07T16:00:00Z", venue: venues.mercedesbenz,   round: "Round of 16", status: "upcoming" },
+  { id: "r16-8", homeTeam: tbd("W R32-15"), awayTeam: tbd("W R32-16"), kickoff: "2026-07-07T20:00:00Z", venue: venues.bcplace,    round: "Round of 16", status: "upcoming" },
 
-  // ── Quarter-Finals (Jul 9–12) — FIFA match numbers 97–100 ──
-  // M97: W89 vs W90 (W r16-1 vs W r16-2)  M99: W91 vs W92 (W r16-3 vs W r16-4)
-  // M98: W93 vs W94 (W r16-6 vs W r16-5)  M100: W95 vs W96 (W r16-7 vs W r16-8)
+  // ── Quarter-Finals (Jul 11–12) ──
   { id: "qf-1", homeTeam: tbd("W R16-1"), awayTeam: tbd("W R16-2"), kickoff: "2026-07-09T20:00:00Z", venue: venues.gillette,  round: "Quarter-Finals", status: "upcoming" },
-  { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-11T21:00:00Z", venue: venues.hardrock,  round: "Quarter-Finals", status: "upcoming" },
-  { id: "qf-3", homeTeam: tbd("W R16-5"), awayTeam: tbd("W R16-6"), kickoff: "2026-07-10T19:00:00Z", venue: venues.sofi,      round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-10T19:00:00Z", venue: venues.sofi,     round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-3", homeTeam: tbd("W R16-5"), awayTeam: tbd("W R16-6"), kickoff: "2026-07-11T21:00:00Z", venue: venues.hardrock,      round: "Quarter-Finals", status: "upcoming" },
   { id: "qf-4", homeTeam: tbd("W R16-7"), awayTeam: tbd("W R16-8"), kickoff: "2026-07-12T01:00:00Z", venue: venues.arrowhead, round: "Quarter-Finals", status: "upcoming" },
 
-  // ── Semi-Finals (Jul 14–15) — FIFA match numbers 101–102 ──
-  // M101: W97 vs W98 (W qf-1 vs W qf-3)  M102: W99 vs W100 (W qf-2 vs W qf-4)
-  { id: "sf-1", homeTeam: tbd("W QF-1"), awayTeam: tbd("W QF-3"), kickoff: "2026-07-14T19:00:00Z", venue: venues.att,          round: "Semi-Finals", status: "upcoming" },
-  { id: "sf-2", homeTeam: tbd("W QF-2"), awayTeam: tbd("W QF-4"), kickoff: "2026-07-15T19:00:00Z", venue: venues.mercedesbenz, round: "Semi-Finals", status: "upcoming" },
+  // ── Semi-Finals (Jul 14–15) ──
+  { id: "sf-1", homeTeam: tbd("W QF-1"), awayTeam: tbd("W QF-2"), kickoff: "2026-07-14T19:00:00Z", venue: venues.att, round: "Semi-Finals", status: "upcoming" },
+  { id: "sf-2", homeTeam: tbd("W QF-3"), awayTeam: tbd("W QF-4"), kickoff: "2026-07-15T19:00:00Z", venue: venues.mercedesbenz,     round: "Semi-Finals", status: "upcoming" },
 
-  // ── Third Place (Jul 18) — FIFA match 103 ──
+  // ── Third Place (Jul 18) ──
   { id: "3rd-1", homeTeam: tbd("SF Loser 1"), awayTeam: tbd("SF Loser 2"), kickoff: "2026-07-18T21:00:00Z", venue: venues.hardrock, round: "Third Place", status: "upcoming" },
 
-  // ── Final (Jul 19) — MetLife Stadium, East Rutherford NJ — FIFA match 104 ──
+  // ── Final (Jul 19) — MetLife Stadium, East Rutherford NJ ──
   { id: "final-1", homeTeam: tbd("SF Winner 1"), awayTeam: tbd("SF Winner 2"), kickoff: "2026-07-19T19:00:00Z", venue: venues.metlife, round: "Final", status: "upcoming" },
 ]
 
@@ -338,15 +331,10 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
     return allStandings[groupId]?.[1]?.team ?? label
   }
 
-  // Build a BracketSlot, pulling venue + kickoff from the static knockoutMatches entry
-  // and preferring live status/scores from src (liveGroupMatches) when available.
+  // Build a BracketSlot, pulling venue + kickoff from the knockoutMatches entry
   function makeSlot(id: string, home: Team | string, away: Team | string): BracketSlot {
     const km = knockoutMatches.find(k => k.id === id)
-    // lm is the live version of this match (after applyLiveScores + resolveKnockoutTeams)
-    const lm = src.find(m => m.id === id)
     const bothKnown = typeof home !== 'string' && typeof away !== 'string'
-    // Prefer live status/scores; fall back to static data
-    const liveStatus = lm?.status as BracketSlot['status'] | undefined
     const kmStatus = km?.status as BracketSlot['status'] | undefined
     return {
       id,
@@ -354,10 +342,10 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
       away,
       kickoff: km?.kickoff,
       venue: km?.venue,
-      homeScore: lm?.homeScore ?? km?.homeScore,
-      awayScore: lm?.awayScore ?? km?.awayScore,
-      // Only mark 'upcoming'/'live'/'ft' when both teams are set; else 'tbd'
-      status: bothKnown ? (liveStatus ?? kmStatus ?? 'upcoming') : 'tbd',
+      homeScore: km?.homeScore,
+      awayScore: km?.awayScore,
+      // Only mark 'upcoming' (teams known, match not yet played) or live/ft when both teams are set
+      status: bothKnown ? (kmStatus ?? 'upcoming') : 'tbd',
     }
   }
 
@@ -373,114 +361,68 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
   //   M87: W K  vs Best3rd(D/E/I/J/L) M88: 2nd D vs 2nd G
   const r32Slots: BracketSlot[] = [
     makeSlot('r32-1',  resolveRunnerUp('A'), resolveRunnerUp('B')),
-    makeSlot('r32-2',  resolveWinner('E'),   teams.paraguay),
+    makeSlot('r32-2',  resolveWinner('E'),   'Best 3rd A/B/C/D/F'),
     makeSlot('r32-3',  resolveWinner('F'),   resolveRunnerUp('C')),
     makeSlot('r32-4',  resolveWinner('C'),   resolveRunnerUp('F')),
-    makeSlot('r32-5',  resolveWinner('I'),   teams.sweden),
+    makeSlot('r32-5',  resolveWinner('I'),   'Best 3rd C/D/F/G/H'),
     makeSlot('r32-6',  resolveRunnerUp('E'), resolveRunnerUp('I')),
-    makeSlot('r32-7',  resolveWinner('A'),   teams.ecuador),
-    makeSlot('r32-8',  resolveWinner('L'),   teams.drcongo),
-    makeSlot('r32-9',  resolveWinner('D'),   teams.bosnia),
-    makeSlot('r32-10', resolveWinner('G'),   teams.senegal),
+    makeSlot('r32-7',  resolveWinner('A'),   'Best 3rd C/E/F/H/I'),
+    makeSlot('r32-8',  resolveWinner('L'),   'Best 3rd E/H/I/J/K'),
+    makeSlot('r32-9',  resolveWinner('D'),   'Best 3rd B/E/F/I/J'),
+    makeSlot('r32-10', resolveWinner('G'),   'Best 3rd A/E/H/I/J'),
     makeSlot('r32-11', resolveRunnerUp('K'), resolveRunnerUp('L')),
     makeSlot('r32-12', resolveWinner('H'),   resolveRunnerUp('J')),
-    makeSlot('r32-13', resolveWinner('B'),   teams.algeria),
+    makeSlot('r32-13', resolveWinner('B'),   'Best 3rd E/F/G/I/J'),
     makeSlot('r32-14', resolveWinner('J'),   resolveRunnerUp('H')),
-    makeSlot('r32-15', resolveWinner('K'),   teams.ghana),
+    makeSlot('r32-15', resolveWinner('K'),   'Best 3rd D/E/I/J/L'),
     makeSlot('r32-16', resolveRunnerUp('D'), resolveRunnerUp('G')),
   ]
 
-  // ── Dynamic winner propagation ────────────────────────────────────────────
-  // Returns the winning Team of a completed knockout match, or the label string
-  // if the match is not yet finished (or ended level — e.g. penalties).
-  function resolveKnockoutWinner(matchId: string, label: string): Team | string {
-    const lm = src.find(m => m.id === matchId)
-    if (!lm || lm.status !== 'ft') return label
-    const hg = lm.homeScore ?? 0
-    const ag = lm.awayScore ?? 0
-    if (hg > ag) return lm.homeTeam
-    if (ag > hg) return lm.awayTeam
-    return label // level after FT (penalty shootout — winner flag not yet tracked)
-  }
-
-  // Returns the losing Team of a completed knockout match (for 3rd-place slot).
-  function resolveKnockoutLoser(matchId: string, label: string): Team | string {
-    const lm = src.find(m => m.id === matchId)
-    if (!lm || lm.status !== 'ft') return label
-    const hg = lm.homeScore ?? 0
-    const ag = lm.awayScore ?? 0
-    if (hg > ag) return lm.awayTeam
-    if (ag > hg) return lm.homeTeam
-    return label
-  }
-
-  // ── R16 — propagate R32 winners ──────────────────────────────────────────
-  // M90: r32-1 vs r32-3  M89: r32-2 vs r32-5  M91: r32-4 vs r32-6  M92: r32-7 vs r32-8
-  // M94: r32-9 vs r32-10  M93: r32-11 vs r32-12  M95: r32-14 vs r32-16  M96: r32-13 vs r32-15
-  const r16Pairs: [string, string, string][] = [
-    ['r16-1', 'r32-1',  'r32-3'],
-    ['r16-2', 'r32-2',  'r32-5'],
-    ['r16-3', 'r32-4',  'r32-6'],
-    ['r16-4', 'r32-7',  'r32-8'],
-    ['r16-5', 'r32-9',  'r32-10'],
-    ['r16-6', 'r32-11', 'r32-12'],
-    ['r16-7', 'r32-14', 'r32-16'],
-    ['r16-8', 'r32-13', 'r32-15'],
+  // ── Rounds beyond R32 — TBD; pull venue/kickoff from knockoutMatches ──────
+  const R16_PAIRS: [string, string][] = [
+    ['W R32-1',  'W R32-3' ],  // r16-1
+    ['W R32-2',  'W R32-5' ],  // r16-2
+    ['W R32-4',  'W R32-6' ],  // r16-3
+    ['W R32-7',  'W R32-8' ],  // r16-4
+    ['W R32-11', 'W R32-12'],  // r16-5
+    ['W R32-9',  'W R32-10'],  // r16-6
+    ['W R32-14', 'W R32-16'],  // r16-7
+    ['W R32-13', 'W R32-15'],  // r16-8
   ]
-  const r16Slots: BracketSlot[] = r16Pairs.map(([id, hmId, amId]) => {
-    const homeNum = hmId.replace('r32-', '')
-    const awayNum = amId.replace('r32-', '')
-    return makeSlot(id,
-      resolveKnockoutWinner(hmId, `W R32-${homeNum}`),
-      resolveKnockoutWinner(amId, `W R32-${awayNum}`),
-    )
+  const r16Slots: BracketSlot[] = R16_PAIRS.map(([home, away], i) => {
+    const id = `r16-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home, away, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
   })
 
-  // ── QF — propagate R16 winners ───────────────────────────────────────────
-  // M97: r16-1 vs r16-2  M99: r16-3 vs r16-4  M98: r16-5 vs r16-6  M100: r16-7 vs r16-8
-  const qfPairs: [string, string, string][] = [
-    ['qf-1', 'r16-1', 'r16-2'],
-    ['qf-2', 'r16-3', 'r16-4'],
-    ['qf-3', 'r16-5', 'r16-6'],
-    ['qf-4', 'r16-7', 'r16-8'],
+  const QF_PAIRS: [string, string][] = [
+    ['W R16-1', 'W R16-2'],  // qf-1
+    ['W R16-5', 'W R16-6'],  // qf-2
+    ['W R16-3', 'W R16-4'],  // qf-3
+    ['W R16-7', 'W R16-8'],  // qf-4
   ]
-  const qfSlots: BracketSlot[] = qfPairs.map(([id, hmId, amId]) => {
-    const homeNum = hmId.replace('r16-', '')
-    const awayNum = amId.replace('r16-', '')
-    return makeSlot(id,
-      resolveKnockoutWinner(hmId, `W R16-${homeNum}`),
-      resolveKnockoutWinner(amId, `W R16-${awayNum}`),
-    )
+  const qfSlots: BracketSlot[] = QF_PAIRS.map(([home, away], i) => {
+    const id = `qf-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home, away, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
   })
 
-  // ── SF — propagate QF winners ─────────────────────────────────────────────
-  // M101 = W97 vs W98 (qf-1 vs qf-3), M102 = W99 vs W100 (qf-2 vs qf-4)
-  const sfPairs: [string, string, string][] = [
-    ['sf-1', 'qf-1', 'qf-3'],
-    ['sf-2', 'qf-2', 'qf-4'],
-  ]
-  const sfSlots: BracketSlot[] = sfPairs.map(([id, hmId, amId]) => {
-    const homeNum = hmId.replace('qf-', '')
-    const awayNum = amId.replace('qf-', '')
-    return makeSlot(id,
-      resolveKnockoutWinner(hmId, `W QF-${homeNum}`),
-      resolveKnockoutWinner(amId, `W QF-${awayNum}`),
-    )
+  const sfSlots: BracketSlot[] = Array.from({ length: 2 }, (_, i) => {
+    const id = `sf-${i + 1}`
+    const km = knockoutMatches.find(k => k.id === id)
+    return { id, home: `W QF-${i * 2 + 1}`, away: `W QF-${i * 2 + 2}`, kickoff: km?.kickoff, venue: km?.venue, status: 'tbd' as const }
   })
 
-  // ── 3rd Place + Final — propagate SF results ──────────────────────────────
-  const third1home = resolveKnockoutLoser('sf-1', 'SF Loser 1')
-  const third1away = resolveKnockoutLoser('sf-2', 'SF Loser 2')
-  const finalHome  = resolveKnockoutWinner('sf-1', 'SF Winner 1')
-  const finalAway  = resolveKnockoutWinner('sf-2', 'SF Winner 2')
+  const km3rd   = knockoutMatches.find(k => k.id === '3rd-1')
+  const kmFinal = knockoutMatches.find(k => k.id === 'final-1')
 
   return [
     { name: "Round of 32",    matches: r32Slots },
     { name: "Round of 16",    matches: r16Slots },
     { name: "Quarter-Finals", matches: qfSlots },
     { name: "Semi-Finals",    matches: sfSlots },
-    { name: "Third Place",    matches: [makeSlot('3rd-1',   third1home, third1away)] },
-    { name: "Final",          matches: [makeSlot('final-1', finalHome,  finalAway)] },
+    { name: "Third Place",    matches: [{ id: "3rd-1",   home: "SF Loser 1",   away: "SF Loser 2",   kickoff: km3rd?.kickoff,   venue: km3rd?.venue,   status: "tbd" }] },
+    { name: "Final",          matches: [{ id: "final-1", home: "SF Winner 1",  away: "SF Winner 2",  kickoff: kmFinal?.kickoff, venue: kmFinal?.venue, status: "tbd" }] },
   ]
 }
 
@@ -651,7 +593,7 @@ export function resolveKnockoutTeamsFromStandings(
     const hs = m.homeScore ?? 0
     const as_ = m.awayScore ?? 0
     if (hs !== as_) {
-      // Key is e.g. "W R32-1" — matches the tbd("W R32-1").name used in R16 slots
+      // Key is "W R32-1" (matches the tbd("W R32-1").name used in R16 slots)
       winnerMap[`W ${m.id.toUpperCase()}`] = hs > as_ ? home : away
     }
   }

@@ -1,4 +1,4 @@
-import dataProvider from '@/lib/dataProvider'
+﻿import dataProvider from '@/lib/dataProvider'
 import CalendarClient from './CalendarClient'
 import type { Standing } from '@/lib/types'
 

@@ -153,7 +153,6 @@ export default function MatchCard({
   allStandingsMap,
   allLiveData,
   allLiveAliases,
-  contextMatches,
 }: {
   match: Match
   userTimezone?: string
@@ -171,7 +170,6 @@ export default function MatchCard({
   allStandingsMap?: Record<string, Standing[]>
   allLiveData?: Record<string, ScoreUpdate>
   allLiveAliases?: Record<string, string>
-  contextMatches?: Match[]
 }){
   const [open, setOpen] = useState(defaultOpen)
   const [closing, setClosing] = useState(false)
@@ -226,9 +224,7 @@ export default function MatchCard({
   const currentHomeStats    = allStatsMap?.[currentMatch.homeTeam.id] ?? (currentMatch.id === match.id ? homeStats : null)
   const currentAwayStats    = allStatsMap?.[currentMatch.awayTeam.id] ?? (currentMatch.id === match.id ? awayStats : null)
   const currentGroupMatches = currentMatch.group
-    ? (currentMatch.id === match.id && groupMatches
-       ? groupMatches
-       : allMatches?.filter(m => m.group === currentMatch.group))
+    ? (allMatches?.filter(m => m.group === currentMatch.group) ?? (currentMatch.id === match.id ? groupMatches : undefined))
     : undefined
   const currentGroupStandings = currentMatch.group
     ? (allStandingsMap?.[currentMatch.group] ?? (currentMatch.id === match.id ? groupStandings : undefined))
@@ -459,7 +455,7 @@ export default function MatchCard({
 
       {/* Team sheet — opens as L3 on top of this sheet; closing it reveals MatchCard */}
       {teamSheet && (
-        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} allStandingsMap={allStandingsMap} allMatchesFull={contextMatches} />
+        <TeamSheet team={teamSheet} onClose={() => setTeamSheet(null)} layer={3} standings={currentGroupStandings} groupMatches={currentGroupMatches} />
       )}
     </>
   )

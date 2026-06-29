@@ -1,7 +1,0 @@
-{
-  "alias": ["worldcupusa.vercel.app"],
-  "crons": [{
-    "path": "/api/cron/refresh",
-    "schedule": "0 0 * * *"
-  }]
-}

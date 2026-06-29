@@ -268,16 +268,10 @@ export default function TodayClient({
     return () => { clearInterval(interval); clearInterval(adaptivePoller); clearInterval(standingsInterval) }
   }, [fetchScores, fetchStandings])
 
-  const liveMatches = useMemo(() => {
-    // Step 1: apply group-stage scores so resolveKnockoutTeams can compute standings
-    const withGroupScores = applyLiveScores(matches, liveScores, liveAliases)
-    // Step 2: resolve group-position slots (1st/2nd Group X → real team)
-    const resolved = resolveKnockoutTeams(withGroupScores)
-    // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
-    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
-    // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
-    return resolveKnockoutTeams(withKnockoutScores)
-  }, [matches, liveScores, liveAliases])
+  const liveMatches = useMemo(
+    () => resolveKnockoutTeams(applyLiveScores(matches, liveScores, liveAliases)),
+    [matches, liveScores, liveAliases]
+  )
 
   // Recompute standings via shared hook — instant, no API lag; ESPN overlay when it has more data
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatches, standingsMap, liveStandingsMap)

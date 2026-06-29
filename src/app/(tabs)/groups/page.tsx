@@ -1,4 +1,4 @@
-import dataProvider from '@/lib/dataProvider'
+﻿import dataProvider from '@/lib/dataProvider'
 import GroupsClient from './GroupsClient'
 
 export default function GroupsPage() {

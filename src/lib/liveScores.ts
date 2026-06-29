@@ -33,3 +33,4 @@ export function applyLiveScores(
     return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
   })
 }
+

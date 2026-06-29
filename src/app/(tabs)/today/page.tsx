@@ -1,4 +1,4 @@
-import dataProvider from '@/lib/dataProvider'
+﻿import dataProvider from '@/lib/dataProvider'
 import TodayClient from './TodayClient'
 import type { TeamStats, Standing } from '@/lib/types'
 

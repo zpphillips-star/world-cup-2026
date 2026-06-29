@@ -98,3 +98,4 @@ export function FlagImg({ teamId, fallback = '🏳️', className = 'h-5 w-auto'
     </span>
   )
 }
+

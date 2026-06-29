@@ -57,3 +57,4 @@ export async function GET() {
     return Response.json({ standings: {}, fetchedAt: Date.now() })
   }
 }
+
