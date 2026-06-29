@@ -4,11 +4,11 @@ self.addEventListener('message', (event) => {
   }
 });
 
-const CACHE_NAME = 'wc2026-v17';
+const CACHE_NAME = 'wc2026-v18';
 const STATIC_ASSETS = [
   '/manifest.json',
-  '/icon-192-v4.png',
-  '/icon-512-v4.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,7 +32,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // Navigation requests: network-first so fresh HTML always loads
+  // Navigation requests: always network-first so fresh HTML loads
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/schedule') || caches.match('/'))
@@ -40,17 +40,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Next.js static chunks (_next/static): cache-first, they're content-hashed
+  // Next.js static chunks (_next/static): network-first to avoid stale bundles.
+  // Next.js content-hashes these so CDN returns them fast anyway.
   if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
+      fetch(event.request)
+        .then((response) => {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           return response;
-        });
-      })
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }
@@ -66,5 +66,3 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(event.request))
   );
 });
-
-
