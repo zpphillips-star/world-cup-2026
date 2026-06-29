@@ -225,7 +225,7 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     ? Math.max(...displayedRounds.map(r => r.matches.length))
     : 0
 
-  const BASE_UNIT = Math.max(CARD_H + 8, 72)
+  const BASE_UNIT = Math.max(CARD_H + 24, 88)
   const totalH = maxMatches * BASE_UNIT
 
   const ROUND_MATCH_LABEL: Record<string, string> = {
