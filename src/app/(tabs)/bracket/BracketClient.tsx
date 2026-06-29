@@ -60,7 +60,8 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
   onClick?: () => void
 }) {
   const isTbd = slot.status === 'tbd'
-  const hasScore = slot.status === 'ft' || slot.status === 'live'
+  const isLive = slot.status === 'live'
+  const hasScore = slot.status === 'ft' || isLive
 
   const homeTeam = isTeam(slot.home) ? slot.home : null
   const awayTeam = isTeam(slot.away) ? slot.away : null
@@ -73,19 +74,30 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
       style={{ width: CARD_W, minWidth: CARD_W }}
       className={`rounded-lg border text-[11px] overflow-hidden text-left w-full
         active:scale-95 transition-transform focus:outline-none
-        ${isFinal
-          ? 'border-yellow-500/60 bg-gradient-to-br from-yellow-950/30 to-[#0d0d15] shadow-lg shadow-yellow-900/20'
-          : isTbd
-            ? 'border-dashed border-zinc-700/40 bg-[#0d0d15]'
-            : 'border-zinc-700 bg-[#13131a]'
+        ${isLive
+          ? 'border-red-500/70 bg-[#13131a] shadow-lg shadow-red-900/30'
+          : isFinal
+            ? 'border-yellow-500/60 bg-gradient-to-br from-yellow-950/30 to-[#0d0d15] shadow-lg shadow-yellow-900/20'
+            : isTbd
+              ? 'border-dashed border-zinc-700/40 bg-[#0d0d15]'
+              : 'border-zinc-700 bg-[#13131a]'
         }`}
     >
       {matchLabel && (
-        <div className={`px-2 py-0.5 text-center text-[9px] font-bold uppercase tracking-widest border-b
-          ${isFinal
-            ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-            : 'bg-zinc-800/60 text-zinc-500 border-zinc-700/60'
+        <div className={`px-2 py-0.5 text-center text-[9px] font-bold uppercase tracking-widest border-b flex items-center justify-center gap-1.5
+          ${isLive
+            ? 'bg-red-500/15 text-red-400 border-red-500/30'
+            : isFinal
+              ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+              : 'bg-zinc-800/60 text-zinc-500 border-zinc-700/60'
           }`}>
+          {isLive && (
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-red-400 font-bold">LIVE</span>
+              <span className="text-zinc-500 font-normal">·</span>
+            </span>
+          )}
           {matchLabel}
         </div>
       )}
@@ -95,7 +107,7 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
           : null
         }
         <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
-        {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.homeScore ?? 0}</span>}
+        {hasScore && <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>{slot.homeScore ?? 0}</span>}
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
@@ -104,7 +116,7 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
           : null
         }
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
-        {hasScore && <span className="font-bold text-white tabular-nums ml-1">{slot.awayScore ?? 0}</span>}
+        {hasScore && <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>{slot.awayScore ?? 0}</span>}
       </div>
     </button>
   )
@@ -246,11 +258,12 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
             const exists = mainRounds.find(r => r.name === name)
             if (!exists) return null
             const on = activeRounds.has(name)
+            const hasLive = exists.matches.some(s => s.status === 'live')
             return (
               <button
                 key={name}
                 onClick={() => toggleRound(name)}
-                className={`flex-1 aspect-[4/3] rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-black/40 flex items-center justify-center
+                className={`flex-1 aspect-[4/3] rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg shadow-black/40 flex flex-col items-center justify-center gap-0.5 relative
                   ${on
                     ? name === 'Final'
                       ? 'bg-yellow-400 text-zinc-900'
@@ -259,6 +272,12 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
                   }`}
               >
                 {ROUND_SHORT[name] || name}
+                {hasLive && (
+                  <span className="flex items-center gap-0.5">
+                    <span className={`inline-block w-1.5 h-1.5 rounded-full animate-pulse ${on ? 'bg-red-700' : 'bg-red-500'}`} />
+                    <span className={`text-[8px] font-bold uppercase ${on ? 'text-red-800' : 'text-red-400'}`}>Live</span>
+                  </span>
+                )}
               </button>
             )
           })}
