@@ -21,6 +21,7 @@ export interface ScoreUpdate {
   clock?: string
   scorers: ScoringEvent[]
   redCards: CardEvent[]
+  penaltyWinner?: 'home' | 'away'
 }
 
 import { normalize, resolveEspnName, ESPN_TO_SCHEDULE } from '@/lib/espnAliases'
@@ -136,7 +137,7 @@ export async function GET() {
 
           // Canonical key = ESPN's primary display name (index 0)
           const canonicalKey = `${homeNames[0]}|${awayNames[0]}`
-          scores[canonicalKey] = {
+          const scoreUpdate: ScoreUpdate = {
             homeScore: parseInt(home.score ?? '0', 10),
             awayScore: parseInt(away.score ?? '0', 10),
             status,
@@ -146,6 +147,12 @@ export async function GET() {
             scorers,
             redCards,
           }
+          // Detect penalty shootout winner from ESPN competitor.winner flag
+          if (statusName === 'STATUS_FULL_PEN' || statusName === 'STATUS_FINAL_PEN') {
+            if (home.winner === true) scoreUpdate.penaltyWinner = 'home'
+            else if (away.winner === true) scoreUpdate.penaltyWinner = 'away'
+          }
+          scores[canonicalKey] = scoreUpdate
 
           // Register alias keys so clients using different name variants still resolve to canonical
           for (const h of homeNames) {

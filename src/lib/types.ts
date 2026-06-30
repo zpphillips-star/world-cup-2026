@@ -27,6 +27,9 @@ export interface Match {
   matchday?: number
   /** Set when a knockout match is decided on penalties ("home" or "away" won the shootout) */
   penaltyWinner?: "home" | "away"
+  /** Penalty shootout scores (only set when penaltyWinner is set) */
+  homePenaltyScore?: number
+  awayPenaltyScore?: number
 }
 
 export interface Group {
@@ -58,6 +61,9 @@ export interface BracketSlot {
   status: "upcoming" | "live" | "ft" | "tbd"
   /** Set when the match was decided on penalties */
   penaltyWinner?: "home" | "away"
+  /** Penalty shootout scores */
+  homePenaltyScore?: number
+  awayPenaltyScore?: number
 }
 
 export interface BracketRound {

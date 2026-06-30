@@ -273,9 +273,14 @@ export default function MatchCard({
             </div>
             <div className="w-12 flex-shrink-0 text-center">
               {hasScore ? (
-                <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
-                  {match.homeScore}–{match.awayScore}
-                </span>
+                <div className="flex flex-col items-center">
+                  <span className={`text-[14px] font-bold tabular-nums ${isLive ? 'text-red-500' : 'text-white'}`}>
+                    {match.homeScore}–{match.awayScore}
+                  </span>
+                  {match.penaltyWinner && (
+                    <span className="text-[9px] text-zinc-500 font-medium">PENS</span>
+                  )}
+                </div>
               ) : (
                 <span className="text-[12px] font-medium text-zinc-400">vs</span>
               )}
@@ -344,6 +349,11 @@ export default function MatchCard({
                       <span className={`text-4xl font-black tabular-nums ${isLive ? 'text-red-400' : 'text-white'}`}>
                         {currentMatch.homeScore} – {currentMatch.awayScore}
                       </span>
+                      {currentMatch.penaltyWinner && currentMatch.homePenaltyScore != null && currentMatch.awayPenaltyScore != null && (
+                        <span className="text-[12px] font-semibold text-zinc-400 mt-0.5">
+                          Pens: {currentMatch.homePenaltyScore} – {currentMatch.awayPenaltyScore}
+                        </span>
+                      )}
                       {isLive && currentClock && (
                         <div className="flex items-center gap-1 mt-0.5">
                           <span className="text-[13px] font-bold text-red-500 animate-pulse">LIVE</span>

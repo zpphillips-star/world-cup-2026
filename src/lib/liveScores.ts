@@ -30,7 +30,13 @@ export function applyLiveScores(
     const key = getMatchScoreKey(m)
     const update = scores[key] ?? scores[aliases[key]]
     if (!update) return m
-    return { ...m, homeScore: update.homeScore, awayScore: update.awayScore, status: update.status }
+    return {
+      ...m,
+      homeScore: update.homeScore,
+      awayScore: update.awayScore,
+      status: update.status,
+      ...(update.penaltyWinner ? { penaltyWinner: update.penaltyWinner } : {}),
+    }
   })
 }
 

@@ -51,6 +51,8 @@ function slotToMatch(slot: BracketSlot, allMatches: Match[]): Match {
     homeScore: slot.homeScore,
     awayScore: slot.awayScore,
     penaltyWinner: slot.penaltyWinner,
+    homePenaltyScore: slot.homePenaltyScore,
+    awayPenaltyScore: slot.awayPenaltyScore,
   }
 }
 
@@ -108,7 +110,14 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
           : null
         }
         <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
-        {hasScore && <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>{slot.homeScore ?? 0}</span>}
+        {hasScore && (
+          <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
+            {slot.homeScore ?? 0}
+            {slot.penaltyWinner && slot.homePenaltyScore != null && (
+              <span className="text-zinc-400 font-normal text-[10px]"> ({slot.homePenaltyScore})</span>
+            )}
+          </span>
+        )}
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
@@ -117,10 +126,17 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
           : null
         }
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
-        {hasScore && <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>{slot.awayScore ?? 0}</span>}
+        {hasScore && (
+          <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
+            {slot.awayScore ?? 0}
+            {slot.penaltyWinner && slot.awayPenaltyScore != null && (
+              <span className="text-zinc-400 font-normal text-[10px]"> ({slot.awayPenaltyScore})</span>
+            )}
+          </span>
+        )}
       </div>
       {slot.status === 'ft' && slot.penaltyWinner && (
-        <div className="px-2 pb-1 text-[9px] text-zinc-500 text-right">P</div>
+        <div className="px-2 pb-1 text-[9px] text-zinc-400 text-center font-medium">Penalties</div>
       )}
     </button>
   )
