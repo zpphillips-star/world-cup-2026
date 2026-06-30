@@ -105,11 +105,15 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
         </div>
       )}
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
+        {slot.penaltyWinner === 'home'
+          ? <span className="text-[9px] text-[#00d4ff] flex-shrink-0">▶</span>
+          : <span className="w-[9px] flex-shrink-0" />
+        }
         {homeTeam
           ? <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4" />
           : null
         }
-        <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
+        <span className={`flex-1 truncate text-[11px] ${slot.penaltyWinner === 'home' ? 'font-bold text-white' : ''}`}>{homeLabel}</span>
         {hasScore && (
           <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
             {slot.homeScore ?? 0}
@@ -121,11 +125,15 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
+        {slot.penaltyWinner === 'away'
+          ? <span className="text-[9px] text-[#00d4ff] flex-shrink-0">▶</span>
+          : <span className="w-[9px] flex-shrink-0" />
+        }
         {awayTeam
           ? <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4" />
           : null
         }
-        <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
+        <span className={`flex-1 truncate text-[11px] ${slot.penaltyWinner === 'away' ? 'font-bold text-white' : ''}`}>{awayLabel}</span>
         {hasScore && (
           <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
             {slot.awayScore ?? 0}

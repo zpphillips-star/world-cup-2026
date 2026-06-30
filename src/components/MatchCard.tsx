@@ -266,7 +266,8 @@ export default function MatchCard({
 
           <div className="flex-1 flex items-center min-w-0">
             <div className="flex-1 flex items-center justify-end gap-1.5 min-w-0">
-              <span className="text-[13px] font-semibold text-white truncate text-right">{match.homeTeam.name}</span>
+              {match.penaltyWinner === 'home' && <span className="text-[10px] text-[#00d4ff] flex-shrink-0">▶</span>}
+              <span className={`text-[13px] truncate text-right ${match.penaltyWinner === 'home' ? 'font-bold text-white' : 'font-semibold text-white'}`}>{match.homeTeam.name}</span>
               <span className="flex-shrink-0">
                 <FlagImg teamId={match.homeTeam.id} fallback={match.homeTeam.flag} className="h-4" />
               </span>
@@ -289,7 +290,8 @@ export default function MatchCard({
               <span className="flex-shrink-0">
                 <FlagImg teamId={match.awayTeam.id} fallback={match.awayTeam.flag} className="h-4" />
               </span>
-              <span className="text-[13px] font-semibold text-white truncate">{match.awayTeam.name}</span>
+              <span className={`text-[13px] truncate ${match.penaltyWinner === 'away' ? 'font-bold text-white' : 'font-semibold text-white'}`}>{match.awayTeam.name}</span>
+              {match.penaltyWinner === 'away' && <span className="text-[10px] text-[#00d4ff] flex-shrink-0">◀</span>}
             </div>
           </div>
         </div>
@@ -341,7 +343,10 @@ export default function MatchCard({
                   >
                     <FlagImg teamId={currentMatch.homeTeam.id} fallback={currentMatch.homeTeam.flag} className="h-10" />
                   </button>
-                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{currentMatch.homeTeam.name}</span>
+                  <span className={`text-[13px] text-center leading-tight flex items-center gap-1 ${currentMatch.penaltyWinner === 'home' ? 'font-bold text-white' : 'font-semibold text-white'}`}>
+                    {currentMatch.penaltyWinner === 'home' && <span className="text-[10px] text-[#00d4ff]">▶</span>}
+                    {currentMatch.homeTeam.name}
+                  </span>
                 </div>
                 <div className="flex flex-col items-center gap-1 min-w-[80px]">
                   {hasScore ? (
@@ -376,7 +381,10 @@ export default function MatchCard({
                   >
                     <FlagImg teamId={currentMatch.awayTeam.id} fallback={currentMatch.awayTeam.flag} className="h-10" />
                   </button>
-                  <span className="text-[13px] font-semibold text-white text-center leading-tight">{currentMatch.awayTeam.name}</span>
+                  <span className={`text-[13px] text-center leading-tight flex items-center gap-1 ${currentMatch.penaltyWinner === 'away' ? 'font-bold text-white' : 'font-semibold text-white'}`}>
+                    {currentMatch.penaltyWinner === 'away' && <span className="text-[10px] text-[#00d4ff]">▶</span>}
+                    {currentMatch.awayTeam.name}
+                  </span>
                 </div>
               </div>
 
