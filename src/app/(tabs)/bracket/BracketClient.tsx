@@ -105,15 +105,11 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
         </div>
       )}
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {slot.penaltyWinner === 'home'
-          ? <span className="text-[9px] text-[#00d4ff] flex-shrink-0">▶</span>
-          : <span className="w-[9px] flex-shrink-0" />
-        }
         {homeTeam
           ? <FlagImg teamId={homeTeam.id} fallback={homeTeam.flag} className="h-4" />
           : null
         }
-        <span className={`flex-1 truncate text-[11px] ${slot.penaltyWinner === 'home' ? 'font-bold text-white' : ''}`}>{homeLabel}</span>
+        <span className="flex-1 truncate text-[11px]">{homeLabel}</span>
         {hasScore && (
           <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
             {slot.homeScore ?? 0}
@@ -125,15 +121,11 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
       </div>
       <div className="border-t border-zinc-800/80" />
       <div className={`flex items-center gap-1.5 px-2 py-1.5 ${isTbd ? 'text-zinc-600' : 'text-zinc-200'}`}>
-        {slot.penaltyWinner === 'away'
-          ? <span className="text-[9px] text-[#00d4ff] flex-shrink-0">▶</span>
-          : <span className="w-[9px] flex-shrink-0" />
-        }
         {awayTeam
           ? <FlagImg teamId={awayTeam.id} fallback={awayTeam.flag} className="h-4" />
           : null
         }
-        <span className={`flex-1 truncate text-[11px] ${slot.penaltyWinner === 'away' ? 'font-bold text-white' : ''}`}>{awayLabel}</span>
+        <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
         {hasScore && (
           <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>
             {slot.awayScore ?? 0}
@@ -144,7 +136,15 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
         )}
       </div>
       {slot.status === 'ft' && slot.penaltyWinner && (
-        <div className="px-2 pb-1 text-[9px] text-zinc-400 text-center font-medium">Penalties</div>
+        <div className="px-2 pb-1 flex items-center justify-center relative">
+          {slot.penaltyWinner === 'home' && (
+            <span className="absolute left-1/2 -translate-x-[calc(50%+18px)] text-[9px] text-zinc-500">▲</span>
+          )}
+          <span className="text-[9px] text-zinc-500 font-medium">Penalties</span>
+          {slot.penaltyWinner === 'away' && (
+            <span className="absolute left-1/2 -translate-x-[calc(50%-18px)] text-[9px] text-zinc-500">▼</span>
+          )}
+        </div>
       )}
     </button>
   )
