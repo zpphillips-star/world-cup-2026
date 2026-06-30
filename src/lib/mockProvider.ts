@@ -45,18 +45,18 @@ const teams: Record<string, Team> = {
   // GROUP C — Opens Jun 13
   brazil:       { id: "brazil",       name: "Brazil",                flag: "🇧🇷", group: "C" },
   morocco:      { id: "morocco",      name: "Morocco",               flag: "🇲🇦", group: "C" },
-  scotland:     { id: "scotland",     name: "Scotland",              flag: "🅱≤áüº≤áüó≤áü│≤áüú≤áü┤≤áü┐", group: "C" },
-  haiti:        { id: "haiti",        name: "Haiti",                 flag: "∩┐╜∩┐╜🇹", group: "C" },
+  scotland:     { id: "scotland",     name: "Scotland",              flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", group: "C" },
+  haiti:        { id: "haiti",        name: "Haiti",                 flag: "🇭🇹", group: "C" },
 
   // GROUP D — Opens Jun 12
-  usa:          { id: "usa",          name: "United States",         flag: "🇺∩┐╜∩┐╜", group: "D" },
+  usa:          { id: "usa",          name: "United States",         flag: "🇺🇸", group: "D" },
   australia:    { id: "australia",    name: "Australia",             flag: "🇦🇺", group: "D" },
   paraguay:     { id: "paraguay",     name: "Paraguay",              flag: "🇵🇾", group: "D" },
   turkey:       { id: "turkey",       name: "Turkey",                flag: "🇹🇷", group: "D" },
 
   // GROUP E — Opens Jun 14
   germany:      { id: "germany",      name: "Germany",               flag: "🇩🇪", group: "E" },
-  ecuador:      { id: "ecuador",      name: "Ecuador",               flag: "∩┐╜∩┐╜🇨", group: "E" },
+  ecuador:      { id: "ecuador",      name: "Ecuador",               flag: "🇪🇨", group: "E" },
   ivorycoast:   { id: "ivorycoast",   name: "Ivory Coast",           flag: "🇨🇮", group: "E" },
   curacao:      { id: "curacao",      name: "Curaçao",               flag: "🇨🇼", group: "E" },
 
@@ -97,7 +97,7 @@ const teams: Record<string, Team> = {
   drcongo:      { id: "drcongo",      name: "DR Congo",              flag: "🇨🇩", group: "K" },
 
   // GROUP L — Opens Jun 17
-  england:      { id: "england",      name: "England",               flag: "🅱≤áüº≤áüó≤áüÑ≤áü«≤áüº≤áü┐", group: "L" },
+  england:      { id: "england",      name: "England",               flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", group: "L" },
   croatia:      { id: "croatia",      name: "Croatia",               flag: "🇭🇷", group: "L" },
   panama:       { id: "panama",       name: "Panama",                flag: "🇵🇦", group: "L" },
   ghana:        { id: "ghana",        name: "Ghana",                 flag: "🇬🇭", group: "L" },
