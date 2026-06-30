@@ -220,7 +220,7 @@ const knockoutMatches: Match[] = [
   // ΓöÇΓöÇ Round of 32 (Jun 28 – Jul 3) — FIFA official match numbers 73–88 ΓöÇΓöÇ
   // Kickoff times (UTC) and venues verified against ESPN/FIFA official schedule
   { id: "r32-1",  homeTeam: tbd("2nd Group A"),   awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T19:00:00Z", venue: venues.sofi,         round: "Round of 32", homeScore: 0, awayScore: 1, status: "ft" },
-  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay, kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", status: "upcoming" },
+  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay, kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", homeScore: 1, awayScore: 1, status: "ft", penaltyWinner: "away" },
   { id: "r32-3",  homeTeam: tbd("1st Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-30T01:00:00Z", venue: venues.bbva,         round: "Round of 32", status: "upcoming" },
   { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,          round: "Round of 32", homeScore: 2, awayScore: 1, status: "ft" },
   { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: teams.sweden, kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,      round: "Round of 32", status: "upcoming" },
@@ -356,6 +356,7 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
       venue: km?.venue,
       homeScore: lm?.homeScore ?? km?.homeScore,
       awayScore: lm?.awayScore ?? km?.awayScore,
+      penaltyWinner: lm?.penaltyWinner ?? km?.penaltyWinner,
       // Only mark 'upcoming'/'live'/'ft' when both teams are set; else 'tbd'
       status: bothKnown ? (liveStatus ?? kmStatus ?? 'upcoming') : 'tbd',
     }
@@ -391,9 +392,9 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
     makeSlot('r32-15', resolveWinner('K'),   teams.ghana),            // → r16-8
   ]
 
-  // ΓöÇΓöÇ Dynamic winner propagation ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  // ── Dynamic winner propagation ──────────────────────────────────────────────────────────────────────────────
   // Returns the winning Team of a completed knockout match, or the label string
-  // if the match is not yet finished (or ended level — e.g. penalties).
+  // if the match is not yet finished. Handles penalty shootout via penaltyWinner.
   function resolveKnockoutWinner(matchId: string, label: string): Team | string {
     const lm = src.find(m => m.id === matchId)
     if (!lm || lm.status !== 'ft') return label
@@ -401,7 +402,10 @@ export function getBracket(liveGroupMatches?: Match[]): BracketRound[] {
     const ag = lm.awayScore ?? 0
     if (hg > ag) return lm.homeTeam
     if (ag > hg) return lm.awayTeam
-    return label // level after FT (penalty shootout — winner flag not yet tracked)
+    // Level after 120' — decided by penalty shootout
+    if (lm.penaltyWinner === 'home') return lm.homeTeam
+    if (lm.penaltyWinner === 'away') return lm.awayTeam
+    return label // truly unresolved (should not occur in practice)
   }
 
   // Returns the losing Team of a completed knockout match (for 3rd-place slot).
@@ -527,7 +531,10 @@ export function resolveKnockoutTeams(allLiveMatches: Match[]): Match[] {
     const away = m.awayScore ?? -1
     if (home > away) knockoutWinners[m.id] = m.homeTeam
     else if (away > home) knockoutWinners[m.id] = m.awayTeam
-    // draw shouldn't occur in knockout; leave unresolved
+    // Scores level after 120' — use penaltyWinner if set
+    else if (m.penaltyWinner === 'home') knockoutWinners[m.id] = m.homeTeam
+    else if (m.penaltyWinner === 'away') knockoutWinners[m.id] = m.awayTeam
+    // else: draw without penaltyWinner set — leave unresolved
   }
 
   // Pass 2 — resolve "W R32-N", "W R16-N", "W QF-N", "W SF-N" placeholders

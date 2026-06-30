@@ -50,6 +50,7 @@ function slotToMatch(slot: BracketSlot, allMatches: Match[]): Match {
     status: slot.status === 'tbd' ? 'upcoming' : slot.status,
     homeScore: slot.homeScore,
     awayScore: slot.awayScore,
+    penaltyWinner: slot.penaltyWinner,
   }
 }
 
@@ -118,6 +119,9 @@ function SlotCard({ slot, isFinal = false, matchLabel, onClick }: {
         <span className="flex-1 truncate text-[11px]">{awayLabel}</span>
         {hasScore && <span className={`font-bold tabular-nums ml-1 ${isLive ? 'text-red-300' : 'text-white'}`}>{slot.awayScore ?? 0}</span>}
       </div>
+      {slot.status === 'ft' && slot.penaltyWinner && (
+        <div className="px-2 pb-1 text-[9px] text-zinc-500 text-right">P</div>
+      )}
     </button>
   )
 }

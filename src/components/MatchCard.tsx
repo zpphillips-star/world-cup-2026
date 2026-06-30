@@ -254,7 +254,9 @@ export default function MatchCard({
                 {clock && <span className="text-[11px] font-semibold text-red-400">{clock}</span>}
               </>
             ) : isFt ? (
-              <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">FINAL</span>
+              <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">
+                {currentMatch.penaltyWinner ? 'FINAL (P)' : 'FINAL'}
+              </span>
             ) : (
               <span className="text-[12px] font-medium text-zinc-300 leading-snug whitespace-nowrap">
                 {time} <span className="text-[10px] text-zinc-500">{tzAbbr}</span>
@@ -318,7 +320,7 @@ export default function MatchCard({
                   </span>
                 )}
                 {isLive && <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full animate-pulse">● LIVE</span>}
-                {isFt && <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">FINAL</span>}
+                {isFt && <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full">{currentMatch.penaltyWinner ? 'FINAL (P)' : 'FINAL'}</span>}
                 {currentMatch.status === 'upcoming' && (
                   <span className="text-[11px] text-zinc-400 bg-zinc-800/60 px-2.5 py-0.5 rounded-full">{date} · {time} {tzAbbr}</span>
                 )}
