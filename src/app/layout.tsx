@@ -2,6 +2,7 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import InstallPrompt from '@/components/InstallPrompt'
+import { Analytics } from '@vercel/analytics/next'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -94,6 +95,7 @@ export default function RootLayout({
         />
         {children}
         <InstallPrompt />
+        <Analytics />
       </body>
     </html>
   )
