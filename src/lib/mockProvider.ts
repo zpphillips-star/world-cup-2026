@@ -243,7 +243,7 @@ const knockoutMatches: Match[] = [
   // M95: W86 vs W88 (r32-14 vs r32-16) M96: W85 vs W87 (r32-13 vs r32-15)
   { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-3"),  kickoff: "2026-07-04T17:00:00Z", venue: venues.nrg,          round: "Round of 16", homeScore: 0, awayScore: 3, status: "ft" },
   { id: "r16-2", homeTeam: tbd("W R32-2"),  awayTeam: tbd("W R32-5"),  kickoff: "2026-07-04T21:00:00Z", venue: venues.lincoln,      round: "Round of 16", homeScore: 0, awayScore: 1, status: "ft" },
-  { id: "r16-3", homeTeam: tbd("W R32-4"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-05T20:00:00Z", venue: venues.metlife,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-3", homeTeam: tbd("W R32-4"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-05T20:00:00Z", venue: venues.metlife,      round: "Round of 16", homeScore: 1, awayScore: 2, status: "ft" },
   { id: "r16-4", homeTeam: tbd("W R32-7"),  awayTeam: tbd("W R32-8"),  kickoff: "2026-07-06T00:00:00Z", venue: venues.azteca,       round: "Round of 16", status: "upcoming" },
   { id: "r16-5", homeTeam: tbd("W R32-9"),  awayTeam: tbd("W R32-10"), kickoff: "2026-07-07T00:00:00Z", venue: venues.lumen,        round: "Round of 16", status: "upcoming" },
   { id: "r16-6", homeTeam: tbd("W R32-11"), awayTeam: tbd("W R32-12"), kickoff: "2026-07-06T19:00:00Z", venue: venues.att,          round: "Round of 16", status: "upcoming" },
