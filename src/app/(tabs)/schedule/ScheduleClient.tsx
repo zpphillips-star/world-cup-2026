@@ -297,7 +297,9 @@ export default function ScheduleClient({
     // Step 3: re-apply scores now that R32+ teams have real names (key lookup works)
     const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
     // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
-    return resolveKnockoutTeams(withKnockoutScores)
+    const withWinners = resolveKnockoutTeams(withKnockoutScores)
+    // Step 5: re-apply scores now that R16+ teams are fully resolved (e.g. paraguay|france)
+    return applyLiveScores(withWinners, liveScores, liveAliases)
   }, [matches, liveScores, liveAliases])
   const hasAnyLive = useMemo(() => Object.values(liveScores).some(s => s.status === 'live'), [liveScores])
   const liveCount = useMemo(() => Object.values(liveScores).filter(s => s.status === 'live').length, [liveScores])

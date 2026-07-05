@@ -102,6 +102,7 @@ export async function GET() {
             statusName === 'STATUS_FINAL' ||
             statusName === 'STATUS_FULL_TIME' ||
             statusName === 'STATUS_FULL_PEN' ||
+            statusName === 'STATUS_FINAL_AET' ||
             statusName === 'STATUS_EXTRA_TIME' && comp.status?.type?.completed === true ||
             comp.status?.type?.completed === true
           ) status = 'ft'

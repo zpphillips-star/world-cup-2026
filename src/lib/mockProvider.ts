@@ -220,29 +220,29 @@ const knockoutMatches: Match[] = [
   // ΓöÇΓöÇ Round of 32 (Jun 28 – Jul 3) — FIFA official match numbers 73–88 ΓöÇΓöÇ
   // Kickoff times (UTC) and venues verified against ESPN/FIFA official schedule
   { id: "r32-1",  homeTeam: tbd("2nd Group A"),   awayTeam: tbd("2nd Group B"),        kickoff: "2026-06-28T19:00:00Z", venue: venues.sofi,         round: "Round of 32", homeScore: 0, awayScore: 1, status: "ft" },
-  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay, kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", homeScore: 1, awayScore: 1, status: "ft", penaltyWinner: "away", homePenaltyScore: 3, awayPenaltyScore: 4 },
-  { id: "r32-3",  homeTeam: tbd("1st Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-30T01:00:00Z", venue: venues.bbva,         round: "Round of 32", homeScore: 1, awayScore: 1, status: "ft", penaltyWinner: "away", homePenaltyScore: 2, awayPenaltyScore: 3 },
+  { id: "r32-2",  homeTeam: tbd("1st Group E"),   awayTeam: teams.paraguay,            kickoff: "2026-06-29T20:30:00Z", venue: venues.gillette,     round: "Round of 32", homeScore: 1, awayScore: 1, penaltyWinner: 'away', status: "ft" },
+  { id: "r32-3",  homeTeam: tbd("1st Group F"),   awayTeam: tbd("2nd Group C"),         kickoff: "2026-06-30T01:00:00Z", venue: venues.bbva,         round: "Round of 32", homeScore: 1, awayScore: 1, penaltyWinner: 'away', status: "ft" },
   { id: "r32-4",  homeTeam: tbd("1st Group C"),   awayTeam: tbd("2nd Group F"),         kickoff: "2026-06-29T17:00:00Z", venue: venues.nrg,          round: "Round of 32", homeScore: 2, awayScore: 1, status: "ft" },
-  { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: teams.sweden, kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-6",  homeTeam: tbd("2nd Group E"),   awayTeam: tbd("2nd Group I"),         kickoff: "2026-06-30T17:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
-  { id: "r32-7",  homeTeam: tbd("1st Group A"),   awayTeam: teams.ecuador, kickoff: "2026-07-01T01:00:00Z", venue: venues.azteca,       round: "Round of 32", status: "upcoming" },
-  { id: "r32-8",  homeTeam: tbd("1st Group L"),   awayTeam: teams.drcongo, kickoff: "2026-07-01T16:00:00Z", venue: venues.mercedesbenz, round: "Round of 32", status: "upcoming" },
-  { id: "r32-9",  homeTeam: tbd("1st Group D"),   awayTeam: teams.bosnia, kickoff: "2026-07-02T00:00:00Z", venue: venues.levis,        round: "Round of 32", status: "upcoming" },
-  { id: "r32-10", homeTeam: tbd("1st Group G"),   awayTeam: teams.senegal, kickoff: "2026-07-01T20:00:00Z", venue: venues.lumen,        round: "Round of 32", status: "upcoming" },
-  { id: "r32-11", homeTeam: tbd("2nd Group K"),   awayTeam: tbd("2nd Group L"),         kickoff: "2026-07-02T23:00:00Z", venue: venues.bmo,          round: "Round of 32", status: "upcoming" },
-  { id: "r32-12", homeTeam: tbd("1st Group H"),   awayTeam: tbd("2nd Group J"),         kickoff: "2026-07-02T19:00:00Z", venue: venues.sofi,         round: "Round of 32", status: "upcoming" },
-  { id: "r32-13", homeTeam: tbd("1st Group B"),   awayTeam: teams.algeria, kickoff: "2026-07-03T03:00:00Z", venue: venues.bcplace,      round: "Round of 32", status: "upcoming" },
-  { id: "r32-14", homeTeam: tbd("1st Group J"),   awayTeam: tbd("2nd Group H"),         kickoff: "2026-07-03T22:00:00Z", venue: venues.hardrock,     round: "Round of 32", status: "upcoming" },
-  { id: "r32-15", homeTeam: tbd("1st Group K"),   awayTeam: teams.ghana, kickoff: "2026-07-04T01:30:00Z", venue: venues.arrowhead,    round: "Round of 32", status: "upcoming" },
-  { id: "r32-16", homeTeam: tbd("2nd Group D"),   awayTeam: tbd("2nd Group G"),         kickoff: "2026-07-03T18:00:00Z", venue: venues.att,          round: "Round of 32", status: "upcoming" },
+  { id: "r32-5",  homeTeam: tbd("1st Group I"),   awayTeam: teams.sweden,              kickoff: "2026-06-30T21:00:00Z", venue: venues.metlife,      round: "Round of 32", homeScore: 3, awayScore: 0, status: "ft" },
+  { id: "r32-6",  homeTeam: tbd("2nd Group E"),   awayTeam: tbd("2nd Group I"),         kickoff: "2026-06-30T17:00:00Z", venue: venues.att,          round: "Round of 32", homeScore: 1, awayScore: 2, status: "ft" },
+  { id: "r32-7",  homeTeam: tbd("1st Group A"),   awayTeam: teams.ecuador,              kickoff: "2026-07-01T01:00:00Z", venue: venues.azteca,       round: "Round of 32", homeScore: 2, awayScore: 0, status: "ft" },
+  { id: "r32-8",  homeTeam: tbd("1st Group L"),   awayTeam: teams.drcongo,              kickoff: "2026-07-01T16:00:00Z", venue: venues.mercedesbenz, round: "Round of 32", homeScore: 2, awayScore: 1, status: "ft" },
+  { id: "r32-9",  homeTeam: tbd("1st Group D"),   awayTeam: teams.bosnia,               kickoff: "2026-07-02T00:00:00Z", venue: venues.levis,        round: "Round of 32", homeScore: 2, awayScore: 0, status: "ft" },
+  { id: "r32-10", homeTeam: tbd("1st Group G"),   awayTeam: teams.senegal,              kickoff: "2026-07-01T20:00:00Z", venue: venues.lumen,        round: "Round of 32", homeScore: 3, awayScore: 2, status: "ft" },
+  { id: "r32-11", homeTeam: tbd("2nd Group K"),   awayTeam: tbd("2nd Group L"),         kickoff: "2026-07-02T23:00:00Z", venue: venues.bmo,          round: "Round of 32", homeScore: 2, awayScore: 1, status: "ft" },
+  { id: "r32-12", homeTeam: tbd("1st Group H"),   awayTeam: tbd("2nd Group J"),         kickoff: "2026-07-02T19:00:00Z", venue: venues.sofi,         round: "Round of 32", homeScore: 3, awayScore: 0, status: "ft" },
+  { id: "r32-13", homeTeam: tbd("1st Group B"),   awayTeam: teams.algeria,              kickoff: "2026-07-03T03:00:00Z", venue: venues.bcplace,      round: "Round of 32", homeScore: 2, awayScore: 0, status: "ft" },
+  { id: "r32-14", homeTeam: tbd("1st Group J"),   awayTeam: tbd("2nd Group H"),         kickoff: "2026-07-03T22:00:00Z", venue: venues.hardrock,     round: "Round of 32", homeScore: 3, awayScore: 2, status: "ft" },
+  { id: "r32-15", homeTeam: tbd("1st Group K"),   awayTeam: teams.ghana,                kickoff: "2026-07-04T01:30:00Z", venue: venues.arrowhead,    round: "Round of 32", homeScore: 1, awayScore: 0, status: "ft" },
+  { id: "r32-16", homeTeam: tbd("2nd Group D"),   awayTeam: tbd("2nd Group G"),         kickoff: "2026-07-03T18:00:00Z", venue: venues.att,          round: "Round of 32", homeScore: 1, awayScore: 1, penaltyWinner: 'away', status: "ft" },
 
   // ΓöÇΓöÇ Round of 16 (Jul 4 – Jul 7) — FIFA match numbers 89–96 ΓöÇΓöÇ
   // M90: W73 vs W75 (r32-1 vs r32-3)  M89: W74 vs W77 (r32-2 vs r32-5)
   // M91: W76 vs W78 (r32-4 vs r32-6)  M92: W79 vs W80 (r32-7 vs r32-8)
   // M94: W81 vs W82 (r32-9 vs r32-10) M93: W83 vs W84 (r32-11 vs r32-12)
   // M95: W86 vs W88 (r32-14 vs r32-16) M96: W85 vs W87 (r32-13 vs r32-15)
-  { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-3"),  kickoff: "2026-07-04T17:00:00Z", venue: venues.nrg,          round: "Round of 16", status: "upcoming" },
-  { id: "r16-2", homeTeam: tbd("W R32-2"),  awayTeam: tbd("W R32-5"),  kickoff: "2026-07-04T21:00:00Z", venue: venues.lincoln,      round: "Round of 16", status: "upcoming" },
+  { id: "r16-1", homeTeam: tbd("W R32-1"),  awayTeam: tbd("W R32-3"),  kickoff: "2026-07-04T17:00:00Z", venue: venues.nrg,          round: "Round of 16", homeScore: 0, awayScore: 3, status: "ft" },
+  { id: "r16-2", homeTeam: tbd("W R32-2"),  awayTeam: tbd("W R32-5"),  kickoff: "2026-07-04T21:00:00Z", venue: venues.lincoln,      round: "Round of 16", homeScore: 0, awayScore: 1, status: "ft" },
   { id: "r16-3", homeTeam: tbd("W R32-4"),  awayTeam: tbd("W R32-6"),  kickoff: "2026-07-05T20:00:00Z", venue: venues.metlife,      round: "Round of 16", status: "upcoming" },
   { id: "r16-4", homeTeam: tbd("W R32-7"),  awayTeam: tbd("W R32-8"),  kickoff: "2026-07-06T00:00:00Z", venue: venues.azteca,       round: "Round of 16", status: "upcoming" },
   { id: "r16-5", homeTeam: tbd("W R32-9"),  awayTeam: tbd("W R32-10"), kickoff: "2026-07-07T00:00:00Z", venue: venues.lumen,        round: "Round of 16", status: "upcoming" },

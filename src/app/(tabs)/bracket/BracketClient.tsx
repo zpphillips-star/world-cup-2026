@@ -214,15 +214,20 @@ export default function BracketClient({ initialMatches, statsMap = {}, standings
     const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
     // Step 2: resolve TBD knockout teams using completed group standings
     const resolved = resolveKnockoutTeams(withGroupScores)
-    // Step 3: re-apply so knockout slot statuses/scores reflect live data
-    const liveMatches = applyLiveScores(resolved, liveScores, liveAliases)
-    return getBracket(liveMatches)
+    // Step 3: re-apply so R32 slot statuses/scores reflect live data
+    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
+    // Step 4: resolve knockout-winner slots (W R32-X → winner) now R32 matches are ft
+    const withWinners = resolveKnockoutTeams(withKnockoutScores)
+    // Step 5: re-apply scores now that R16+ teams are fully resolved (e.g. paraguay|france)
+    return getBracket(applyLiveScores(withWinners, liveScores, liveAliases))
   }, [initialMatches, liveScores, liveAliases])
 
   const liveMatchesFull = useMemo(() => {
     const withGroupScores = applyLiveScores(initialMatches, liveScores, liveAliases)
     const resolved = resolveKnockoutTeams(withGroupScores)
-    return applyLiveScores(resolved, liveScores, liveAliases)
+    const withKnockoutScores = applyLiveScores(resolved, liveScores, liveAliases)
+    const withWinners = resolveKnockoutTeams(withKnockoutScores)
+    return applyLiveScores(withWinners, liveScores, liveAliases)
   }, [initialMatches, liveScores, liveAliases])
   const { effectiveStandingsMap } = useEffectiveStandings(liveMatchesFull, standingsMap, liveStandingsMap)
 

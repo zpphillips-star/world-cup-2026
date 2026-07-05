@@ -24,6 +24,7 @@ export interface Match {
   status: "upcoming" | "live" | "ft"
   homeScore?: number
   awayScore?: number
+  penaltyWinner?: 'home' | 'away'
   matchday?: number
   /** Set when a knockout match is decided on penalties ("home" or "away" won the shootout) */
   penaltyWinner?: "home" | "away"
