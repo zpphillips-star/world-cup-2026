@@ -1,4 +1,9 @@
 {
+  "name": "WC Score Live",
+  "short_name": "WC Score",
+  "start_url": "/today",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
   "theme_color": "#0a0a0f",
   "icons": [
     {
