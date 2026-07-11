@@ -254,7 +254,7 @@ const knockoutMatches: Match[] = [
   // M97: W89 vs W90 (W r16-1 vs W r16-2)  M99: W91 vs W92 (W r16-3 vs W r16-4)
   // M98: W93 vs W94 (W r16-6 vs W r16-5)  M100: W95 vs W96 (W r16-7 vs W r16-8)
   { id: "qf-1", homeTeam: tbd("W R16-1"), awayTeam: tbd("W R16-2"), kickoff: "2026-07-09T20:00:00Z", venue: venues.gillette,  round: "Quarter-Finals", homeScore: 0, awayScore: 2, status: "ft" },
-  { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-11T21:00:00Z", venue: venues.hardrock,  round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-11T21:00:00Z", venue: venues.hardrock,  round: "Quarter-Finals", homeScore: 1, awayScore: 2, status: "ft" },
   { id: "qf-3", homeTeam: tbd("W R16-5"), awayTeam: tbd("W R16-6"), kickoff: "2026-07-10T19:00:00Z", venue: venues.sofi,      round: "Quarter-Finals", homeScore: 1, awayScore: 2, status: "ft" },
   { id: "qf-4", homeTeam: tbd("W R16-7"), awayTeam: tbd("W R16-8"), kickoff: "2026-07-12T01:00:00Z", venue: venues.arrowhead, round: "Quarter-Finals", status: "upcoming" },
 
