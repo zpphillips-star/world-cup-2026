@@ -256,7 +256,7 @@ const knockoutMatches: Match[] = [
   { id: "qf-1", homeTeam: tbd("W R16-1"), awayTeam: tbd("W R16-2"), kickoff: "2026-07-09T20:00:00Z", venue: venues.gillette,  round: "Quarter-Finals", homeScore: 0, awayScore: 2, status: "ft" },
   { id: "qf-2", homeTeam: tbd("W R16-3"), awayTeam: tbd("W R16-4"), kickoff: "2026-07-11T21:00:00Z", venue: venues.hardrock,  round: "Quarter-Finals", homeScore: 1, awayScore: 2, status: "ft" },
   { id: "qf-3", homeTeam: tbd("W R16-5"), awayTeam: tbd("W R16-6"), kickoff: "2026-07-10T19:00:00Z", venue: venues.sofi,      round: "Quarter-Finals", homeScore: 1, awayScore: 2, status: "ft" },
-  { id: "qf-4", homeTeam: tbd("W R16-7"), awayTeam: tbd("W R16-8"), kickoff: "2026-07-12T01:00:00Z", venue: venues.arrowhead, round: "Quarter-Finals", status: "upcoming" },
+  { id: "qf-4", homeTeam: tbd("W R16-7"), awayTeam: tbd("W R16-8"), kickoff: "2026-07-12T01:00:00Z", venue: venues.arrowhead, round: "Quarter-Finals", homeScore: 3, awayScore: 1, status: "ft" },
 
   // ΓöÇΓöÇ Semi-Finals (Jul 14–15) — FIFA match numbers 101–102 ΓöÇΓöÇ
   // M101: W97 vs W98 (W qf-1 vs W qf-3)  M102: W99 vs W100 (W qf-2 vs W qf-4)
