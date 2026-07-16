@@ -260,14 +260,14 @@ const knockoutMatches: Match[] = [
 
   // ΓöÇΓöÇ Semi-Finals (Jul 14–15) — FIFA match numbers 101–102 ΓöÇΓöÇ
   // M101: W97 vs W98 (W qf-1 vs W qf-3)  M102: W99 vs W100 (W qf-2 vs W qf-4)
-  { id: "sf-1", homeTeam: tbd("W QF-1"), awayTeam: tbd("W QF-3"), kickoff: "2026-07-14T19:00:00Z", venue: venues.att,          round: "Semi-Finals", homeScore: 0, awayScore: 2, status: "ft" },
-  { id: "sf-2", homeTeam: tbd("W QF-2"), awayTeam: tbd("W QF-4"), kickoff: "2026-07-15T19:00:00Z", venue: venues.mercedesbenz, round: "Semi-Finals", homeScore: 1, awayScore: 2, status: "ft" },
+  { id: "sf-1", homeTeam: teams.france,   awayTeam: teams.spain,    kickoff: "2026-07-14T19:00:00Z", venue: venues.att,          round: "Semi-Finals", homeScore: 0, awayScore: 2, status: "ft" },
+  { id: "sf-2", homeTeam: teams.england,  awayTeam: teams.argentina, kickoff: "2026-07-15T19:00:00Z", venue: venues.mercedesbenz, round: "Semi-Finals", homeScore: 1, awayScore: 2, status: "ft" },
 
   // ΓöÇΓöÇ Third Place (Jul 18) — FIFA match 103 ΓöÇΓöÇ
-  { id: "3rd-1", homeTeam: tbd("SF Loser 1"), awayTeam: tbd("SF Loser 2"), kickoff: "2026-07-18T21:00:00Z", venue: venues.hardrock, round: "Third Place", status: "upcoming" },
+  { id: "3rd-1",   homeTeam: teams.france, awayTeam: teams.england,   kickoff: "2026-07-18T21:00:00Z", venue: venues.hardrock, round: "Third Place", status: "upcoming" },
 
   // ΓöÇΓöÇ Final (Jul 19) — MetLife Stadium, East Rutherford NJ — FIFA match 104 ΓöÇΓöÇ
-  { id: "final-1", homeTeam: tbd("SF Winner 1"), awayTeam: tbd("SF Winner 2"), kickoff: "2026-07-19T19:00:00Z", venue: venues.metlife, round: "Final", status: "upcoming" },
+  { id: "final-1", homeTeam: teams.spain,  awayTeam: teams.argentina, kickoff: "2026-07-19T19:00:00Z", venue: venues.metlife,  round: "Final",       status: "upcoming" },
 ]
 
 function computeStandings(groupId: string, src: Match[] = matches): Standing[] {
